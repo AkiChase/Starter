@@ -12,12 +12,8 @@ class GlobalData {
     static searchResult := unset
 
     static init() {
-        if (A_IsCompiled)
-            this.rootDir := A_ScriptDir
-        else {
-            SplitPath(A_ScriptDir, , &tmp)
-            this.rootDir := tmp
-        }
+        SplitPath(A_ScriptDir, , &tmp)
+        this.rootDir := tmp
 
         this.imgDir := this.rootDir "\resource\img"
         this.bootDir := this.rootDir "\boot"

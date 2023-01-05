@@ -26,7 +26,9 @@ BootGui.init()
 
 OnExit((*) => GlobalData.storeProgramData())    ;退出时保存数据
 
+;@Ahk2Exe-IgnoreBegin
 !q:: {
     Send("^s")
     Reload()
 }
+;@Ahk2Exe-IgnoreEnd

@@ -10,7 +10,7 @@ class Start {
             if !(workingDir)    ;默认使用文件所在文件夹作为工作目录
                 SplitPath(path, , &workingDir)
 
-            Run(path, workingDir, options, &outPID)
+            try Run(path, workingDir, options, &outPID)
             return outPID
 
         }
@@ -21,10 +21,10 @@ class Start {
             FileGetShortcut(path, &path)
 
         if (FileExist(path)) {
-            Run('explorer.exe /select,"' path '"')
+            try Run('explorer.exe /select,"' path '"')
         } else {
             SplitPath(path, , &outDir)
-            Run(outDir)
+            try Run(outDir)
         }
     }
 }

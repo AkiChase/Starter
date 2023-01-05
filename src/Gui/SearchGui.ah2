@@ -299,7 +299,7 @@ class SearchGui {
         this.listView.Delete()
         for item in GlobalData.searchResult {
             if (!FileExist(item[1]))    ; 文件不存在则使用error图标
-                this.listView.Add("Icon" this.imgPathToImgListIndex["error"], "  " item[4])
+                this.listView.Add("Icon" this.imgPathToImgListIndex[GlobalData.imgDir "\error.png"], "  " item[4])
             else
                 this.listView.Add("Icon" this.imgPathToImgListIndex[item[2]], "  " item[4])
         }
