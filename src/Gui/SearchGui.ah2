@@ -20,12 +20,7 @@ class SearchGui {
         this.setEditplaceholder('Hi, Starter')
         this.edit.Focus()
 
-        search(edit, info) {    ;防抖
-            static f := this.search.Bind(this)
-            SetTimer(f, 0)
-            SetTimer(f, -150)
-        }
-        this.edit.OnEvent("Change", search)    ; 文本变动事件
+        this.edit.OnEvent("Change", (*) => this.search())    ; 文本变动事件
 
         this.gui.OnEvent("DropFiles", this.dropAddItem)    ; 文件拖入事件
 
@@ -242,14 +237,16 @@ class SearchGui {
             if (InStr(FileExist(item[2]), "D")) {    ;文件夹类型
                 item[2] := GlobalData.imgDir "\folder.png"
             } else if (!this.imgPathToImgListIndex.Has(item[2])) {    ;未载入则添加进字典中
+                ext := SubStr(item[1], -4)    ;对原文件类型进行判断
+                if (ext = '.lnk') {    ;快捷方式则转为其指向文件
+                    FileGetShortcut(item[1], &target)
+                    item[2] := target
+                    ext := SubStr(target, -4)
+                }
+
                 index := IL_Add(this.imgListID, item[2])
                 if (!index)    ; 图片载入失败
                 {
-                    ext := SubStr(item[1], -4)    ;对原文件类型进行判断
-                    if (ext = '.lnk') {    ;快捷方式对其指向文件类型进行判断
-                        FileGetShortcut(item[1], &target)
-                        ext := SubStr(target, -4)
-                    }
                     img := "program.png"    ;默认图标
                     switch ext, 0 {
                         case ".ahk": img := "autohotkey.png"
