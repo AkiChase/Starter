@@ -20,12 +20,7 @@ class SearchGui {
         this.setEditplaceholder('Hi, Starter')
         this.edit.Focus()
 
-        search(edit, info) {    ;防抖
-            static f := this.search.Bind(this)
-            SetTimer(f, 0)
-            SetTimer(f, -150)
-        }
-        this.edit.OnEvent("Change", search)    ; 文本变动事件
+        this.edit.OnEvent("Change", (*) => this.search())    ; 文本变动事件
 
         this.gui.OnEvent("DropFiles", this.dropAddItem)    ; 文件拖入事件
 
