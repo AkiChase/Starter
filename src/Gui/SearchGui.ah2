@@ -237,14 +237,16 @@ class SearchGui {
             if (InStr(FileExist(item[2]), "D")) {    ;文件夹类型
                 item[2] := GlobalData.imgDir "\folder.png"
             } else if (!this.imgPathToImgListIndex.Has(item[2])) {    ;未载入则添加进字典中
+                ext := SubStr(item[1], -4)    ;对原文件类型进行判断
+                if (ext = '.lnk') {    ;快捷方式则转为其指向文件
+                    FileGetShortcut(item[1], &target)
+                    item[2] := target
+                    ext := SubStr(target, -4)
+                }
+
                 index := IL_Add(this.imgListID, item[2])
                 if (!index)    ; 图片载入失败
                 {
-                    ext := SubStr(item[1], -4)    ;对原文件类型进行判断
-                    if (ext = '.lnk') {    ;快捷方式对其指向文件类型进行判断
-                        FileGetShortcut(item[1], &target)
-                        ext := SubStr(target, -4)
-                    }
                     img := "program.png"    ;默认图标
                     switch ext, 0 {
                         case ".ahk": img := "autohotkey.png"
