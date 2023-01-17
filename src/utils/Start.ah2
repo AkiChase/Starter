@@ -10,9 +10,10 @@ class Start {
             if !(workingDir)    ;默认使用文件所在文件夹作为工作目录
                 SplitPath(path, , &workingDir)
 
-            try Run(path, workingDir, options, &outPID)
-            return outPID
-
+            try {
+                Run(path, workingDir, options, &outPID)
+                return outPID
+            }
         }
     }
 
