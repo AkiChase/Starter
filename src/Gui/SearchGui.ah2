@@ -20,7 +20,12 @@ class SearchGui {
         this.setEditplaceholder('Hi, Starter')
         this.edit.Focus()
 
-        this.edit.OnEvent("Change", (*) => this.search())    ; 文本变动事件
+        search(edit, info) {    ;防抖
+            static f := this.search.Bind(this)
+            SetTimer(f, 0)
+            SetTimer(f, -50)
+        }
+        this.edit.OnEvent("Change", search)    ; 文本变动事件
 
         this.gui.OnEvent("DropFiles", this.dropAddItem)    ; 文件拖入事件
 
@@ -249,7 +254,7 @@ class SearchGui {
                 {
                     img := "program.png"    ;默认图标
                     switch ext, 0 {
-                        case ".ahk": img := "autohotkey.png"
+                        case ".ahk", ".ah2": img := "autohotkey.png"
                         case ".jpg", ".jpeg", ".png", ".ico": img := "img.png"
                         case ".txt": img := "txt.png"
                     }

@@ -73,6 +73,9 @@ class EditGui {
 
     ; 显示菜单
     static showMenu(rowNum) {
+        if (!this.curItemIndex)
+            return
+
         if (rowNum) {
             this.menuRow := rowNum
             this.menu.Enable("2&"), this.menu.Enable("3&")
@@ -98,23 +101,28 @@ class EditGui {
 
     ; 显示Gui
     static showGui(index := 1) {
-        if (!GlobalData.programData.Length) {
-            MsgBox("启动列表内无可编辑项", "提示", 0x2040)
-            return
-        }
-
         Critical('On')    ;防止线程被中断
         Hotkey("~CapsLock Up", "Off")    ; 关闭热键，防止数据冲突
         SearchGui.hideGui()
 
-        this.listView.Opt("-Redraw")    ;禁用重绘
-        this.listView.Delete()
-        for item in GlobalData.programData
-            this.listView.Add(, item[4])
-        this.listView.Modify(index, "Select Focus Vis")
-        this.listView.Opt("Redraw")
+        if (GlobalData.programData.Length >= index) {
+            this.listView.Opt("-Redraw")    ;禁用重绘
+            this.listView.Delete()
+            for item in GlobalData.programData
+                this.listView.Add(, item[4])
+            this.listView.Modify(index, "Select Focus Vis")
+            this.listView.Opt("Redraw")
+            this.itemEdit(index)
+        } else {    ; 无任何项目时，curItemIndex置0从而禁用各种按钮响应和关键字列表响应
+            this.changeFlag := false
+            this.curItemIndex := 0
+            this.curItem := unset
+            loop 4
+                this.editGroup[A_Index].Value := ""
+            this.keywordsListView.Delete()
+        }
 
-        this.itemEdit(index)
+
         this.gui.Show()
         Critical('Off')
     }
@@ -152,23 +160,25 @@ class EditGui {
 
     ; 选择文件路径
     static choseFile(index) {
-        oldPath := this.editGroup[index].Value
-        if (index == 1) {
-            res := FileSelect("35", oldPath, "请选择文件")
-        } else {
-            res := FileSelect("3", oldPath, "请选择图标路径")
-        }
-        if (StrLen(res) and oldPath !== res) {
-            this.editGroup[index].Value := res
-            this.changeFlag := true
-            if (index == 2)
-                this.reloadILFlag := true
+        if (this.curItemIndex) {
+            oldPath := this.editGroup[index].Value
+            if (index == 1) {
+                res := FileSelect("35", oldPath, "请选择文件")
+            } else {
+                res := FileSelect("3", oldPath, "请选择图标路径")
+            }
+            if (StrLen(res) and oldPath !== res) {
+                this.editGroup[index].Value := res
+                this.changeFlag := true
+                if (index == 2)
+                    this.reloadILFlag := true
+            }
         }
     }
 
     ; 删除当前项
     static delCurItem() {
-        if (MsgBox("当前操作不可恢复，是否将当前项删除？", "提示", 0x2044) = "Yes") {
+        if (this.curItemIndex > 0 and MsgBox("当前操作不可恢复，是否将当前项删除？", "提示", 0x2044) = "Yes") {
             GlobalData.programData.RemoveAt(this.curItemIndex)
             this.listView.Delete(this.curItemIndex)
 
@@ -188,22 +198,24 @@ class EditGui {
 
     ; 保存当前项
     static saveCurItem() {
-        if (this.curItem[4] != this.editGroup[4].Value)
-            this.listView.Modify(this.curItemIndex, , this.editGroup[4].Value)
-        loop 4
-            this.curItem[A_Index] := this.editGroup[A_Index].Value
+        if (this.curItemIndex > 0 and StrLen(this.editGroup[4].Value)) {
+            if (this.curItem[4] != this.editGroup[4].Value)
+                this.listView.Modify(this.curItemIndex, , this.editGroup[4].Value)
+            loop 4
+                this.curItem[A_Index] := this.editGroup[A_Index].Value
 
-        GlobalData.programData[this.curItemIndex] := this.curItem
-        this.changeFlag := false
+            GlobalData.programData[this.curItemIndex] := this.curItem
+            this.changeFlag := false
 
-        if (this.reloadILFlag) {    ; 需要重载列表
-            SearchGui.reloadSearchList(false, false)
-            SearchGui.search(true, false)
-            this.reloadILFlag := false
+            if (this.reloadILFlag) {    ; 需要重载列表
+                SearchGui.reloadSearchList(false, false)
+                SearchGui.search(true, false)
+                this.reloadILFlag := false
+            }
+
+            ToolTip("保存成功")
+            SetTimer(() => ToolTip(), -1500)
         }
-
-        ToolTip("保存成功")
-        SetTimer(() => ToolTip(), -1500)
     }
 
     ; 发送F2到listview开启编辑
@@ -224,7 +236,7 @@ class EditGui {
     ; 添加新关键词
     static keywordsAdd() {
         this.changeFlag := true
-        newKeyword := ChineseFirstChar(this.curItem[4])
+        newKeyword := ChineseFirstChar(this.editGroup[4].Value)
         this.curItem.Push(newKeyword)
         this.keywordsListView.Add(, newKeyword)
     }
