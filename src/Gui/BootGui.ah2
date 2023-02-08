@@ -1,6 +1,7 @@
 class BootGui {
     static gui := unset
     static listView := unset
+    static itemList := unset
     static menu := unset
     static menuRow := 0
 
@@ -16,6 +17,8 @@ class BootGui {
         this.listView := this.gui.Add("ListView", "x0 y0 w300 h300 -Multi -hdr Grid", [""])
         this.listView.SetFont("s12")
         this.listView.OnEvent("ContextMenu", (_lv, rowNum, *) => this.showMenu(rowNum))
+        this.listView.OnEvent("DoubleClick", (_lv, rowNum) => this.startSelectedItem(rowNum))
+
 
         this.gui.Show("Hide w300 h300")
         this.menuInit()
@@ -58,9 +61,19 @@ class BootGui {
 
     ; 加载boot项
     static loadItems() {
+        this.itemList := []
         this.listView.Delete()
-        loop files GlobalData.bootDir "\*.*"
+        loop files GlobalData.bootDir "\*.*" {
+            this.itemList.Push(A_LoopFileFullPath)
             this.listView.Add(, A_LoopFileName)
+        }
+    }
+
+    ; 启动点击项
+    static startSelectedItem(rowNum) {
+        if (rowNum) {
+            Start.startFile(this.itemList[rowNum])
+        }
     }
 
     ; 选择文件路径
@@ -83,7 +96,8 @@ class BootGui {
                     FileCreateShortcut(filePath, GlobalData.bootDir "\" fileNameNoExt ".lnk", outDir)
                 }
             }
-            BootGui.loadItems()    ; 此处this不是BootGui
+            BootGui.loadItems()    ; 重载列表项
+            ; 此处this不一定是BootGui
         }
     }
 
@@ -92,6 +106,7 @@ class BootGui {
         fileName := this.listView.GetText(rowNum)
         if (MsgBox("当前操作不可恢复，是否将当前项删除？", "提示", 0x2044) = "Yes") {
             FileDelete(GlobalData.bootDir "\" fileName)
+            this.itemList.RemoveAt(rowNum)
             this.listView.Delete(rowNum)
         }
     }

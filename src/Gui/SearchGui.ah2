@@ -177,8 +177,7 @@ class SearchGui {
             if (GlobalData.searchResult[rowNum][3] < 999)
                 GlobalData.searchResult[rowNum][3]++
 
-            Start.startFile(GlobalData.searchResult[rowNum][1])
-            this.hideGui()
+            Start.startFile(GlobalData.searchResult[rowNum][1], , , this.hideGui.Bind(this))
         }
     }
 
@@ -243,7 +242,7 @@ class SearchGui {
                 item[2] := GlobalData.imgDir "\folder.png"
             } else if (!this.imgPathToImgListIndex.Has(item[2])) {    ;未载入则添加进字典中
                 ext := SubStr(item[1], -4)    ;对原文件类型进行判断
-                if (ext = '.lnk') {    ;快捷方式则转为其指向文件
+                if (ext = '.lnk' and FileExist(item[1])) {    ;快捷方式则转为其指向文件
                     FileGetShortcut(item[1], &target)
                     item[2] := target
                     ext := SubStr(target, -4)
@@ -305,11 +304,12 @@ class SearchGui {
             else
                 this.listView.Add("Icon" this.imgPathToImgListIndex[item[2]], "  " item[4])
         }
-        this.listView.Modify(1, "Select Focus Vis")    ;聚焦第一行
         ;重置listView和gui高度
         LVHeight := Round((GlobalData.searchResult.Length >= 8 ? 8 : GlobalData.searchResult.Length) * 26.4)    ; 此处不需要DPI缩放计算
         this.listView.Move(, , , LVHeight)
         this.listView.ModifyCol(1, "480")
+        this.listView.Modify(1, "Select Focus Vis")    ;聚焦第一行
+
         this.listView.Opt("Redraw")
 
         WinMove(, , 500 * (A_ScreenDPI / 96), Round((LVHeight + 55) * (A_ScreenDPI / 96)), this.gui)
