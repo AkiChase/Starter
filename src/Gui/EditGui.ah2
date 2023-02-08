@@ -112,6 +112,7 @@ class EditGui {
                 this.listView.Add(, item[4])
             this.listView.Modify(index, "Select Focus Vis")
             this.listView.Opt("Redraw")
+            this.gui.Show()
             this.itemEdit(index)
         } else {    ; 无任何项目时，curItemIndex置0从而禁用各种按钮响应和关键字列表响应
             this.changeFlag := false
@@ -120,10 +121,8 @@ class EditGui {
             loop 4
                 this.editGroup[A_Index].Value := ""
             this.keywordsListView.Delete()
+            this.gui.Show()
         }
-
-
-        this.gui.Show()
         Critical('Off')
     }
 
