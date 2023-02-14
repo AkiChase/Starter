@@ -103,7 +103,7 @@ class EditGui {
     static showGui(index := 1) {
         Critical('On')    ;防止线程被中断
         Hotkey("~CapsLock Up", "Off")    ; 关闭热键，防止数据冲突
-        SearchGui.hideGui()
+        StartupMode.hideGui()
 
         if (GlobalData.programData.Length >= index) {
             this.listView.Opt("-Redraw")    ;禁用重绘
@@ -152,8 +152,8 @@ class EditGui {
             GlobalData.programData.Push([filePath, filePath, 0, fileNameNoExt, ChineseFirstChar(fileNameNoExt)])
             EditGui.listView.Add(, fileNameNoExt)    ; 添加至列表
         }
-        SearchGui.reloadSearchList(false, false)    ;重载列表，但不重置图片列表且不保存
-        SearchGui.search(true, false)
+        StartupMode.reloadSearchList(false, false)    ;重载列表，但不重置图片列表且不保存
+        StartupMode.search(true, false)
         GlobalData.storeProgramData()    ;此处再保存
     }
 
@@ -191,7 +191,7 @@ class EditGui {
 
             ; 刷新搜索界面的列表
             SearchGui.edit.Value := ""
-            SearchGui.search(true, false)
+            StartupMode.search(true, false)
         }
     }
 
@@ -207,8 +207,8 @@ class EditGui {
             this.changeFlag := false
 
             if (this.reloadILFlag) {    ; 需要重载列表
-                SearchGui.reloadSearchList(false, false)
-                SearchGui.search(true, false)
+                StartupMode.reloadSearchList(false, false)
+                StartupMode.search(true, false)
                 this.reloadILFlag := false
             }
 

@@ -1,52 +1,35 @@
-class SearchGui {
-    static gui := unset
-    static edit := unset
+class StartupMode {
     static listView := unset
     static menu := unset
     static menuRow := 0
     static imgListID := 0
+    static imgPathToImgListIndex := Map()
+    static hotkeyHandlerMap := Map()
     static autoHideFunc := this.autoHide.Bind(this)
 
-    static imgPathToImgListIndex := Map()
-
     static init() {
-        this.gui := Gui("Owner AlwaysOnTop -Resize -Caption", "Starter")
-        this.gui.BackColor := "FFFFFF"
-        this.gui.SetFont("s20 q5 c333333", "NSimSun")
-        this.gui.SetFont(, "雅痞-简")    ;优先使用更好看的字体
-        this.gui.MarginY := 0
-
-        this.edit := this.gui.AddEdit("x10 y10 h30 w450 -E0x200")
-        this.setEditplaceholder('Hi, Starter')
-        this.edit.Focus()
-
-        search(edit, info) {    ;防抖
-            static f := this.search.Bind(this)
-            SetTimer(f, 0)
-            SetTimer(f, -50)
-        }
-        this.edit.OnEvent("Change", search)    ; 文本变动事件
-
-        this.gui.OnEvent("DropFiles", this.dropAddItem)    ; 文件拖入事件
-
-        this.gui.AddPicture("x460 y10 w30 h30", GlobalData.imgDir "\Starter.png")
-        this.listView := this.gui.Add("ListView", "x10 y50 w510 r8 -Multi -hdr -E0x200 Count" GlobalData.programData.Length, [""])
+        this.listView := SearchGui.gui.Add("ListView", "x10 y50 w510 r8 -Multi -hdr -E0x200 Count" GlobalData.programData.Length, [""])
         this.listView.SetFont("s14 w700 c444444")
-        this.gui.Show("Hide y" Round(A_ScreenHeight / 5))
+
         this.reloadSearchList()
         this.search(true)
-
-        this.gui.AddButton("Default Hidden").OnEvent("Click", (*) => this.startSelectedFile())
 
         ; 鼠标双击运行
         this.listView.OnEvent("DoubleClick", (_lv, rowNum) => this.startSelectedFile(rowNum))
         ; 菜单栏
         this.listView.OnEvent("ContextMenu", (_lv, rowNum, *) => this.showMenu(rowNum))
 
-        this.hotkeyInit()
+        ; 启动模式热键处理函数
+        this.hotkeyHandlerMap["+Esc"] := () => StrLen(SearchGui.edit.Value) ? this.clearSearchWords() : this.hideGui()
+        this.hotkeyHandlerMap["~Left Up"] := () => (A_ThisHotkey = A_PriorHotkey and A_TimeSincePriorHotkey < 250) ? this.openSelectedFileInFolder() : 0
+        this.hotkeyHandlerMap["Down"] := () => this.focusNextRow()
+        this.hotkeyHandlerMap["Up"] := () => this.focusNextRow(true)
+
+        ; 启动模式菜单初始化
         this.MenuInit()
     }
 
+    ; 启动模式列表右键菜单初始化
     static MenuInit() {
         this.menu := Menu()
         this.menu.Add("启动选中项`t(&R)", (*) => this.startSelectedFile(this.menuRow))
@@ -58,30 +41,6 @@ class SearchGui {
         this.menu.SetIcon("2&", GlobalData.imgDir "\grey-folder.png")
         this.menu.SetIcon("3&", GlobalData.imgDir "\grey-edit.png")
         this.menu.SetIcon("4&", GlobalData.imgDir "\grey-delete.png")
-    }
-
-
-    static hotkeyInit() {
-        ; 激活
-        Hotkey("~CapsLock Up", key => (A_ThisHotkey = A_PriorHotkey and A_TimeSincePriorHotkey < 300) ? this.showGui() : 0)
-
-        ;===仅当窗口激活时有效===
-        HotIfWinActive("ahk_id " this.gui.Hwnd)
-        ; 清空、隐藏
-        Hotkey("+Esc", key => StrLen(this.edit.Value) ? this.clearSearchWords() : this.hideGui())
-        ; 文件夹中显示
-        Hotkey("~Left Up", key => (A_ThisHotkey = A_PriorHotkey and A_TimeSincePriorHotkey < 250) ? this.openSelectedFileInFolder() : 0)
-        ; 上下移动焦点行
-        Hotkey("Down", key => this.focusNextRow())
-        Hotkey("Up", key => this.focusNextRow(true))
-        HotIf()
-    }
-
-    ; 超时自动隐藏
-    static autoHide() {
-        if (!WinActive(this.gui)) {
-            this.hideGui()
-        }
     }
 
     ; 跳转至编辑界面
@@ -100,16 +59,34 @@ class SearchGui {
         EditGui.showGui(rowNum)
     }
 
-    ; 显示gui
+    ; 超时自动隐藏
+    static autoHide() {
+        if (!WinActive(SearchGui.gui)) {
+            this.hideGui()
+        }
+    }
+
+    ; 以启动模式显示gui
     static showGui(refresh := false) {
+        SearchGui.toggleMode(0)    ; 按需切换
+
         if (refresh) {
-            this.edit.Value := ""
+            SearchGui.edit.Value := ""
             this.search()
         } else
-            this.gui.Show()
-        this.edit.Focus()
+            SearchGui.gui.Show()
+
+        SearchGui.edit.Focus()
         IME_SET(0)
         SetTimer(this.autoHideFunc, 1000)
+    }
+
+    ; 启动模式下隐藏主界面
+    static hideGui() {
+        SetTimer(this.autoHideFunc, 0)
+        SearchGui.edit.Value := ""
+        SearchGui.gui.hide()
+        this.search(true, false)    ; 重绘 隐藏但不重排
     }
 
     ; 显示菜单
@@ -137,7 +114,7 @@ class SearchGui {
         LVHeight := Round((GlobalData.searchResult.Length >= 8 ? 8 : GlobalData.searchResult.Length) * 26.4)    ; 此处不需要DPI缩放计算
         this.listView.Move(, , , LVHeight)
         this.listView.ModifyCol(1, "480")
-        WinMove(, , 500 * (A_ScreenDPI / 96), Round((LVHeight + 55) * (A_ScreenDPI / 96)), this.gui)
+        WinMove(, , 500 * (A_ScreenDPI / 96), Round((LVHeight + 55) * (A_ScreenDPI / 96)), SearchGui.gui)
         Critical('Off')
     }
 
@@ -148,8 +125,14 @@ class SearchGui {
             SplitPath(filePath, , , , &fileNameNoExt)
             GlobalData.programData.Push([filePath, filePath, 0, fileNameNoExt, ChineseFirstChar(fileNameNoExt)])
         }
-        SearchGui.reloadSearchList(false, false)    ;重载列表，但不重置图片列表且不保存
-        SearchGui.search()
+
+        StartupMode.reloadSearchList(false, false)    ;重载列表，但不重置图片列表且不保存
+
+        if (SearchGui.curMode !== 0)    ; 非启动模式下，转为启动模式
+            SearchGui.toggleMode(0)    ; 转换启动模式时会搜索一次
+        else
+            StartupMode.search()
+
         GlobalData.storeProgramData()    ;此处再保存
     }
 
@@ -196,27 +179,14 @@ class SearchGui {
 
     ; 清空搜索框
     static clearSearchWords() {
-        this.edit.Value := ""
+        SearchGui.edit.Value := ""
         this.search()
-    }
-
-    ; 隐藏主界面
-    static hideGui() {
-        SetTimer(this.autoHideFunc, 0)
-        this.edit.Value := ""
-        this.gui.hide()
-        this.search(true, false)    ; 重绘 隐藏但不重排
-    }
-
-    ; 设置搜索框占位符
-    static setEditplaceholder(text) {
-        DllCall("User32.dll\SendMessageW", "Ptr", this.edit.Hwnd, "Uint", (0x1500 + 1), "Ptr", True, "WStr", text)
     }
 
     ; 重新加载搜索列表
     static reloadSearchList(reloadTL := true, allowStore := true) {
-        this.setEditplaceholder("正在加载搜索列表...")
-        this.edit.Value := ""    ;清空搜索框
+        SearchGui.setEditplaceholder("正在加载搜索列表...")
+        SearchGui.edit.Value := ""    ;清空搜索框
         this.listView.Delete()    ;清空搜索列表
 
 
@@ -270,12 +240,12 @@ class SearchGui {
             GlobalData.storeProgramData()
         if (reloadTL and oldImgListID)
             DllCall("ImageList_Destroy", "Uint", oldImgListID)
-        this.setEditplaceholder('Hi, Starter')
+        SearchGui.setEditplaceholder('Hi, Starter')
     }
 
     ; 搜索
     static search(hide := false, sortFlag := true) {
-        keyword := this.edit.Value
+        keyword := SearchGui.edit.Value
         if (StrLen(keyword)) {
             GlobalData.searchResult := []
             ;匹配（任意关键词包含搜索内容时匹配）
@@ -312,8 +282,8 @@ class SearchGui {
 
         this.listView.Opt("Redraw")
 
-        WinMove(, , 500 * (A_ScreenDPI / 96), Round((LVHeight + 55) * (A_ScreenDPI / 96)), this.gui)
+        WinMove(, , 500 * (A_ScreenDPI / 96), Round((LVHeight + 55) * (A_ScreenDPI / 96)), SearchGui.gui)
         if (hide)
-            this.gui.Hide()
+            SearchGui.gui.Hide()
     }
 }
