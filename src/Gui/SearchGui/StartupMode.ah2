@@ -8,7 +8,7 @@ class StartupMode {
     static autoHideFunc := this.autoHide.Bind(this)
 
     static init() {
-        this.listView := SearchGui.gui.Add("ListView", "x10 y50 w510 r8 -Multi -hdr -E0x200 Count" GlobalData.programData.Length, [""])
+        this.listView := SearchGui.gui.Add("ListView", "x10 y50 w510 r8 -Multi -hdr -E0x200 Count" GlobalData.startupData.Length, [""])
         this.listView.SetFont("s14 w700 c444444")
 
         this.reloadSearchList()
@@ -45,9 +45,9 @@ class StartupMode {
 
     ; 跳转至编辑界面
     static toEditGui(rowNum) {
-        if (GlobalData.searchResult !== GlobalData.programData) {
+        if (GlobalData.searchResult !== GlobalData.startupData) {
             selectedItem := GlobalData.searchResult[rowNum]
-            for index, item in GlobalData.programData {
+            for index, item in GlobalData.startupData {
                 if (item == selectedItem) {
                     rowNum := index
                     break
@@ -102,10 +102,10 @@ class StartupMode {
         Critical('On')    ;防止线程被中断
         item := GlobalData.searchResult[rowNum]
         GlobalData.searchResult.RemoveAt(rowNum)
-        if (GlobalData.searchResult != GlobalData.programData) {    ; 当并非直接指向时还须再删除
-            for index, oriItem in GlobalData.programData {
+        if (GlobalData.searchResult != GlobalData.startupData) {    ; 当并非直接指向时还须再删除
+            for index, oriItem in GlobalData.startupData {
                 if (item == oriItem)
-                    GlobalData.programData.RemoveAt(index)
+                    GlobalData.startupData.RemoveAt(index)
             }
         }
         this.listView.Delete(rowNum)
@@ -123,7 +123,7 @@ class StartupMode {
         fileList := args[2]
         for filePath in fileList {
             SplitPath(filePath, , , , &fileNameNoExt)
-            GlobalData.programData.Push([filePath, filePath, 0, fileNameNoExt, ChineseFirstChar(fileNameNoExt)])
+            GlobalData.startupData.Push([filePath, filePath, 0, fileNameNoExt, ChineseFirstChar(fileNameNoExt)])
         }
 
         StartupMode.reloadSearchList(false, false)    ;重载列表，但不重置图片列表且不保存
@@ -133,7 +133,7 @@ class StartupMode {
         else
             StartupMode.search()
 
-        GlobalData.storeProgramData()    ;此处再保存
+        GlobalData.storestartupData()    ;此处再保存
     }
 
     ; 聚焦下一行（循环）
@@ -205,7 +205,7 @@ class StartupMode {
 
         ; 为每个项目载入图标
         changeFlag := false
-        for item in GlobalData.programData {
+        for item in GlobalData.startupData {
             item[3] := Integer(item[3])    ; 转为整数
 
             if (InStr(FileExist(item[2]), "D")) {    ;文件夹类型
@@ -235,9 +235,9 @@ class StartupMode {
             }
             ; 否则图标已加载
         }
-        ; 若有变动则保存programData
+        ; 若有变动则保存startupData
         if (allowStore and changeFlag)
-            GlobalData.storeProgramData()
+            GlobalData.storestartupData()
         if (reloadTL and oldImgListID)
             DllCall("ImageList_Destroy", "Uint", oldImgListID)
         SearchGui.setEditplaceholder('Hi, Starter')
@@ -249,7 +249,7 @@ class StartupMode {
         if (StrLen(keyword)) {
             GlobalData.searchResult := []
             ;匹配（任意关键词包含搜索内容时匹配）
-            for item in GlobalData.programData {
+            for item in GlobalData.startupData {
                 loop item.Length - 3 {    ;依次对关键词（包括显示名称）进行判断，忽略大小写
                     k := item[3 + A_Index]
                     if (InStr(k, keyword)) {
@@ -259,7 +259,7 @@ class StartupMode {
                 }
             }
         } else    ;搜索词为空时显示所有
-            GlobalData.searchResult := GlobalData.programData
+            GlobalData.searchResult := GlobalData.startupData
 
         ;排序(优先级降序，其次按显示名称)
         if (sortFlag)

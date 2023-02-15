@@ -3,13 +3,19 @@ class GlobalData {
     static imgDir := unset
     static bootDir := unset
     static dataDir := unset
+    static customImgDir := unset
 
-    static programData := unset
-    static programDataPath := unset
+    static startupData := unset
+    static startupDataPath := unset
     static config := unset
     static configPath := unset
 
+    static intelligentData := unset
+    static intelligentDataPath := unset
+
     static searchResult := unset
+
+    static onExitHandler := unset
 
     static init() {
         SplitPath(A_ScriptDir, , &tmp)
@@ -18,37 +24,65 @@ class GlobalData {
         this.imgDir := this.rootDir "\resource\img"
         this.bootDir := this.rootDir "\boot"
         this.dataDir := this.rootDir "\resource\data"
+        this.customImgDir := this.dataDir "\customImg"
+        
 
         for dirPath in [this.bootDir, this.dataDir]
             if (!FileExist(dirPath))
                 DirCreate(dirPath)
 
-        this.programDataPath := this.dataDir "\programData.txt"
+        this.startupDataPath := this.dataDir "\startupData.txt"
         this.configPath := this.dataDir "\config.json"
-        this.refreshProgramData()
+        this.intelligentDataPath := this.dataDir "\intelligentData.json"
+
+        this.refreshstartupData()
         this.refreshConfig()
+        this.refreshIntelligentData()
+
+        ; 退出前执行
+        onExitHandler(*) {
+            this.storestartupData()
+            this.storeConfig()
+        }
+        this.onExitHandler := onExitHandler
     }
 
-    ; 重新读取programData
-    static refreshProgramData() {
-        if (FileExist(this.programDataPath))
-            this.programData := DataHelper.loadData(this.programDataPath)
+    ; 重新读取智能模式数据
+    static refreshIntelligentData() {
+        if (FileExist(this.intelligentDataPath))
+            this.intelligentData := DataHelper.loadJSON(this.intelligentDataPath)
         else
         {
-            FileAppend("", this.programDataPath)
-            this.programData := []
+            FileAppend("{}", this.intelligentDataPath)
+            this.config := Map()
         }
     }
 
-    ; 保存programDataPath至本地
-    static storeProgramData() {
-        DataHelper.storeData(this.programData, this.programDataPath)
+    ; 保存智能模式数据文件至本地
+    static storeIntelligentData() {
+        DataHelper.storeJSON(this.intelligentData, this.intelligentDataPath)
+    }
+
+    ; 重新读取startupData
+    static refreshstartupData() {
+        if (FileExist(this.startupDataPath))
+            this.startupData := DataHelper.loadData(this.startupDataPath)
+        else
+        {
+            FileAppend("", this.startupDataPath)
+            this.startupData := []
+        }
+    }
+
+    ; 保存startupDataPath至本地
+    static storestartupData() {
+        DataHelper.storeData(this.startupData, this.startupDataPath)
     }
 
     ; 重新读取配置文件
     static refreshConfig() {
         if (FileExist(this.configPath))
-            this.config := DataHelper.loadConfig(this.configPath)
+            this.config := DataHelper.loadJSON(this.configPath)
         else
         {
             FileAppend("{}", this.configPath)
@@ -58,6 +92,6 @@ class GlobalData {
 
     ; 保存配置文件至本地
     static storeConfig() {
-        DataHelper.storeConfig(this.config, this.configPath)
+        DataHelper.storeJSON(this.config, this.configPath)
     }
 }

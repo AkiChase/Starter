@@ -20,7 +20,7 @@ class EditGui {
         this.gui.OnEvent("Close", (guiObj) => this.hideGui())
         this.gui.OnEvent("DropFiles", this.addItem)
 
-        this.listView := this.gui.Add("ListView", "x10 y10 w100 h380 -Multi -hdr Grid Count" GlobalData.programData.Length, [""])
+        this.listView := this.gui.Add("ListView", "x10 y10 w100 h380 -Multi -hdr Grid Count" GlobalData.startupData.Length, [""])
         this.listView.ModifyCol(1, 80)
         this.listView.SetFont("s12")
         ; 鼠标点击切换
@@ -105,10 +105,10 @@ class EditGui {
         Hotkey("~CapsLock Up", "Off")    ; 关闭热键，防止数据冲突
         StartupMode.hideGui()
 
-        if (GlobalData.programData.Length >= index) {
+        if (GlobalData.startupData.Length >= index) {
             this.listView.Opt("-Redraw")    ;禁用重绘
             this.listView.Delete()
-            for item in GlobalData.programData
+            for item in GlobalData.startupData
                 this.listView.Add(, item[4])
             this.listView.Modify(index, "Select Focus Vis")
             this.listView.Opt("Redraw")
@@ -149,12 +149,12 @@ class EditGui {
         fileList := args.Length == 1 ? args[1] : args[2]
         for filePath in fileList {
             SplitPath(filePath, , , , &fileNameNoExt)
-            GlobalData.programData.Push([filePath, filePath, 0, fileNameNoExt, ChineseFirstChar(fileNameNoExt)])
+            GlobalData.startupData.Push([filePath, filePath, 0, fileNameNoExt, ChineseFirstChar(fileNameNoExt)])
             EditGui.listView.Add(, fileNameNoExt)    ; 添加至列表
         }
         StartupMode.reloadSearchList(false, false)    ;重载列表，但不重置图片列表且不保存
         StartupMode.search(true, false)
-        GlobalData.storeProgramData()    ;此处再保存
+        GlobalData.storestartupData()    ;此处再保存
     }
 
     ; 选择文件路径
@@ -178,12 +178,12 @@ class EditGui {
     ; 删除当前项
     static delCurItem() {
         if (this.curItemIndex > 0 and MsgBox("当前操作不可恢复，是否将当前项删除？", "提示", 0x2044) = "Yes") {
-            GlobalData.programData.RemoveAt(this.curItemIndex)
+            GlobalData.startupData.RemoveAt(this.curItemIndex)
             this.listView.Delete(this.curItemIndex)
 
             ; 切换到下一项
-            if (GlobalData.programData.Length)
-                this.itemEdit(Min(this.curItemIndex, GlobalData.programData.Length))
+            if (GlobalData.startupData.Length)
+                this.itemEdit(Min(this.curItemIndex, GlobalData.startupData.Length))
             else {
                 this.hideGui()
                 MsgBox("启动列表内无可编辑项", "提示", 0x2040)
@@ -203,7 +203,7 @@ class EditGui {
             loop 4
                 this.curItem[A_Index] := this.editGroup[A_Index].Value
 
-            GlobalData.programData[this.curItemIndex] := this.curItem
+            GlobalData.startupData[this.curItemIndex] := this.curItem
             this.changeFlag := false
 
             if (this.reloadILFlag) {    ; 需要重载列表
@@ -259,7 +259,7 @@ class EditGui {
             }
             this.changeFlag := false
             this.curItemIndex := rowNum
-            this.curItem := GlobalData.programData[rowNum].Clone()    ;生成浅拷贝
+            this.curItem := GlobalData.startupData[rowNum].Clone()    ;生成浅拷贝
             this.listView.Modify(rowNum, "Select Focus Vis")
 
             loop 4
