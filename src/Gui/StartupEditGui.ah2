@@ -1,4 +1,4 @@
-class EditGui {
+class StartupEditGui {
     static gui := unset
     static listView := unset
     static editGroup := unset
@@ -95,7 +95,7 @@ class EditGui {
 
     ; 事件回调修改changeFlag
     static _eventChangeFlag(*) {
-        EditGui.changeFlag := true
+        StartupEditGui.changeFlag := true
     }
 
 
@@ -150,7 +150,7 @@ class EditGui {
         for filePath in fileList {
             SplitPath(filePath, , , , &fileNameNoExt)
             GlobalData.startupData.Push([filePath, filePath, 0, fileNameNoExt, ChineseFirstChar(fileNameNoExt)])
-            EditGui.listView.Add(, fileNameNoExt)    ; 添加至列表
+            StartupEditGui.listView.Add(, fileNameNoExt)    ; 添加至列表
         }
         StartupMode.reloadSearchList(false, false)    ;重载列表，但不重置图片列表且不保存
         StartupMode.search(true, false)

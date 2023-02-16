@@ -34,7 +34,7 @@ class StartupMode {
         this.menu := Menu()
         this.menu.Add("启动选中项`t(&R)", (*) => this.startSelectedFile(this.menuRow))
         this.menu.Add("文件夹中打开`t(&O)", (*) => this.openSelectedFileInFolder(this.menuRow))
-        this.menu.Add("编辑选中项`t(&E)", (*) => this.toEditGui(this.menuRow))
+        this.menu.Add("编辑选中项`t(&E)", (*) => this.toStartupEditGui(this.menuRow))
         this.menu.Add("删除选中项`t(&X)", (*) => this.deleteItem(this.menuRow))
 
         this.menu.SetIcon("1&", GlobalData.imgDir "\grey-run.png")
@@ -44,9 +44,9 @@ class StartupMode {
     }
 
     ; 跳转至编辑界面
-    static toEditGui(rowNum) {
-        if (GlobalData.searchResult !== GlobalData.startupData) {
-            selectedItem := GlobalData.searchResult[rowNum]
+    static toStartupEditGui(rowNum) {
+        if (GlobalData.startupSearchResult !== GlobalData.startupData) {
+            selectedItem := GlobalData.startupSearchResult[rowNum]
             for index, item in GlobalData.startupData {
                 if (item == selectedItem) {
                     rowNum := index
@@ -56,7 +56,7 @@ class StartupMode {
 
         }
         this.hideGui()
-        EditGui.showGui(rowNum)
+        StartupEditGui.showGui(rowNum)
     }
 
     ; 超时自动隐藏
@@ -100,9 +100,9 @@ class StartupMode {
     ; 删除项
     static deleteItem(rowNum) {
         Critical('On')    ;防止线程被中断
-        item := GlobalData.searchResult[rowNum]
-        GlobalData.searchResult.RemoveAt(rowNum)
-        if (GlobalData.searchResult != GlobalData.startupData) {    ; 当并非直接指向时还须再删除
+        item := GlobalData.startupSearchResult[rowNum]
+        GlobalData.startupSearchResult.RemoveAt(rowNum)
+        if (GlobalData.startupSearchResult != GlobalData.startupData) {    ; 当并非直接指向时还须再删除
             for index, oriItem in GlobalData.startupData {
                 if (item == oriItem)
                     GlobalData.startupData.RemoveAt(index)
@@ -111,7 +111,7 @@ class StartupMode {
         this.listView.Delete(rowNum)
 
         ;重置listView和gui高度
-        LVHeight := Round((GlobalData.searchResult.Length >= 8 ? 8 : GlobalData.searchResult.Length) * 26.4)    ; 此处不需要DPI缩放计算
+        LVHeight := Round((GlobalData.startupSearchResult.Length >= 8 ? 8 : GlobalData.startupSearchResult.Length) * 26.4)    ; 此处不需要DPI缩放计算
         this.listView.Move(, , , LVHeight)
         this.listView.ModifyCol(1, "480")
         WinMove(, , 500 * (A_ScreenDPI / 96), Round((LVHeight + 55) * (A_ScreenDPI / 96)), SearchGui.gui)
@@ -157,10 +157,10 @@ class StartupMode {
         if (rowNum == -1)    ;说明需要获取焦点所在行
             rowNum := this.listView.GetNext(, "F")
         if (rowNum) {
-            if (GlobalData.searchResult[rowNum][3] < 999)
-                GlobalData.searchResult[rowNum][3]++
+            if (GlobalData.startupSearchResult[rowNum][3] < 999)
+                GlobalData.startupSearchResult[rowNum][3]++
 
-            Start.startFile(GlobalData.searchResult[rowNum][1], , , this.hideGui.Bind(this))
+            Start.startFile(GlobalData.startupSearchResult[rowNum][1], , , this.hideGui.Bind(this))
         }
     }
 
@@ -169,10 +169,10 @@ class StartupMode {
         if (rowNum == -1)    ;说明需要获取焦点所在行
             rowNum := this.listView.GetNext(, "F")
         if (rowNum) {
-            if (GlobalData.searchResult[rowNum][3] < 999)
-                GlobalData.searchResult[rowNum][3]++
+            if (GlobalData.startupSearchResult[rowNum][3] < 999)
+                GlobalData.startupSearchResult[rowNum][3]++
 
-            Start.openFileInFolder(GlobalData.searchResult[rowNum][1])
+            Start.openFileInFolder(GlobalData.startupSearchResult[rowNum][1])
             this.hideGui()
         }
     }
@@ -183,15 +183,14 @@ class StartupMode {
         this.search()
     }
 
-    ; 重新加载搜索列表
-    static reloadSearchList(reloadTL := true, allowStore := true) {
+    ; 重新加载搜索列表图标资源
+    static reloadSearchList(reloadIL := true, allowStore := true) {
         SearchGui.setEditplaceholder("正在加载搜索列表...")
         SearchGui.edit.Value := ""    ;清空搜索框
         this.listView.Delete()    ;清空搜索列表
 
-
-        general := ["error.png", "autohotkey.png", "img.png", "folder.png", "program.png", "txt.png"]
-        if (reloadTL) {
+        if (reloadIL) {
+            general := ["error.png", "autohotkey.png", "img.png", "folder.png", "program.png", "txt.png"]
             this.imgPathToImgListIndex := Map()    ;重置图片路径与序号映射
             oldImgListID := 0
             if (this.imgListID)
@@ -203,7 +202,7 @@ class StartupMode {
                 this.imgPathToImgListIndex[GlobalData.imgDir "\" img] := IL_Add(this.imgListID, GlobalData.imgDir "\" img)
         }
 
-        ; 为每个项目载入图标
+        ; 为每个项目按需载入图标
         changeFlag := false
         for item in GlobalData.startupData {
             item[3] := Integer(item[3])    ; 转为整数
@@ -238,44 +237,44 @@ class StartupMode {
         ; 若有变动则保存startupData
         if (allowStore and changeFlag)
             GlobalData.storestartupData()
-        if (reloadTL and oldImgListID)
+        if (reloadIL and oldImgListID)
             DllCall("ImageList_Destroy", "Uint", oldImgListID)
         SearchGui.setEditplaceholder('Hi, Starter')
     }
 
-    ; 搜索
+    ; 搜索即重置列表显示匹配的内容
     static search(hide := false, sortFlag := true) {
         keyword := SearchGui.edit.Value
         if (StrLen(keyword)) {
-            GlobalData.searchResult := []
+            GlobalData.startupSearchResult := []
             ;匹配（任意关键词包含搜索内容时匹配）
             for item in GlobalData.startupData {
                 loop item.Length - 3 {    ;依次对关键词（包括显示名称）进行判断，忽略大小写
                     k := item[3 + A_Index]
                     if (InStr(k, keyword)) {
-                        GlobalData.searchResult.Push(item)
+                        GlobalData.startupSearchResult.Push(item)
                         break
                     }
                 }
             }
         } else    ;搜索词为空时显示所有
-            GlobalData.searchResult := GlobalData.startupData
+            GlobalData.startupSearchResult := GlobalData.startupData
 
         ;排序(优先级降序，其次按显示名称)
         if (sortFlag)
-            QuickSort(GlobalData.searchResult, (itemA, itemB) => itemB[3] == itemA[3] ? StrCompare(itemA[4], itemB[4]) : itemB[3] - itemA[3])
+            QuickSort(GlobalData.startupSearchResult, (itemA, itemB) => itemB[3] == itemA[3] ? StrCompare(itemA[4], itemB[4]) : itemB[3] - itemA[3])
 
         ;显示新列表
         this.listView.Opt("-Redraw")    ;禁用重绘
         this.listView.Delete()
-        for item in GlobalData.searchResult {
+        for item in GlobalData.startupSearchResult {
             if (!FileExist(item[1]))    ; 文件不存在则使用error图标
                 this.listView.Add("Icon" this.imgPathToImgListIndex[GlobalData.imgDir "\error.png"], "  " item[4])
             else
                 this.listView.Add("Icon" this.imgPathToImgListIndex[item[2]], "  " item[4])
         }
         ;重置listView和gui高度
-        LVHeight := Round((GlobalData.searchResult.Length >= 8 ? 8 : GlobalData.searchResult.Length) * 26.4)    ; 此处不需要DPI缩放计算
+        LVHeight := Round((GlobalData.startupSearchResult.Length >= 8 ? 8 : GlobalData.startupSearchResult.Length) * 26.4)    ; 此处不需要DPI缩放计算
         this.listView.Move(, , , LVHeight)
         this.listView.ModifyCol(1, "480")
         this.listView.Modify(1, "Select Focus Vis")    ;聚焦第一行
