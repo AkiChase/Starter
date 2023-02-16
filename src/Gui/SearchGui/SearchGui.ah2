@@ -35,7 +35,7 @@ class SearchGui {
     ; 回车触发按钮事件
     static enterButtonEvent(*) {
         if (this.curMode) {
-            ToolTip("暂无智能模式enter")
+            IntelligentMode.intelligentHandler()
         } else {
             StartupMode.startSelectedFile()
         }
