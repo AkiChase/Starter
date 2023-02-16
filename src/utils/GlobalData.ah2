@@ -13,7 +13,11 @@ class GlobalData {
     static intelligentData := unset
     static intelligentDataPath := unset
 
-    static searchResult := unset
+    static startupSearchResult := unset
+    static intelligentSearchResult := unset
+
+    static intelligentGroups := ["run-with", "search"]
+    static intelligentMatchPriority := Map("str", 1, "reg", 2)
 
     static onExitHandler := unset
 
@@ -25,9 +29,9 @@ class GlobalData {
         this.bootDir := this.rootDir "\boot"
         this.dataDir := this.rootDir "\resource\data"
         this.customImgDir := this.dataDir "\customImg"
-        
 
-        for dirPath in [this.bootDir, this.dataDir]
+
+        for dirPath in [this.bootDir, this.dataDir, this.customImgDir]
             if (!FileExist(dirPath))
                 DirCreate(dirPath)
 
@@ -43,6 +47,7 @@ class GlobalData {
         onExitHandler(*) {
             this.storestartupData()
             this.storeConfig()
+            this.storeIntelligentData()
         }
         this.onExitHandler := onExitHandler
     }

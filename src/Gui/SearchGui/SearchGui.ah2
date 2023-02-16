@@ -32,9 +32,10 @@ class SearchGui {
         this.hotkeyInit()
     }
 
+    ; 回车触发按钮事件
     static enterButtonEvent(*) {
         if (this.curMode) {
-            ToolTip("暂无智能模式")
+            ToolTip("暂无智能模式enter")
         } else {
             StartupMode.startSelectedFile()
         }
@@ -58,9 +59,10 @@ class SearchGui {
 
         ;===仅当窗口激活时有效===
         HotIfWinActive("ahk_id " this.gui.Hwnd)
+
+        Hotkey("Tab Up", key => this.toggleMode(!this.curMode))
         ; 清空、隐藏
         Hotkey("+Esc", hotkeyHandler)
-
         ; 文件夹中显示
         Hotkey("~Left Up", hotkeyHandler)
         ; 上下移动焦点行
@@ -76,12 +78,16 @@ class SearchGui {
 
         this.curMode := mode
         if (mode) {    ; IntelligentMode
+            this.setEditplaceholder('Hi, type something 😃')
             SetTimer(StartupMode.autoHideFunc, 0)    ; 关闭另一模式下的自动隐藏
             StartupMode.listView.Visible := false    ; 隐藏另一模式的列表
             IntelligentMode.listView.Visible := true
 
+            this.search()    ;不清空内容直接搜索
+            SetTimer(IntelligentMode.autoHideFunc, 1000)    ; 启动本模式自动隐藏
 
         } else {    ; StartupMode
+            this.setEditplaceholder('Hi, Starter')
             SetTimer(IntelligentMode.autoHideFunc, 0)    ; 关闭另一模式下的自动隐藏
             IntelligentMode.listView.Visible := false    ; 隐藏另一模式的列表
             StartupMode.listView.Visible := true
@@ -91,10 +97,10 @@ class SearchGui {
         }
     }
 
+    ; 根据模式进行搜索
     static search() {
         if (this.curMode) {
-
-            ToolTip("暂无")
+            IntelligentMode.search()
         } else {
             StartupMode.search()
         }
