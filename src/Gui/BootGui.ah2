@@ -1,8 +1,8 @@
 class BootGui {
-    static gui := unset
-    static listView := unset
-    static itemList := unset
-    static menu := unset
+    ; static gui := unset
+    ; static listView := unset
+    ; static itemList := unset
+    ; static menu := unset
     static menuRow := 0
 
     static init() {

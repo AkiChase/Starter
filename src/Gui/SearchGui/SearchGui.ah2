@@ -1,7 +1,7 @@
 class SearchGui {
-    static gui := unset
-    static edit := unset
-    static thumb := unset
+    ; static gui := unset
+    ; static edit := unset
+    static thumbList := []
     static curMode := 0
 
     static init() {
@@ -11,7 +11,7 @@ class SearchGui {
         this.gui.SetFont(, "雅痞-简")    ;优先使用更好看的字体
         this.gui.MarginY := 0
 
-        this.edit := this.gui.AddEdit("x10 y10 h30 w450 -E0x200")
+        this.edit := this.gui.AddEdit("x10 y10 h30 w445 -E0x200")
         this.setEditplaceholder('Hi, Starter')
         this.edit.Focus()
 
@@ -23,8 +23,11 @@ class SearchGui {
         this.edit.OnEvent("Change", search)    ; 文本变动事件
         this.gui.OnEvent("DropFiles", StartupMode.dropAddItem)    ; 文件拖入事件
 
-        this.thumb := this.gui.AddPicture("x460 y10 w30 h30", GlobalData.imgDir "\Starter.png")
+        this.thumbList := [this.gui.AddPicture("x460 y10 w30 h30", GlobalData.imgDir "\Starter.png")
+            , this.gui.AddPicture("x460 y10 w30 h30 Hidden", GlobalData.imgDir "\AI.png")]
+
         this.gui.AddButton("Default Hidden").OnEvent("Click", this.enterButtonEvent.Bind(this))
+
         this.gui.Show("Hide y" Round(A_ScreenHeight / 5))
         StartupMode.init()
         IntelligentMode.init()
@@ -78,6 +81,8 @@ class SearchGui {
 
         this.curMode := mode
         if (mode) {    ; IntelligentMode
+            this.thumbList[1].Visible := false
+            this.thumbList[2].Visible := true
             this.setEditplaceholder('Hi, type something 😃')
             SetTimer(StartupMode.autoHideFunc, 0)    ; 关闭另一模式下的自动隐藏
             StartupMode.listView.Visible := false    ; 隐藏另一模式的列表
@@ -87,6 +92,8 @@ class SearchGui {
             SetTimer(IntelligentMode.autoHideFunc, 1000)    ; 启动本模式自动隐藏
 
         } else {    ; StartupMode
+            this.thumbList[1].Visible := true
+            this.thumbList[2].Visible := false
             this.setEditplaceholder('Hi, Starter')
             SetTimer(IntelligentMode.autoHideFunc, 0)    ; 关闭另一模式下的自动隐藏
             IntelligentMode.listView.Visible := false    ; 隐藏另一模式的列表

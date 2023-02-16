@@ -1,6 +1,6 @@
 class StartupMode {
-    static listView := unset
-    static menu := unset
+    ; static listView := unset
+    ; static menu := unset
     static menuRow := 0
     static imgListID := 0
     static imgPathToImgListIndex := Map()
@@ -43,7 +43,7 @@ class StartupMode {
         this.menu.SetIcon("4&", GlobalData.imgDir "\grey-delete.png")
     }
 
-    ; 跳转至编辑界面
+    ; 跳转至启动模式编辑界面
     static toStartupEditGui(rowNum) {
         if (GlobalData.startupSearchResult !== GlobalData.startupData) {
             selectedItem := GlobalData.startupSearchResult[rowNum]

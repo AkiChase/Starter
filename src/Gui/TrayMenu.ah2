@@ -1,5 +1,5 @@
 class TrayMenu {
-    static menu := unset
+    ; static menu := unset
 
     static init() {
         TraySetIcon(GlobalData.imgDir "\Starter.png", , true)
@@ -9,7 +9,7 @@ class TrayMenu {
         this.menu.Delete()
 
         this.menu.Add("搜索界面`t双击CapsLock", (*) => SearchGui.showGui())
-        this.menu.Add("编辑界面`t(&E)", (*) => StartupEditGui.showGui())
+        this.menu.Add("编辑启动模式`t(&E)", (*) => StartupEditGui.showGui())
         this.menu.Add("自启界面`t(&B)", (*) => BootGui.showGui())
         this.menu.Add()
         this.menu.Add("开机启动", (*) => this.toggleStartupState())

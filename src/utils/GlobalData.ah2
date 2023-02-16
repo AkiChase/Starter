@@ -1,25 +1,25 @@
 class GlobalData {
-    static rootDir := unset
-    static imgDir := unset
-    static bootDir := unset
-    static dataDir := unset
-    static customImgDir := unset
+    ; static rootDir := unset
+    ; static imgDir := unset
+    ; static bootDir := unset
+    ; static dataDir := unset
+    ; static customImgDir := unset
 
-    static startupData := unset
-    static startupDataPath := unset
-    static config := unset
-    static configPath := unset
+    ; static startupData := unset
+    ; static startupDataPath := unset
+    ; static config := unset
+    ; static configPath := unset
 
-    static intelligentData := unset
-    static intelligentDataPath := unset
+    ; static intelligentData := unset
+    ; static intelligentDataPath := unset
 
-    static startupSearchResult := unset
-    static intelligentSearchResult := unset
+    ; static startupSearchResult := unset
+    ; static intelligentSearchResult := unset
 
     static intelligentGroups := ["run-with", "search"]
     static intelligentMatchPriority := Map("str", 1, "reg", 2)
 
-    static onExitHandler := unset
+    ; static onExitHandler := unset
 
     static init() {
         SplitPath(A_ScriptDir, , &tmp)

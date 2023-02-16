@@ -1,6 +1,6 @@
 class IntelligentMode {
-    static listView := unset
-    static menu := unset
+    ; static listView := unset
+    ; static menu := unset
     static menuRow := 0
     static imgListID := 0
     static imgPathToImgListIndex := Map()

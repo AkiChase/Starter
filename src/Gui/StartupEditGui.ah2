@@ -1,10 +1,10 @@
 class StartupEditGui {
-    static gui := unset
-    static listView := unset
-    static editGroup := unset
-    static keywordsListView := unset
-    static curItem := unset
-    static menu := unset
+    ; static gui := unset
+    ; static listView := unset
+    ; static editGroup := unset
+    ; static keywordsListView := unset
+    ; static curItem := unset
+    ; static menu := unset
     static menuRow := 0
     static curItemIndex := 0
     static changeFlag := false
@@ -12,7 +12,7 @@ class StartupEditGui {
 
 
     static init() {
-        this.gui := Gui("-Resize", "编辑界面")
+        this.gui := Gui("-Resize", "启动模式编辑界面")
         this.gui.BackColor := "FFFFFF"
         this.gui.SetFont("s14 q5 c333333", "NSimSun")
         this.gui.SetFont(, "雅痞-简")    ;优先使用更好看的字体
