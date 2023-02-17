@@ -22,16 +22,12 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-      
-      - name: Mirror the Github organization repos to Gitee.
-        uses: Yikun/hub-mirror-action@master
+      - name: sync-gitee-mirror
+        uses: abersheeran/sync-gitee-mirror@v1-beta
         with:
-        # The owner names of github and gitee are exactly the same
-          src: 'github/${{ github.repository_owner }}'
-          dst: 'gitee/${{ github.repository_owner }}'
-          dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
-          dst_token: ${{ secrets.GITEE_TOKEN }}
-          static_list: "Starter"
-          force_update: true
+          # Gitee 仓库，例如 abersheeran/gitee-mirror
+          repository: ${{ github.repository }}
+          # Gitee 用户名，用于登录。
+          username: ${{ secrets.GITEE_USER_NAME }}
+          # Gitee 密码，用于登录。
+          password: ${{ secrets.GITEE_PASSWORD }}
