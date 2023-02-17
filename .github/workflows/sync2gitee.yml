@@ -28,6 +28,6 @@ jobs:
           # Gitee 仓库，例如 abersheeran/gitee-mirror
           repository: ${{ github.repository }}
           # Gitee 用户名，用于登录。
-          username: ${{ secrets.GITEE_USER_NAME }}
+          username: ruchuby
           # Gitee 密码，用于登录。
           password: ${{ secrets.GITEE_PASSWORD }}
