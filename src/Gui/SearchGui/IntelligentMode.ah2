@@ -16,31 +16,66 @@ class IntelligentMode {
 
         ; 鼠标双击运行
         this.listView.OnEvent("DoubleClick", (_lv, rowNum) => this.intelligentHandler(rowNum))
-        ; ; 菜单栏
-        ; this.listView.OnEvent("ContextMenu", (_lv, rowNum, *) => this.showMenu(rowNum))
+        ; 菜单栏
+        this.listView.OnEvent("ContextMenu", (_lv, rowNum, *) => this.showMenu(rowNum))
 
         ; 启动模式热键处理函数
         this.hotkeyHandlerMap["+Esc"] := () => StrLen(SearchGui.edit.Value) ? this.clearSearchWords() : this.hideGui()
         this.hotkeyHandlerMap["Down"] := () => this.focusNextRow()
         this.hotkeyHandlerMap["Up"] := () => this.focusNextRow(true)
 
-
+        this.menuInit()
     }
 
+    ; 智能模式列表右键菜单初始化
+    static menuInit() {
+        this.menu := Menu()
+        this.menu.Add("启动选中项`t(&R)", (*) => this.intelligentHandler(this.menuRow))
+        this.menu.Add("编辑选中项`t(&E)", (*) => this.toIntelligentEditGui(this.menuRow))
+
+        this.menu.SetIcon("1&", GlobalData.imgDir "\grey-run.png")
+        this.menu.SetIcon("2&", GlobalData.imgDir "\grey-edit.png")
+    }
+
+    ; 显示右键菜单
+    static showMenu(rowNum) {
+        if (rowNum) {
+            this.menuRow := rowNum
+            this.menu.Show()
+        }
+    }
+
+    ; 跳转至智能模式编辑界面
+    static toIntelligentEditGui(rowNum) {
+        selectedItem := GlobalData.intelligentSearchResult[rowNum]
+        group := selectedItem["group"]
+        for index, item in GlobalData.intelligentData[group] {
+            if (item == selectedItem) {
+                posIndex := index
+                break
+            }
+        }
+
+        this.hideGui()
+        IntelligentEditGui.showGui([group, posIndex])
+    }
+
+    ; run-with处理函数
     static runWithHandler(item) {
         editVal := SearchGui.edit.Value
         script := item["script"]
-        if (script["type"] == "arg") {    ; 传递单命令行参数
+        if (script["mode"] == "arg") {    ; 传递单命令行参数
             arg := StrReplace(editVal, '"', '""')    ; 双引号转义为两个双引号
             Run(Format('"{}" "{}"', script["program"], arg))
         }
-        else if (script["type"] == "args") {    ; 传递多命令行参数，不进行转义等操作
+        else if (script["mode"] == "args") {    ; 传递多命令行参数，不进行转义等操作
             Run(Format('"{}" {}', script["program"], editVal))
         }
         else    ; type: none
             Run(editVal)
     }
 
+    ; search处理函数
     static searchHandler(item) {
         Run(Format(item["url"], SearchGui.edit.Value))
     }
@@ -74,7 +109,9 @@ class IntelligentMode {
             this.imgListID := DllCall("ImageList_Create", "Int", 32, "Int", 32, "Int", 32, "Int", 1, "Int", 1)    ;创建新图片列表
             this.listView.SetImageList(this.imgListID, 1)
         }
-        ; 载入表示图片错误的图标
+
+        ; 载入图片错误和根目录的图标
+        this.imgPathToImgListIndex[GlobalData.imgDir "\folder.png"] := IL_Add(this.imgListID, GlobalData.imgDir "\folder.png")
         this.imgPathToImgListIndex[GlobalData.imgDir "\noImg.png"] := IL_Add(this.imgListID, GlobalData.imgDir "\noImg.png")
         ; 为每个项目按需载入图标
         for name in GlobalData.intelligentGroups {
@@ -101,9 +138,11 @@ class IntelligentMode {
             for name in GlobalData.intelligentGroups {
                 if (GlobalData.intelligentData.Has(name)) {
                     for item in GlobalData.intelligentData[name] {
-                        if (item["match"]["type"] == "str")
+                        if (!item["enabled"])
+                            continue
+                        if (item["match"]["mode"] == "str")
                             GlobalData.intelligentSearchResult.Push(item)
-                        else if (item["match"]["type"] == "reg") {
+                        else if (item["match"]["mode"] == "reg") {
                             for exp in item["match"]["exp"]
                                 if RegExMatch(keyword, exp) {
                                     GlobalData.intelligentSearchResult.Push(item)
@@ -114,7 +153,7 @@ class IntelligentMode {
                 }
             }
             ; 按拟定的优先级降序排列
-            QuickSort(GlobalData.intelligentSearchResult, (itemA, itemB) => GlobalData.intelligentMatchPriority[itemB["match"]["type"]] - GlobalData.intelligentMatchPriority[itemA["match"]["type"]])
+            QuickSort(GlobalData.intelligentSearchResult, (itemA, itemB) => GlobalData.intelligentMatchPriority[itemB["match"]["mode"]] - GlobalData.intelligentMatchPriority[itemA["match"]["mode"]])
         } else    ; 搜索词为空什么都不显示
             GlobalData.intelligentSearchResult := []
         ;显示新列表

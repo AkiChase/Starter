@@ -26,11 +26,11 @@ class StartupMode {
         this.hotkeyHandlerMap["Up"] := () => this.focusNextRow(true)
 
         ; 启动模式菜单初始化
-        this.MenuInit()
+        this.menuInit()
     }
 
     ; 启动模式列表右键菜单初始化
-    static MenuInit() {
+    static menuInit() {
         this.menu := Menu()
         this.menu.Add("启动选中项`t(&R)", (*) => this.startSelectedFile(this.menuRow))
         this.menu.Add("文件夹中打开`t(&O)", (*) => this.openSelectedFileInFolder(this.menuRow))
@@ -45,7 +45,7 @@ class StartupMode {
 
     ; 跳转至启动模式编辑界面
     static toStartupEditGui(rowNum) {
-        if (GlobalData.startupSearchResult !== GlobalData.startupData) {
+        if (GlobalData.startupSearchResult !== GlobalData.startupData) { ; 当处于搜索结果时，需要遍历查找到位置
             selectedItem := GlobalData.startupSearchResult[rowNum]
             for index, item in GlobalData.startupData {
                 if (item == selectedItem) {

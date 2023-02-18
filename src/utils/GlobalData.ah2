@@ -13,8 +13,8 @@ class GlobalData {
     ; static intelligentData := unset
     ; static intelligentDataPath := unset
 
-    ; static startupSearchResult := unset
-    ; static intelligentSearchResult := unset
+    static startupSearchResult := []
+    static intelligentSearchResult := []
 
     static intelligentGroups := ["run-with", "search"]
     static intelligentMatchPriority := Map("str", 1, "reg", 2)
@@ -54,18 +54,73 @@ class GlobalData {
 
     ; 重新读取智能模式数据
     static refreshIntelligentData() {
-        if (FileExist(this.intelligentDataPath))
-            this.intelligentData := DataHelper.loadJSON(this.intelligentDataPath)
-        else
+        static defaultData := "
+        (Join
         {
-            FileAppend("{}", this.intelligentDataPath)
-            this.config := Map()
+            "run-with": [
+                {
+                "enabled": 1,
+                "group": "run-with",
+                "match": {
+                    "exp": [
+                    "[^\\s]*(\\.[a-zA-z]{2}[^\\s]*){2}",
+                    "https?:(\/{2})?(.*)"
+                    ],
+                    "mode": "reg"
+                },
+                "notes": "使用默认浏览器打开网址链接",
+                "removable": 0,
+                "script": {
+                    "mode": "none"
+                },
+                "thumb": "打开网址.png",
+                "title": "打开网址"
+                }
+            ],
+            "search": [
+                {
+                "enabled": 1,
+                "group": "search",
+                "match": {
+                    "mode": "str"
+                },
+                "notes": "使用默认浏览器百度搜索",
+                "removable": 1,
+                "thumb": "百度搜索.ico",
+                "title": "百度搜索",
+                "url": "https:\/\/www.baidu.com\/s?word={}"
+                },
+                {
+                "enabled": 1,
+                "group": "search",
+                "match": {
+                    "mode": "str"
+                },
+                "notes": "使用默认浏览器谷歌搜索",
+                "removable": 0,
+                "thumb": "谷歌搜索.ico",
+                "title": "谷歌搜索",
+                "url": "https:\/\/www.google.com\/search?q={}"
+                }
+            ]
+            }
+        )"
+    ; 加载默认值
+        default := Jxon_Load(&defaultData)
+        if (FileExist(this.intelligentDataPath)) {
+            this.intelligentData := DataHelper.loadJSONFile(this.intelligentDataPath)
+            for group, itemList in default {
+                if !(this.intelligentData.Has(group) and (this.intelligentData[group] is Array) this.intelligentData[group].Length)
+                    this.intelligentData[group] := itemList    ; 当前组不存在、非数组、为空则置默认值
+            }
         }
+        else
+            this.intelligentData := default
     }
 
     ; 保存智能模式数据文件至本地
     static storeIntelligentData() {
-        DataHelper.storeJSON(this.intelligentData, this.intelligentDataPath)
+        DataHelper.storeJSONFile(this.intelligentData, this.intelligentDataPath)
     }
 
     ; 重新读取startupData
@@ -87,7 +142,7 @@ class GlobalData {
     ; 重新读取配置文件
     static refreshConfig() {
         if (FileExist(this.configPath))
-            this.config := DataHelper.loadJSON(this.configPath)
+            this.config := DataHelper.loadJSONFile(this.configPath)
         else
         {
             FileAppend("{}", this.configPath)
@@ -97,6 +152,6 @@ class GlobalData {
 
     ; 保存配置文件至本地
     static storeConfig() {
-        DataHelper.storeJSON(this.config, this.configPath)
+        DataHelper.storeJSONFile(this.config, this.configPath)
     }
 }

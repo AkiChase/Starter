@@ -5,7 +5,7 @@ class StartupEditGui {
     ; static keywordsListView := unset
     ; static curItem := unset
     ; static menu := unset
-    static menuRow := 0
+    static kwMenuRow := 0
     static curItemIndex := 0
     static changeFlag := false
     static reloadILFlag := false
@@ -47,7 +47,7 @@ class StartupEditGui {
         this.keywordsListView.OnEvent("ItemEdit", (LV, rowNum) => this.keywordsEdit(rowNum))
         ; 其他关键词列表菜单
         this.keywordsListView.OnEvent("ContextMenu", (_lv, rowNum, *) => this.showMenu(rowNum))
-        this.MenuInit()
+        this.kwMenuInit()
 
         ; 添加按钮
         this.gui.AddButton("x10 y405 h32 w100", "添加").OnEvent("Click", (*) => this.chooseAddItem())
@@ -59,15 +59,16 @@ class StartupEditGui {
         this.gui.Show("Hide w600 h450")
     }
 
-    static MenuInit() {
-        this.menu := Menu()
-        this.menu.Add("添加关键词`t(&A)", (*) => this.keywordsAdd())
-        this.menu.Add("修改关键词`t(&E)", (*) => this.keywordsSendF2())
-        this.menu.Add("删除关键词`t(&X)", (*) => this.keywordsDel(this.menuRow))
+    static kwMenuInit() {
+        m := Menu()
+        m.Add("添加关键词`t(&A)", (*) => this.keywordsAdd())
+        m.Add("修改关键词`t(&E)", (*) => this.keywordsSendF2())
+        m.Add("删除关键词`t(&X)", (*) => this.keywordsDel(this.kwMenuRow))
 
-        this.menu.SetIcon("1&", GlobalData.imgDir "\grey-run.png")
-        this.menu.SetIcon("2&", GlobalData.imgDir "\grey-edit.png")
-        this.menu.SetIcon("3&", GlobalData.imgDir "\grey-delete.png")
+        m.SetIcon("1&", GlobalData.imgDir "\grey-run.png")
+        m.SetIcon("2&", GlobalData.imgDir "\grey-edit.png")
+        m.SetIcon("3&", GlobalData.imgDir "\grey-delete.png")
+        this.kwMenu := m
     }
 
 
@@ -76,13 +77,12 @@ class StartupEditGui {
         if (!this.curItemIndex)
             return
 
-        if (rowNum) {
-            this.menuRow := rowNum
-            this.menu.Enable("2&"), this.menu.Enable("3&")
-        } else {
-            this.menu.Disable("2&"), this.menu.Disable("3&")
-        }
-        this.menu.Show()
+        this.kwMenuRow := rowNum
+        if (rowNum)
+            this.kwMenu.Enable("2&"), this.kwMenu.Enable("3&")
+        else
+            this.kwMenu.Disable("2&"), this.kwMenu.Disable("3&")
+        this.kwMenu.Show()
     }
 
     ; 添加编辑框ui组件
@@ -103,7 +103,7 @@ class StartupEditGui {
     static showGui(index := 1) {
         Critical('On')    ;防止线程被中断
         Hotkey("~CapsLock Up", "Off")    ; 关闭热键，防止数据冲突
-        StartupMode.hideGui()
+        SearchGui.hideGui()
 
         if (GlobalData.startupData.Length >= index) {
             this.listView.Opt("-Redraw")    ;禁用重绘

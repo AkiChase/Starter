@@ -113,6 +113,15 @@ class SearchGui {
         }
     }
 
+    ; 根据模式隐藏主界面
+    static hideGui() {
+        if (this.curMode) {
+            IntelligentMode.hideGui()
+        } else {
+            StartupMode.hideGui()
+        }
+    }
+
     ; 设置搜索框占位符
     static setEditplaceholder(text) {
         DllCall("User32.dll\SendMessageW", "Ptr", SearchGui.edit.Hwnd, "Uint", (0x1500 + 1), "Ptr", True, "WStr", text)

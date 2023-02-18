@@ -8,8 +8,9 @@ class TrayMenu {
         this.menu := A_TrayMenu
         this.menu.Delete()
 
-        this.menu.Add("搜索界面`t双击CapsLock", (*) => SearchGui.showGui())
-        this.menu.Add("编辑启动模式`t(&E)", (*) => StartupEditGui.showGui())
+        this.menu.Add("搜索界面`t双击CapsLock", (*) => StartupMode.showGui())
+        this.menu.Add("编辑启动模式`t(&S)", (*) => StartupEditGui.showGui())
+        this.menu.Add("编辑智能模式`t(&I)", (*) => IntelligentEditGui.showGui())
         this.menu.Add("自启界面`t(&B)", (*) => BootGui.showGui())
         this.menu.Add()
         this.menu.Add("开机启动", (*) => this.toggleStartupState())
@@ -24,10 +25,11 @@ class TrayMenu {
 
         this.menu.SetIcon("1&", GlobalData.imgDir "\Starter.png")
         this.menu.SetIcon("2&", GlobalData.imgDir "\grey-edit.png")
-        this.menu.SetIcon("3&", GlobalData.imgDir "\grey-run.png")
+        this.menu.SetIcon("3&", GlobalData.imgDir "\grey-edit.png")
+        this.menu.SetIcon("4&", GlobalData.imgDir "\grey-run.png")
 
         if (this.getStartupState())
-            this.menu.Check("5&")
+            this.menu.Check("开机启动")
 
         this.menu.Default := "1&"
     }
@@ -65,11 +67,11 @@ class TrayMenu {
     static toggleStartupState() {
         if (this.getStartupState()) {
             RegDelete("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run", "Starter")
-            this.menu.Uncheck("5&")
+            this.menu.Uncheck("开机启动")
         } else {
             cmd := A_IsCompiled ? Format('"{}" "the_Startup"', A_ScriptFullPath) : Format('"{}" "{}" "the_Startup"', A_AhkPath, A_ScriptFullPath)
             RegWrite(cmd, "REG_SZ", "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run", "Starter")
-            this.menu.check("5&")
+            this.menu.check("开机启动")
         }
     }
 }

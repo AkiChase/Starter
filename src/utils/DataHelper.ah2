@@ -28,12 +28,12 @@ class DataHelper {
         f.Close()
     }
 
-    static loadJSON(path) {
+    static loadJSONFile(path) {
         json := FileRead(path)
         return Jxon_Load(&json)
     }
 
-    static storeJSON(json, path) {
+    static storeJSONFile(json, path) {
         f := FileOpen(path, "w")
         f.Write(Jxon_Dump(json, 2))
         f.Close()
