@@ -323,7 +323,7 @@ class StartupEditGui {
 
             oriItem := GlobalData.startupData[rowNum]
             this._curItem := []
-            this._curItem.Length := oriItem.Length
+            this._curItem.Length := 4
 
             ; 基本信息
             for name in ["filePath", "icoPath", "priority", "name"]
@@ -334,7 +334,7 @@ class StartupEditGui {
             this.kwListView.Opt("-Redraw")    ;禁用重绘
             this.kwListView.Delete()
             loop keywordsCount
-                this.curItem.keywords[A_Index](oriItem[4 + A_Index])
+                this.curItem.keywords.Push(oriItem[4 + A_Index])
             this.kwListView.Opt("Redraw")
 
             this.changeFlag := false
