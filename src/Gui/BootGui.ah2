@@ -38,9 +38,9 @@ class BootGui {
         this.menu.Add("刷新`t(&R)", (*) => this.loadItems())
         this.menu.Add("删除`t(&X)", (*) => this.delItem(this.menuRow))
 
-        this.menu.SetIcon("1&", GlobalData.imgDir "\grey-run.png")
-        this.menu.SetIcon("2&", GlobalData.imgDir "\grey-refresh.png")
-        this.menu.SetIcon("3&", GlobalData.imgDir "\grey-delete.png")
+        this.menu.SetIcon("1&", GlobalData.imgDir "\add.ico")
+        this.menu.SetIcon("2&", GlobalData.imgDir "\reload.ico")
+        this.menu.SetIcon("3&", GlobalData.imgDir "\delete.ico")
     }
 
     static showGui() {

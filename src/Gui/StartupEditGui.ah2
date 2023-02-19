@@ -146,9 +146,9 @@ class StartupEditGui {
         m.Add("添加关键词`t(&A)", (*) => this.curItem.keywords.Push(ChineseFirstChar(this.curItem.name)))
         m.Add("修改关键词`t(&E)", (*) => this.keywordsSendF2())
         m.Add("删除关键词`t(&X)", (*) => this.curItem.keywords.RemoveAt(this.kwMenuRow))
-        m.SetIcon("1&", GlobalData.imgDir "\grey-run.png")
-        m.SetIcon("2&", GlobalData.imgDir "\grey-edit.png")
-        m.SetIcon("3&", GlobalData.imgDir "\grey-delete.png")
+        m.SetIcon("1&", GlobalData.imgDir "\add.ico")
+        m.SetIcon("2&", GlobalData.imgDir "\edit.ico")
+        m.SetIcon("3&", GlobalData.imgDir "\delete.ico")
         this.kwMenu := m
     }
 

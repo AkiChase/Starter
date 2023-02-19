@@ -25,8 +25,10 @@ class TrayMenu {
         this.menu.Add("退出`t(&X)", (*) => ExitApp())
 
         this.menu.SetIcon("1&", GlobalData.imgDir "\Starter.png")
-        this.menu.SetIcon("2&", GlobalData.imgDir "\grey-edit.png")
-        this.menu.SetIcon("3&", GlobalData.imgDir "\grey-edit.png")
+        this.menu.SetIcon("2&", GlobalData.imgDir "\edit.ico")
+        this.menu.SetIcon("3&", GlobalData.imgDir "\edit.ico")
+        this.menu.SetIcon("4&", GlobalData.imgDir "\run.ico")
+        this.menu.SetIcon("5&", GlobalData.imgDir "\info.ico")
 
         if (this.getStartupState())
             this.menu.Check("开机启动")

@@ -65,10 +65,10 @@ class StartupMode {
         this.menu.Add("编辑选中项`t(&E)", (*) => this.toStartupEditGui(this.focusedRow))
         this.menu.Add("删除选中项`t(&X)", (*) => this.deleteItem(this.focusedRow))
 
-        this.menu.SetIcon("1&", GlobalData.imgDir "\grey-run.png")
-        this.menu.SetIcon("2&", GlobalData.imgDir "\grey-folder.png")
-        this.menu.SetIcon("3&", GlobalData.imgDir "\grey-edit.png")
-        this.menu.SetIcon("4&", GlobalData.imgDir "\grey-delete.png")
+        this.menu.SetIcon("1&", GlobalData.imgDir "\run.ico")
+        this.menu.SetIcon("2&", GlobalData.imgDir "\folder.ico")
+        this.menu.SetIcon("3&", GlobalData.imgDir "\edit.ico")
+        this.menu.SetIcon("4&", GlobalData.imgDir "\delete.ico")
     }
 
     ; 跳转至启动模式编辑界面
