@@ -15,6 +15,7 @@ class GlobalData {
 
     static startupSearchResult := []
     static intelligentSearchResult := []
+    static intelligentRegMap := Map()
 
     static intelligentGroups := ["run-with", "search"]
     static intelligentMatchPriority := Map("str", 1, "reg", 2)

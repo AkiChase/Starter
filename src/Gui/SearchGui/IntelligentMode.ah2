@@ -59,8 +59,8 @@ class IntelligentMode {
         this.menu.Add("启动选中项`t(&R)", (*) => this.intelligentRun(this.focusedRow))
         this.menu.Add("编辑选中项`t(&E)", (*) => this.toIntelligentEditGui(this.focusedRow))
 
-        this.menu.SetIcon("1&", GlobalData.imgDir "\grey-run.png")
-        this.menu.SetIcon("2&", GlobalData.imgDir "\grey-edit.png")
+        this.menu.SetIcon("1&", GlobalData.imgDir "\run.ico")
+        this.menu.SetIcon("2&", GlobalData.imgDir "\edit.ico")
     }
 
     ; 跳转至智能模式编辑界面
@@ -80,17 +80,20 @@ class IntelligentMode {
 
     ; run-with处理函数
     static runWithHandler(item) {
-        editVal := SearchGui.edit.Value
-        script := item["script"]
-        if (script["mode"] == "arg") {    ; 传递单命令行参数
-            arg := StrReplace(editVal, '"', '""')    ; 双引号转义为两个双引号
-            Run(Format('"{}" "{}"', script["program"], arg))
+        searchTxt := SearchGui.searchText
+        if (item["script"]["mode"] == "arg") {    ; 传递单命令行参数
+            arg := StrReplace(searchTxt, '"', '""')    ; 双引号转义为两个双引号
+            Run(Format('"{}" "{}"', item["script"]["program"], arg))
         }
-        else if (script["mode"] == "args") {    ; 传递多命令行参数，不进行转义等操作
-            Run(Format('"{}" {}', script["program"], editVal))
+        else if (item["script"]["mode"] == "args") {    ; 传递多命令行参数，不进行转义等操作
+            Run(Format('"{}" {}', item["script"]["program"], searchTxt))
+        }
+        else if (item["match"]["mode"] == "reg") {
+            reg := GlobalData.intelligentRegMap[item]
+            Run(RegExReplace(searchTxt, reg.exp, reg.replace, , 1))
         }
         else    ; type: none
-            Run(editVal)
+            Run(searchTxt)
     }
 
     ; search处理函数
@@ -164,8 +167,9 @@ class IntelligentMode {
                         if (item["match"]["mode"] == "str")
                             GlobalData.intelligentSearchResult.Push(item)
                         else if (item["match"]["mode"] == "reg") {
-                            for exp in item["match"]["exp"]
+                            for index, exp in item["match"]["exp"]
                                 if RegExMatch(keyword, exp) {
+                                    GlobalData.intelligentRegMap[item] := { exp: exp, replace: item["match"]["replace"][A_Index] }
                                     GlobalData.intelligentSearchResult.Push(item)
                                     break
                                 }

@@ -63,9 +63,19 @@ class IntelligentEditGui {
         class match {
             static outer := IntelligentEditGui
 
-            static mode2Help := Map("str", "匹配条件: 输入内容为字符串", "reg", "匹配条件: 输入内容满足下方任一正则表达式")
-            static mode2BoxTitle := Map("str", "字符串模式", "reg", "正则匹配模式")
+            static mode2Help := Map("str", "输入内容为任意字符串可匹配"
+                , "reg", "输入内容满足左侧列表任一正则表达式可匹配，`n而输入内容经右侧列表相应行正则替换后传递给启动处理程序")
+            static mode2BoxTitle := Map("str", "字符串模式", "reg", "正则匹配替换模式")
             static modeKeys := ["str", "reg"]
+
+            static reloadLV(LV, list) {
+                LV.Opt("-Redraw")    ;禁用重绘
+                Lv.Delete()
+                for exp in list    ; 不调用exp属性、更快捷
+                    LV.Add(, exp)
+                LV.Opt("Redraw")
+            }
+
             static mode {
                 get => this.outer._curItem["match"]["mode"]
                 set {
@@ -81,21 +91,18 @@ class IntelligentEditGui {
                     this.outer.matchInfo["box"].Text := this.mode2BoxTitle[value]
                     ; 视模式调整其他控件
                     if (value == "reg") {
-                        if (this.outer._curItem["match"].Has("exp")) {
-                            this.outer.matchInfo["regLV"].Opt("-Redraw")    ;禁用重绘
-                            this.outer.matchInfo["regLV"].Delete()
-                            for exp in this.outer._curItem["match"]["exp"]    ; 不调用exp属性、更快捷
-                                this.outer.matchInfo["regLV"].Add(, exp)
-                            this.outer.matchInfo["regLV"].Opt("Redraw")
-                        } else    ; 不存在时添加默认项
+                        ; 保证每个都至少1条，数量匹配在保存时验证
+                        if (this.outer._curItem["match"].Has("exp"))
+                            this.reloadLV(this.outer.matchInfo["expLV"], this.outer._curItem["match"]["exp"])
+                        else
                             this.exp.Push(".+")
-                        this.outer.matchInfo["regLV"].Visible := true
-                    } else {
-                        this.outer.matchInfo["regLV"].Visible := false
-                        this.outer.matchInfo["modeText"].Text := this.mode2Help[value]    ; 显示模式帮助信息
-                        this.outer.matchInfo["modeText"].Visible := true
-                    }
-
+                        if (this.outer._curItem["match"].Has("replace"))
+                            this.reloadLV(this.outer.matchInfo["replaceLV"], this.outer._curItem["match"]["replace"])
+                        else
+                            this.replace.Push("$0")
+                        this.outer.matchInfo["expLV"].Visible := this.outer.matchInfo["replaceLV"].Visible := true
+                    } else
+                        this.outer.matchInfo["expLV"].Visible := this.outer.matchInfo["replaceLV"].Visible := false
                     this.outer.changeFlag := true
                 }
             }
@@ -111,12 +118,33 @@ class IntelligentEditGui {
                 }
                 static Push(v) {
                     this.outer._curItem["match"]["exp"].Push(v)
-                    this.outer.matchInfo["regLV"].Add(, v)
+                    this.outer.matchInfo["expLV"].Add(, v)
                     this.outer.changeFlag := true
                 }
                 static RemoveAt(index) {
                     this.outer._curItem["match"]["exp"].RemoveAt(index)
-                    this.outer.matchInfo["regLV"].Delete(index)
+                    this.outer.matchInfo["expLV"].Delete(index)
+                    this.outer.changeFlag := true
+                }
+            }
+
+            class replace {
+                static outer := IntelligentEditGui
+                static __Item[index] {
+                    get => this.outer._curItem["match"]["replace"][index]
+                    set {
+                        this.outer._curItem["match"]["replace"][index] := value
+                        this.outer.changeFlag := true
+                    }
+                }
+                static Push(v) {
+                    this.outer._curItem["match"]["replace"].Push(v)
+                    this.outer.matchInfo["replaceLV"].Add(, v)
+                    this.outer.changeFlag := true
+                }
+                static RemoveAt(index) {
+                    this.outer._curItem["match"]["replace"].RemoveAt(index)
+                    this.outer.matchInfo["replaceLV"].Delete(index)
                     this.outer.changeFlag := true
                 }
             }
@@ -196,9 +224,6 @@ class IntelligentEditGui {
     ;#endregion
 
 
-    ; TODO 增加regR 正则替换模式
-
-
     static init() {
         this.gui := Gui("-Resize", "智能模式编辑界面")
         this.gui.BackColor := "FFFFFF"
@@ -228,15 +253,26 @@ class IntelligentEditGui {
 
         this.matchInfo["DDL"] := this.gui.AddDropDownList("xp+90 yp-5 w100 R5", this.curItem.match.modeKeys)
         this.matchInfo["DDL"].OnEvent("Change", (*) => this.curItem.match.mode := this.curItem.match.modeKeys[this.matchInfo["DDL"].Value])
+
+        this.gui.AddPicture("xp+110 yp AltSubmit", GlobalData.imgDir "\help.png").OnEvent("Click", (*) => this.showHelp())
+
         this.matchInfo["box"] := this.gui.AddGroupBox("x280 y200 w442 h130")
         this.matchInfo["box"].SetFont("s12")
 
-        this.matchInfo["modeText"] := this.gui.AddText("x300 y260 w402")
-        this.matchInfo["regLV"] := this.gui.Add("ListView", "x300 y220 w402 h100 -Multi -hdr -ReadOnly -E0x200 Grid Count3", [""])
-        this.matchInfo["regLV"].ModifyCol(1, "Center")
-        this.matchInfo["regLV"].OnEvent("ItemEdit", (LV, rowNum) => this.regLVEdit(rowNum))
+        this.matchInfo["expLV"] := this.gui.Add("ListView", "x285 y220 w215 h105 -Multi -hdr -ReadOnly -E0x200 Grid Count3", [""])
+        this.matchInfo["expLV"].ModifyCol(1, "195 Center")
+        this.matchInfo["expLV"].OnEvent("ItemEdit", (LV, rowNum) => this.LVEdit(LV, rowNum))
+        this.matchInfo["expLV"].OnEvent("ContextMenu", (LV, rowNum, *) => this.regLVSyncSelected(rowNum) or this.showLVMenu(LV, rowNum))
+        this.matchInfo["expLV"].OnEvent("Click", (LV, rowNum) => this.regLVSyncSelected(rowNum))
 
-        this.matchInfo["regLV"].OnEvent("ContextMenu", (_lv, rowNum, *) => this.showRegLVMenu(rowNum))
+
+        this.matchInfo["replaceLV"] := this.gui.Add("ListView", "x500 y220 w215 h105 -Multi -hdr -ReadOnly -E0x200 Grid Count3", [""])
+        this.matchInfo["replaceLV"].ModifyCol(1, "195 Center")
+        this.matchInfo["replaceLV"].OnEvent("ItemEdit", (LV, rowNum) => this.LVEdit(LV, rowNum))
+        this.matchInfo["replaceLV"].OnEvent("ContextMenu", (LV, rowNum, *) => this.regLVSyncSelected(rowNum) or this.showLVMenu(LV, rowNum))
+        this.matchInfo["replaceLV"].OnEvent("Click", (LV, rowNum) => this.regLVSyncSelected(rowNum))
+
+
         this.regMenuInit()
         ;#endregion
 
@@ -263,6 +299,11 @@ class IntelligentEditGui {
         this.enableBtn.OnEvent("Click", (*) => this.curItem.enabled := !this.curItem.enabled)
 
         this.gui.Show("Hide w800 h480")
+    }
+
+    static showHelp() {
+        ToolTip(this.curItem.match.mode2Help[this.curItem.match.mode])
+        SetTimer(() => ToolTip(), -1500)
     }
 
     ; 创建新项目
@@ -311,41 +352,51 @@ class IntelligentEditGui {
         this.curItem[propName] := editCtrl.Value
     }
 
+    ; 同步选中俩个列表同一行的项目
+    static regLVSyncSelected(rowNum) {
+        for LV in [this.matchInfo["expLV"], this.matchInfo["replaceLV"]]
+            LV.Modify(rowNum, "Select Focus Vis")
+    }
+
     ; 正则列表菜单初始化
     static regMenuInit() {
         m := Menu()
-        m.Add("添加正则表达式`t(&A)", (*) => this.curItem.match.exp.Push(".+"))
-        m.Add("修改正则表达式`t(&E)", (*) => this.regLVSendF2())
-        m.Add("删除正则表达式`t(&X)", (*) => this.curItem.match.exp.RemoveAt(this.matchInfo["regLVMenuRow"]))
 
-        m.SetIcon("1&", GlobalData.imgDir "\grey-run.png")
-        m.SetIcon("2&", GlobalData.imgDir "\grey-edit.png")
-        m.SetIcon("3&", GlobalData.imgDir "\grey-delete.png")
-        this.matchInfo["regLVMenu"] := m
-        this.matchInfo["regLVMenuRow"] := 0
+        m.Add("添加`t(&A)", (*) => this.curItem.match.exp.Push(".+") or this.curItem.match.replace.Push("$0"))
+        m.Add("修改`t(&E)", (*) => this.matchLVSendF2())
+        m.Add("删除`t(&X)", (*) => this.curItem.match.exp.RemoveAt(this.matchInfo["LVMenuRow"]) or this.curItem.match.replace.RemoveAt(this.matchInfo["LVMenuRow"]))
+
+        m.SetIcon("1&", GlobalData.imgDir "\add.ico")
+        m.SetIcon("2&", GlobalData.imgDir "\edit.ico")
+        m.SetIcon("3&", GlobalData.imgDir "\delete.ico")
+        this.matchInfo["matchLVMenu"] := m
+        this.matchInfo["LVMenuRow"] := 0
     }
 
     ; 发送F2到listview开启编辑
-    static regLVSendF2() {
-        this.matchInfo["regLV"].Focus()
-        ControlSend("{F2}", this.matchInfo["regLV"], this.gui)
+    static matchLVSendF2() {
+        LV := this.matchInfo[this.matchInfo["curLVName"]]
+        LV.Focus()
+        ControlSend("{F2}", this.matchInfo[this.matchInfo["curLVName"]], this.gui)
     }
 
     ; 编辑关键词回调
-    static regLVEdit(rowNum) {
-        newKeyword := this.matchInfo["regLV"].GetText(rowNum)
-        if (this.curItem.match.exp[rowNum] !== newKeyword)
-            this.curItem.match.exp[rowNum] := newKeyword
+    static LVEdit(LV, rowNum) {
+        newKeyword := LV.GetText(rowNum)
+        tmp := LV == this.matchInfo["expLV"] ? this.curItem.match.exp : this.curItem.match.replace
+        if (tmp[rowNum] !== newKeyword)
+            tmp[rowNum] := newKeyword
     }
 
     ; 显示菜单
-    static showRegLVMenu(rowNum) {
-        this.matchInfo["regLVMenuRow"] := rowNum
+    static showLVMenu(LV, rowNum) {
+        (LV == this.matchInfo["expLV"]) ? this.matchInfo["curLVName"] := "expLV" : this.matchInfo["curLVName"] := "replaceLV"
+        this.matchInfo["LVMenuRow"] := rowNum
         if (rowNum)
-            this.matchInfo["regLVMenu"].Enable("2&"), this.matchInfo["regLVMenu"].Enable("3&")
+            this.matchInfo["matchLVMenu"].Enable("2&"), this.matchInfo["matchLVMenu"].Enable("3&")
         else
-            this.matchInfo["regLVMenu"].Disable("2&"), this.matchInfo["regLVMenu"].Disable("3&")
-        this.matchInfo["regLVMenu"].Show()
+            this.matchInfo["matchLVMenu"].Disable("2&"), this.matchInfo["matchLVMenu"].Disable("3&")
+        this.matchInfo["matchLVMenu"].Show()
     }
 
     ; 重新加载树状图
@@ -419,7 +470,7 @@ class IntelligentEditGui {
                     return
                 }
             } else
-                this._curItem["script"] := Map("mode", this.curItem.script.mode)    ; 其他模式则需要重置match值
+                this._curItem["script"] := Map("mode", this.curItem.script.mode)    ; 其他模式则需要重置script值
         }
 
         pos := this.curItem.id2Pos[this.curItem.id]
