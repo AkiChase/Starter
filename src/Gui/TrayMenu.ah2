@@ -12,6 +12,7 @@ class TrayMenu {
         this.menu.Add("编辑启动模式`t(&S)", (*) => StartupEditGui.showGui())
         this.menu.Add("编辑智能模式`t(&I)", (*) => IntelligentEditGui.showGui())
         this.menu.Add("自启界面`t(&B)", (*) => BootGui.showGui())
+        this.menu.Add("关于界面`t(&A)", (*) => AboutGui.showGui())
         this.menu.Add()
         this.menu.Add("开机启动", (*) => this.toggleStartupState())
 
@@ -26,7 +27,6 @@ class TrayMenu {
         this.menu.SetIcon("1&", GlobalData.imgDir "\Starter.png")
         this.menu.SetIcon("2&", GlobalData.imgDir "\grey-edit.png")
         this.menu.SetIcon("3&", GlobalData.imgDir "\grey-edit.png")
-        this.menu.SetIcon("4&", GlobalData.imgDir "\grey-run.png")
 
         if (this.getStartupState())
             this.menu.Check("开机启动")

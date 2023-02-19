@@ -31,6 +31,10 @@ StartupEditGui.init()
 #Include .\Gui\IntelligentEditGui.ah2
 IntelligentEditGui.init()
 
+#Include .\Gui\AboutGui.ah2
+AboutGui.init()
+
+
 
 OnExit((*) => GlobalData.onExitHandler())    ;退出时保存数据
 
