@@ -56,7 +56,7 @@ class IntelligentMode {
     ; 智能模式列表右键菜单初始化
     static menuInit() {
         this.menu := Menu()
-        this.menu.Add("启动选中项`t(&R)", (*) => this.intelligentRun(this.focusedRow))
+        this.menu.Add("执行选中项`t(&R)", (*) => this.intelligentRun(this.focusedRow))
         this.menu.Add("编辑选中项`t(&E)", (*) => this.toIntelligentEditGui(this.focusedRow))
 
         this.menu.SetIcon("1&", GlobalData.imgDir "\run.ico")

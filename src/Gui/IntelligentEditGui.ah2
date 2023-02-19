@@ -323,7 +323,7 @@ class IntelligentEditGui {
 
     ; 选择图标文件
     static selectIcon() {
-        res := FileSelect("3", GlobalData.customImgDir "\" this.baseInfo["thumbEdit"].Value, "请选择图标路径")
+        res := FileSelect("3", GlobalData.customImgDir "\" this.curItem.thumb, "请选择图标路径")
         if (StrLen(res)) {
             SplitPath(res, , &dir, &ext, &oriName)
             name := oriName
@@ -458,7 +458,6 @@ class IntelligentEditGui {
 
         ; 脚本模式
         if (this.curItem.group == "search") {
-            url := this.scriptInfo["programEdit"].Value
             if (!StrLen(this.curItem.url)) {
                 MsgBox("搜索url不可为空", "提示", 0x2040)
                 return
@@ -584,7 +583,7 @@ class IntelligentEditGui {
             filePath := Format("{}\{}.{}", GlobalData.customImgDir, newTitle, ext)
             try {
                 WinHttp().Download(icoURL, "Timeout:10", , , filePath)
-                this.baseInfo["thumbEdit"].Value := Format("{}.{}", newTitle, ext)
+                this.curItem.thumb := Format("{}.{}", newTitle, ext)
                 this.changeFlag := true
                 this.reloadILFlag := true
                 MsgBox("图标下载成功！保存至数据目录下:`n" filePath, "提示", 0x2040)
@@ -601,7 +600,7 @@ class IntelligentEditGui {
         WinActivate(this.gui)
     }
 
-    ; 获取图标
+    ; 获取图标链接
     static getFaviconUrl(url) {
         if (!RegExMatch(url, "^(https?:\/{2})?([.a-z]*)", &out))    ; 正则提取domain
             return false

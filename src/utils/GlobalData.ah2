@@ -65,9 +65,13 @@ class GlobalData {
                 "match": {
                     "exp": [
                     "[^\\s]*(\\.[a-zA-z]{2}[^\\s]*){2}",
-                    "https?:(\/{2})?(.*)"
+                    "https?:\/{2}(.+)"
                     ],
-                    "mode": "reg"
+                    "mode": "reg",
+                    "replace": [
+                    "$0",
+                    "$0"
+                    ]
                 },
                 "notes": "使用默认浏览器打开网址链接",
                 "removable": 0,
