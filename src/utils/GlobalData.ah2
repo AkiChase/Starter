@@ -39,13 +39,13 @@ class GlobalData {
         this.configPath := this.dataDir "\config.json"
         this.intelligentDataPath := this.dataDir "\intelligentData.json"
 
-        this.refreshstartupData()
+        this.refreshStartupData()
         this.refreshConfig()
         this.refreshIntelligentData()
 
         ; 退出前执行
         onExitHandler(*) {
-            this.storestartupData()
+            this.storeStartupData()
             this.storeConfig()
             this.storeIntelligentData()
         }
@@ -124,7 +124,7 @@ class GlobalData {
     }
 
     ; 重新读取startupData
-    static refreshstartupData() {
+    static refreshStartupData() {
         if (FileExist(this.startupDataPath))
             this.startupData := DataHelper.loadData(this.startupDataPath)
         else
@@ -135,7 +135,7 @@ class GlobalData {
     }
 
     ; 保存startupDataPath至本地
-    static storestartupData() {
+    static storeStartupData() {
         DataHelper.storeData(this.startupData, this.startupDataPath)
     }
 

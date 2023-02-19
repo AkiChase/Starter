@@ -1,29 +1,57 @@
 class StartupMode {
     ; static listView := unset
     ; static menu := unset
-    static menuRow := 0
+
     static imgListID := 0
     static imgPathToImgListIndex := Map()
     static hotkeyHandlerMap := Map()
-    static autoHideFunc := this.autoHide.Bind(this)
 
+    ;#region 聚焦行
+    static focusedRow
+    {
+        get => this.listView.GetNext()
+        set {
+            if (value > GlobalData.startupSearchResult.Length)
+                value := 1
+            else if (value == 0)
+                value := GlobalData.startupSearchResult.Length
+            this.listView.Modify(value, "Select Focus Vis")
+        }
+    }
+    ;#endregion
+
+    ;#region 失去焦点自动隐藏开关
+    static _autoHideFlag := 0
+    static autoHideFlag {
+        get => this._autoHideFlag
+        set {
+            _autoHideFunc() {
+                if (!WinActive(SearchGui.gui))
+                    StartupMode.hideGui()
+            }
+            SetTimer(_autoHideFunc, value ? 1000 : 0)
+        }
+    }
+    ;#endregion
+
+    ; 初始化
     static init() {
         this.listView := SearchGui.gui.Add("ListView", "x10 y50 w510 r8 -Multi -hdr -E0x200 Count" GlobalData.startupData.Length, [""])
         this.listView.SetFont("s14 w700 c444444")
 
-        this.reloadSearchList()
-        this.search(true)
+        this.loadImgs(true)
+        this.search()
 
         ; 鼠标双击运行
         this.listView.OnEvent("DoubleClick", (_lv, rowNum) => this.startSelectedFile(rowNum))
         ; 菜单栏
-        this.listView.OnEvent("ContextMenu", (_lv, rowNum, *) => this.showMenu(rowNum))
+        this.listView.OnEvent("ContextMenu", (_lv, rowNum, *) => rowNum ? this.menu.Show() : 0)
 
         ; 启动模式热键处理函数
-        this.hotkeyHandlerMap["+Esc"] := () => StrLen(SearchGui.edit.Value) ? this.clearSearchWords() : this.hideGui()
+        this.hotkeyHandlerMap["+Esc"] := () => StrLen(SearchGui.searchText) ? SearchGui.searchText := SearchGui.edit.Value := "" : this.hideGui()
         this.hotkeyHandlerMap["~Left Up"] := () => (A_ThisHotkey = A_PriorHotkey and A_TimeSincePriorHotkey < 250) ? this.openSelectedFileInFolder() : 0
-        this.hotkeyHandlerMap["Down"] := () => this.focusNextRow()
-        this.hotkeyHandlerMap["Up"] := () => this.focusNextRow(true)
+        this.hotkeyHandlerMap["Down"] := () => this.focusedRow++
+        this.hotkeyHandlerMap["Up"] := () => this.focusedRow--
 
         ; 启动模式菜单初始化
         this.menuInit()
@@ -32,10 +60,10 @@ class StartupMode {
     ; 启动模式列表右键菜单初始化
     static menuInit() {
         this.menu := Menu()
-        this.menu.Add("启动选中项`t(&R)", (*) => this.startSelectedFile(this.menuRow))
-        this.menu.Add("文件夹中打开`t(&O)", (*) => this.openSelectedFileInFolder(this.menuRow))
-        this.menu.Add("编辑选中项`t(&E)", (*) => this.toStartupEditGui(this.menuRow))
-        this.menu.Add("删除选中项`t(&X)", (*) => this.deleteItem(this.menuRow))
+        this.menu.Add("启动选中项`t(&R)", (*) => this.startSelectedFile(this.focusedRow))
+        this.menu.Add("文件夹中打开`t(&O)", (*) => this.openSelectedFileInFolder(this.focusedRow))
+        this.menu.Add("编辑选中项`t(&E)", (*) => this.toStartupEditGui(this.focusedRow))
+        this.menu.Add("删除选中项`t(&X)", (*) => this.deleteItem(this.focusedRow))
 
         this.menu.SetIcon("1&", GlobalData.imgDir "\grey-run.png")
         this.menu.SetIcon("2&", GlobalData.imgDir "\grey-folder.png")
@@ -45,7 +73,7 @@ class StartupMode {
 
     ; 跳转至启动模式编辑界面
     static toStartupEditGui(rowNum) {
-        if (GlobalData.startupSearchResult !== GlobalData.startupData) { ; 当处于搜索结果时，需要遍历查找到位置
+        if (GlobalData.startupSearchResult !== GlobalData.startupData) {    ; 当处于搜索结果时，需要遍历查找到位置
             selectedItem := GlobalData.startupSearchResult[rowNum]
             for index, item in GlobalData.startupData {
                 if (item == selectedItem) {
@@ -59,42 +87,20 @@ class StartupMode {
         StartupEditGui.showGui(rowNum)
     }
 
-    ; 超时自动隐藏
-    static autoHide() {
-        if (!WinActive(SearchGui.gui)) {
-            this.hideGui()
-        }
-    }
-
-    ; 以启动模式显示gui
-    static showGui(refresh := false) {
-        SearchGui.toggleMode(0)    ; 按需切换
-
-        if (refresh) {
-            SearchGui.edit.Value := ""
-            this.search()
-        } else
-            SearchGui.gui.Show()
-
+    ; 以启动模式显示搜索界面
+    static showGui() {
+        SearchGui.mode := 0
+        SearchGui.edit.Value := SearchGui.searchText := ""
+        SearchGui.gui.Show()
         SearchGui.edit.Focus()
         IME_SET(0)
-        SetTimer(this.autoHideFunc, 1000)
+        this.autoHideFlag := 1
     }
 
-    ; 启动模式下隐藏主界面
+    ; 启动模式下隐藏搜索
     static hideGui() {
-        SetTimer(this.autoHideFunc, 0)
-        SearchGui.edit.Value := ""
+        this.autoHideFlag := 0
         SearchGui.gui.hide()
-        this.search(true, false)    ; 重绘 隐藏但不重排
-    }
-
-    ; 显示菜单
-    static showMenu(rowNum) {
-        if (rowNum) {
-            this.menuRow := rowNum
-            this.menu.Show()
-        }
     }
 
     ; 删除项
@@ -118,39 +124,6 @@ class StartupMode {
         Critical('Off')
     }
 
-    ; 拖拽添加
-    static dropAddItem(args*) {
-        fileList := args[2]
-        for filePath in fileList {
-            SplitPath(filePath, , , , &fileNameNoExt)
-            GlobalData.startupData.Push([filePath, filePath, 0, fileNameNoExt, ChineseFirstChar(fileNameNoExt)])
-        }
-
-        StartupMode.reloadSearchList(false, false)    ;重载列表，但不重置图片列表且不保存
-
-        if (SearchGui.curMode !== 0)    ; 非启动模式下，转为启动模式
-            SearchGui.toggleMode(0)    ; 转换启动模式时会搜索一次
-        else
-            StartupMode.search()
-
-        GlobalData.storestartupData()    ;此处再保存
-    }
-
-    ; 聚焦下一行（循环）
-    static focusNextRow(reverse := false) {
-        rowNum := this.listView.GetNext(, "F")
-        if (reverse) {
-            if (rowNum > 1)
-                this.listView.Modify(rowNum - 1, "Select Focus Vis")
-            else
-                this.listView.Modify(this.listView.GetCount(), "Select Focus Vis")
-        } else {
-            if (rowNum < this.listView.GetCount())
-                this.listView.Modify(rowNum + 1, "Select Focus Vis")
-            else
-                this.listView.Modify(1, "Select Focus Vis")
-        }
-    }
 
     ; 运行选中文件
     static startSelectedFile(rowNum := -1) {
@@ -177,19 +150,13 @@ class StartupMode {
         }
     }
 
-    ; 清空搜索框
-    static clearSearchWords() {
-        SearchGui.edit.Value := ""
-        this.search()
-    }
 
     ; 重新加载搜索列表图标资源
-    static reloadSearchList(reloadIL := true, allowStore := true) {
-        SearchGui.setEditplaceholder("正在加载搜索列表...")
-        SearchGui.edit.Value := ""    ;清空搜索框
+    static loadImgs(reloadIL := true) {
+        SearchGui.placeholder := "正在加载搜索列表..."
         this.listView.Delete()    ;清空搜索列表
 
-        if (reloadIL) {
+        if (reloadIL) {    ;完全重新加载，否则仅加载未载入的
             general := ["error.png", "autohotkey.png", "img.png", "folder.png", "program.png", "txt.png"]
             this.imgPathToImgListIndex := Map()    ;重置图片路径与序号映射
             oldImgListID := 0
@@ -234,17 +201,15 @@ class StartupMode {
             }
             ; 否则图标已加载
         }
-        ; 若有变动则保存startupData
-        if (allowStore and changeFlag)
-            GlobalData.storestartupData()
         if (reloadIL and oldImgListID)
             DllCall("ImageList_Destroy", "Uint", oldImgListID)
-        SearchGui.setEditplaceholder('Hi, Starter')
+
+        SearchGui.placeholder := "Hi, Starter"
     }
 
     ; 搜索即重置列表显示匹配的内容
-    static search(hide := false, sortFlag := true) {
-        keyword := SearchGui.edit.Value
+    static search(sortFlag := true) {
+        keyword := SearchGui.searchText
         if (StrLen(keyword)) {
             GlobalData.startupSearchResult := []
             ;匹配（任意关键词包含搜索内容时匹配）
@@ -261,7 +226,7 @@ class StartupMode {
             GlobalData.startupSearchResult := GlobalData.startupData
 
         ;排序(优先级降序，其次按显示名称)
-        if (sortFlag)
+        if (sortFlag)    ;有时不需要重排顺序
             QuickSort(GlobalData.startupSearchResult, (itemA, itemB) => itemB[3] == itemA[3] ? StrCompare(itemA[4], itemB[4]) : itemB[3] - itemA[3])
 
         ;显示新列表
@@ -277,12 +242,10 @@ class StartupMode {
         LVHeight := Round((GlobalData.startupSearchResult.Length >= 8 ? 8 : GlobalData.startupSearchResult.Length) * 26.4)    ; 此处不需要DPI缩放计算
         this.listView.Move(, , , LVHeight)
         this.listView.ModifyCol(1, "480")
-        this.listView.Modify(1, "Select Focus Vis")    ;聚焦第一行
+        this.focusedRow := 1    ;聚焦第一行
 
         this.listView.Opt("Redraw")
 
         WinMove(, , 500 * (A_ScreenDPI / 96), Round((LVHeight + 55) * (A_ScreenDPI / 96)), SearchGui.gui)
-        if (hide)
-            SearchGui.gui.Hide()
     }
 }

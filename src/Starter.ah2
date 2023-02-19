@@ -17,6 +17,9 @@ GlobalData.init()
 #Include .\Gui\TrayMenu.ah2
 TrayMenu.init()
 
+#Include .\Gui\BootGui.ah2
+BootGui.init()
+
 #Include .\Gui\SearchGui\SearchGui.ah2
 #Include .\Gui\SearchGui\StartupMode.ah2
 #Include .\Gui\SearchGui\IntelligentMode.ah2
@@ -24,9 +27,6 @@ SearchGui.init()
 
 #Include .\Gui\StartupEditGui.ah2
 StartupEditGui.init()
-
-#Include .\Gui\BootGui.ah2
-BootGui.init()
 
 #Include .\Gui\IntelligentEditGui.ah2
 IntelligentEditGui.init()
