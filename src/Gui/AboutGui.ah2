@@ -45,7 +45,7 @@ class AboutGui {
         latest := SubStr(res_json[1]["name"], 2)
 
         if (this.versionCompare(latest, this.version) > 0) {
-            if (MsgBox("检测到新版本: " latest ", 是否打开Gitee项目主页?`n右键右下角托盘图标备份用户数据后可以导入新版本中", "提示", 0x2044) = "Yes")
+            if (MsgBox("检测到新版本: " latest ", 是否打开Gitee项目主页?`n右键右下角托盘图标导出用户数据后可以导入新版本中", "提示", 0x2044) = "Yes")
                 Run("https://gitee.com/ruchuby/Starter")
         } else if (!silent) {
             MsgBox("无需更新，最新版本: " latest "", "提示", 0x2040)

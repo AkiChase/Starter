@@ -18,7 +18,7 @@ class TrayMenu {
 
         userDataMenu := Menu()
         userDataMenu.Add("打开数据目录`t(&D)", (*) => Start.startFile(GlobalData.dataDir))
-        userDataMenu.Add("备份用户数据`t(&B)", (*) => this.backupUserData())
+        userDataMenu.Add("导出用户数据`t(&B)", (*) => this.backupUserData())
         userDataMenu.Add("导入用户数据`t(&I)", (*) => this.importUserData())
         this.menu.Add("用户数据`t(&D)", userDataMenu)
 
@@ -36,20 +36,20 @@ class TrayMenu {
         this.menu.Default := "1&"
     }
 
-    ; 备份用户数据
+    ; 导出用户数据
     static backupUserData() {
         folder := DirSelect("*" A_Desktop, , "请选择保存目录")
         if (StrLen(folder)) {
             newPath := folder "\Starter_Data_" A_Now
             DirCopy(GlobalData.dataDir, newPath)
             Start.openFileInFolder(newPath)
-            MsgBox("用户数据已备份: " newPath, "提示", 0x2040)
+            MsgBox("用户数据已导出: " newPath, "提示", 0x2040)
         }
     }
 
     ; 导入用户数据
     static importUserData() {
-        folder := DirSelect("*" A_Desktop, , "请选择备份数据文件夹")
+        folder := DirSelect("*" A_Desktop, , "请选择导出数据文件夹")
         if (StrLen(folder)) {
             DirCopy(folder, GlobalData.dataDir, true)
             GlobalData.onExitHandler := (*) => MsgBox("用户数据已导入，即将重启", "提示", 0x2040)

@@ -154,17 +154,14 @@ class IntelligentEditGui {
             static outer := IntelligentEditGui
 
             static modeKeys := ["none", "arg", "args"]
+            static mode2Help := Map("none", "启动处理程序直接执行收到的内容"
+                , "arg", '启动处理程序将收到的内容视为一个命令行参数(即添加双引号)`n启动下方程序路径',
+                "args", '启动处理程序将收到的内容视为完整命令行参数(不做任何处理)启动下方程序路径')
+            static mode2BoxTitle := Map("str", "字符串模式", "reg", "正则匹配替换模式")
             static mode {
                 get => this.outer._curItem["script"]["mode"]
                 set {
-                    if (value !== "none") {
-                        this.outer.scriptInfo["programEdit"].Enabled := true
-                        this.program := this.program
-                    } else {
-                        this.outer.scriptInfo["programEdit"].Enabled := false
-                        this.outer.scriptInfo["programEdit"].Value := ""    ;防止清除program值
-                    }
-
+                    this.outer._curItem["script"]["mode"] := value
                     for index, mode in this.modeKeys {
                         if (this.mode == mode) {
                             this.outer.scriptInfo["DDL"].Value := index
@@ -172,9 +169,18 @@ class IntelligentEditGui {
                         }
                     }
 
-                    this.outer._curItem["script"]["mode"] := value
-                    this.outer.scriptInfo["programEdit"].Enabled := value !== "none"
+                    if (value !== "none") {
+                        this.outer.scriptInfo["programEdit"].Enabled := true
+                        if (!this.outer._curItem["script"].Has("program"))
+                            this.program := ""
+                        else
+                            this.program := this.program
+                    } else {
+                        this.outer.scriptInfo["programEdit"].Enabled := false
+                        this.outer.scriptInfo["programEdit"].Value := ""    ;防止清除program值
+                    }
 
+                    this.outer.scriptInfo["programEdit"].Enabled := value !== "none"
                     this.outer.changeFlag := true
                 }
             }
@@ -254,7 +260,7 @@ class IntelligentEditGui {
         this.matchInfo["DDL"] := this.gui.AddDropDownList("xp+90 yp-5 w100 R5", this.curItem.match.modeKeys)
         this.matchInfo["DDL"].OnEvent("Change", (*) => this.curItem.match.mode := this.curItem.match.modeKeys[this.matchInfo["DDL"].Value])
 
-        this.gui.AddPicture("xp+110 yp AltSubmit", GlobalData.imgDir "\help.png").OnEvent("Click", (*) => this.showHelp())
+        this.gui.AddPicture("xp+110 yp AltSubmit", GlobalData.imgDir "\help.png").OnEvent("Click", (*) => this.showMatchHelp())
 
         this.matchInfo["box"] := this.gui.AddGroupBox("x280 y200 w442 h130")
         this.matchInfo["box"].SetFont("s12")
@@ -280,6 +286,8 @@ class IntelligentEditGui {
         this.gui.AddText("w80 x280 y350", "脚本模式")
         this.scriptInfo["DDL"] := this.gui.AddDropDownList("xp+90 yp-5 w100 R5", this.curItem.script.modeKeys)
         this.scriptInfo["DDL"].OnEvent("Change", (ddl, *) => this.curItem.script.mode := this.curItem.script.modeKeys[ddl.Value])
+        this.gui.AddPicture("xp+110 yp AltSubmit", GlobalData.imgDir "\help.png").OnEvent("Click", (*) => this.showScripHelp())
+
         this.scriptInfo["programText"] := this.gui.AddText("w80 x280 y390", "程序路径")
         this.scriptInfo["programEdit"] := this.gui.AddEdit("w350 yp-5 xp+90")
         this.scriptInfo["programEdit"].OnEvent("Change", (edit, *) => this.curItem.url ? this.curItem.url := edit.Value : this.curItem.script.program := edit.Value)
@@ -301,8 +309,20 @@ class IntelligentEditGui {
         this.gui.Show("Hide w800 h480")
     }
 
-    static showHelp() {
+    ; 显示匹配模式帮助
+    static showMatchHelp() {
         ToolTip(this.curItem.match.mode2Help[this.curItem.match.mode])
+        SetTimer(() => ToolTip(), -1500)
+    }
+
+
+    ; 显示脚本模式帮助
+    static showScripHelp() {
+        if (this.curItem.group == "search")
+            help := '启动处理程序将收到的内容填充至搜索URL中"{}"所在位置, 打开填充后的URL'
+        else
+            help := this.curItem.script.mode2Help[this.curItem.script.mode]
+        ToolTip(help)
         SetTimer(() => ToolTip(), -1500)
     }
 
