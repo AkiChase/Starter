@@ -87,7 +87,13 @@ class GlobalData {
                 "enabled": 1,
                 "group": "search",
                 "match": {
-                    "mode": "str"
+                    "exp": [
+                    "(bd|baidu|百度)\\s+(?<query>.*)"
+                    ],
+                    "mode": "reg",
+                    "replace": [
+                    "${query}"
+                    ]
                 },
                 "notes": "使用默认浏览器百度搜索",
                 "removable": 1,
@@ -99,7 +105,13 @@ class GlobalData {
                 "enabled": 1,
                 "group": "search",
                 "match": {
-                    "mode": "str"
+                    "exp": [
+                    "(gg|谷歌)\\s+(?<query>.*)"
+                    ],
+                    "mode": "reg",
+                    "replace": [
+                    "${query}"
+                    ]
                 },
                 "notes": "使用默认浏览器谷歌搜索",
                 "removable": 0,

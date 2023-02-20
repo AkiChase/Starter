@@ -94,12 +94,18 @@ class IntelligentEditGui {
                         ; 保证每个都至少1条，数量匹配在保存时验证
                         if (this.outer._curItem["match"].Has("exp"))
                             this.reloadLV(this.outer.matchInfo["expLV"], this.outer._curItem["match"]["exp"])
-                        else
+                        else {
+                            this.outer.matchInfo["expLV"].Delete()
                             this.exp.Push(".+")
+                        }
+
                         if (this.outer._curItem["match"].Has("replace"))
                             this.reloadLV(this.outer.matchInfo["replaceLV"], this.outer._curItem["match"]["replace"])
-                        else
+                        else {
+                            this.outer.matchInfo["replaceLV"].Delete()
                             this.replace.Push("$0")
+                        }
+
                         this.outer.matchInfo["expLV"].Visible := this.outer.matchInfo["replaceLV"].Visible := true
                     } else
                         this.outer.matchInfo["expLV"].Visible := this.outer.matchInfo["replaceLV"].Visible := false
@@ -117,6 +123,9 @@ class IntelligentEditGui {
                     }
                 }
                 static Push(v) {
+                    if (!this.outer._curItem["match"].Has("exp"))
+                        this.outer._curItem["match"]["exp"] := []
+
                     this.outer._curItem["match"]["exp"].Push(v)
                     this.outer.matchInfo["expLV"].Add(, v)
                     this.outer.changeFlag := true
@@ -138,6 +147,8 @@ class IntelligentEditGui {
                     }
                 }
                 static Push(v) {
+                    if (!this.outer._curItem["match"].Has("replace"))
+                        this.outer._curItem["match"]["replace"] := []
                     this.outer._curItem["match"]["replace"].Push(v)
                     this.outer.matchInfo["replaceLV"].Add(, v)
                     this.outer.changeFlag := true
@@ -556,10 +567,10 @@ class IntelligentEditGui {
     ; 显示智能模式编辑界面，并编辑某项
     static showGui(editPos := unset) {
         Critical('On')    ;防止线程被中断
-        Hotkey("~CapsLock Up", "Off")    ; 关闭热键，防止数据冲突
         for c in [SearchGui, StartupEditGui]
             if (WinExist(c.gui))
                 c.hideGui()
+        Hotkey("~CapsLock Up", "Off")    ; 关闭热键，防止数据冲突
 
         ; 重新加载树状图
         this.reloadTV()
