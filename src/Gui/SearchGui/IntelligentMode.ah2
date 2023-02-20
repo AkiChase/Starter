@@ -81,24 +81,31 @@ class IntelligentMode {
     ; run-with处理函数
     static runWithHandler(item) {
         searchTxt := SearchGui.searchText
+        if (item["match"]["mode"] == "reg") {
+            reg := GlobalData.intelligentRegMap[item]
+            searchTxt:=RegExReplace(searchTxt, reg.exp, reg.replace, , 1)
+        }
+
         if (item["script"]["mode"] == "arg") {    ; 传递单命令行参数
             arg := StrReplace(searchTxt, '"', '""')    ; 双引号转义为两个双引号
             Run(Format('"{}" "{}"', item["script"]["program"], arg))
         }
-        else if (item["script"]["mode"] == "args") {    ; 传递多命令行参数，不进行转义等操作
+        else if (item["script"]["mode"] == "args")    ; 传递多命令行参数，不进行转义等操作
             Run(Format('"{}" {}', item["script"]["program"], searchTxt))
-        }
-        else if (item["match"]["mode"] == "reg") {
-            reg := GlobalData.intelligentRegMap[item]
-            Run(RegExReplace(searchTxt, reg.exp, reg.replace, , 1))
-        }
         else    ; type: none
             Run(searchTxt)
     }
 
     ; search处理函数
     static searchHandler(item) {
-        Run(Format(item["url"], SearchGui.edit.Value))
+        searchTxt := SearchGui.searchText
+        
+        if (item["match"]["mode"] == "reg") {
+            reg := GlobalData.intelligentRegMap[item]
+            searchTxt:=RegExReplace(searchTxt, reg.exp, reg.replace, , 1)
+        }
+
+        Run(Format(item["url"], searchTxt))
     }
 
     ; 根据项目执行对应操作
