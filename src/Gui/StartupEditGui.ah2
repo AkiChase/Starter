@@ -187,10 +187,10 @@ class StartupEditGui {
     ; 显示Gui
     static showGui(index := 1) {
         Critical('On')    ;防止线程被中断
-        Hotkey("~CapsLock Up", "Off")    ; 关闭热键，防止数据冲突
         for c in [SearchGui, IntelligentEditGui]
             if (WinExist(c.gui))
                 c.hideGui()
+        Hotkey("~CapsLock Up", "Off")    ; 关闭热键，防止数据冲突
 
         this.reloadSULV()    ; 重载启动项列表
         this.changeFlag := false
