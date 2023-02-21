@@ -4,6 +4,7 @@ FileEncoding("UTF-8-RAW")
 
 #Include .\utils\ChineseFirstChar.ah2
 #Include .\utils\MapArrClone.ah2
+#Include .\utils\GetSelectedText.ah2
 #Include .\utils\JXON.ah2
 #Include .\utils\WinHttp.ah2
 #Include .\utils\IME.ah2

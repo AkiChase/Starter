@@ -570,7 +570,7 @@ class IntelligentEditGui {
         for c in [SearchGui, StartupEditGui]
             if (WinExist(c.gui))
                 c.hideGui()
-        Hotkey("~CapsLock Up", "Off")    ; 关闭热键，防止数据冲突
+        Hotkey("~CapsLock", "Off")    ; 关闭热键，防止数据冲突
 
         ; 重新加载树状图
         this.reloadTV()
@@ -589,7 +589,7 @@ class IntelligentEditGui {
 
     ; 隐藏编辑界面
     static hideGui() {
-        Hotkey("~CapsLock Up", "On")    ; 恢复热键
+        Hotkey("~CapsLock", "On")    ; 恢复热键
         if (this.changeFlag) {
             if (MsgBox("是否将当前项修改内容保存？", "提示", 0x2044) = "Yes")
                 this.saveCurItem()

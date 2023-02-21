@@ -190,7 +190,7 @@ class StartupEditGui {
         for c in [SearchGui, IntelligentEditGui]
             if (WinExist(c.gui))
                 c.hideGui()
-        Hotkey("~CapsLock Up", "Off")    ; 关闭热键，防止数据冲突
+        Hotkey("~CapsLock", "Off")    ; 关闭热键，防止数据冲突
 
         this.reloadSULV()    ; 重载启动项列表
         this.changeFlag := false
@@ -207,7 +207,7 @@ class StartupEditGui {
                 this.itemEdit(1)
             }
             else {
-                Hotkey("~CapsLock Up", "On")    ; 恢复热键
+                Hotkey("~CapsLock", "On")    ; 恢复热键
             }
 
         }
@@ -215,7 +215,7 @@ class StartupEditGui {
 
     ; 隐藏Gui
     static hideGui() {
-        Hotkey("~CapsLock Up", "On")    ; 恢复热键
+        Hotkey("~CapsLock", "On")    ; 恢复热键
         if (this.changeFlag) {
             if (MsgBox("是否将当前项修改内容保存？", "提示", 0x2044) = "Yes")
                 this.saveCurItem()

@@ -83,7 +83,7 @@ class IntelligentMode {
         searchTxt := SearchGui.searchText
         if (item["match"]["mode"] == "reg") {
             reg := GlobalData.intelligentRegMap[item]
-            searchTxt:=RegExReplace(searchTxt, reg.exp, reg.replace, , 1)
+            searchTxt := RegExReplace(searchTxt, reg.exp, reg.replace, , 1)
         }
 
         if (item["script"]["mode"] == "arg") {    ; 传递单命令行参数
@@ -99,10 +99,10 @@ class IntelligentMode {
     ; search处理函数
     static searchHandler(item) {
         searchTxt := SearchGui.searchText
-        
+
         if (item["match"]["mode"] == "reg") {
             reg := GlobalData.intelligentRegMap[item]
-            searchTxt:=RegExReplace(searchTxt, reg.exp, reg.replace, , 1)
+            searchTxt := RegExReplace(searchTxt, reg.exp, reg.replace, , 1)
         }
 
         Run(Format(item["url"], searchTxt))
@@ -209,9 +209,9 @@ class IntelligentMode {
     }
 
     ; 以智能模式显示gui
-    static showGui() {
+    static showGui(searchText := "") {
         SearchGui.mode := 1
-        SearchGui.edit.Value := SearchGui.searchText := ""
+        SearchGui.edit.Value := SearchGui.searchText := searchText
         SearchGui.gui.Show()
         SearchGui.edit.Focus()
         IME_SET(0)

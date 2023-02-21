@@ -88,9 +88,9 @@ class StartupMode {
     }
 
     ; 以启动模式显示搜索界面
-    static showGui() {
+    static showGui(searchText := "") {
         SearchGui.mode := 0
-        SearchGui.edit.Value := SearchGui.searchText := ""
+        SearchGui.edit.Value := SearchGui.searchText := searchText
         SearchGui.gui.Show()
         SearchGui.edit.Focus()
         IME_SET(0)
