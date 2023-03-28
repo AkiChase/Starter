@@ -114,7 +114,6 @@ class SearchGui {
                     StartupMode.showGui()
                 }
             } else {
-                MsgBox(1)
                 StartupMode.showGui(GetSelectedText())
                 KeyWait("CapsLock")    ;等待松开
                 SetCapsLockState(!GetKeyState("CapsLock", "T"))    ; 长按会修改1次状态，此处修改回原来的
