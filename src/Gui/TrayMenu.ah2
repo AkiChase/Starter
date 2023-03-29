@@ -45,6 +45,8 @@ class TrayMenu {
             this.menu.Check("开机启动")
 
         this.menu.Default := "1&"
+
+        A_IconHidden := false ; 重载结束后显示图标
     }
 
     ; 导出用户数据
@@ -82,7 +84,7 @@ class TrayMenu {
             RegDelete("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run", "Starter")
             this.menu.Uncheck("开机启动")
         } else {
-            cmd := A_IsCompiled ? Format('"{}" "the_Startup"', A_ScriptFullPath) : Format('"{}" "{}" "the_Startup"', A_AhkPath, A_ScriptFullPath)
+            cmd:=Format('"{}" "{}" "the_Startup"', GlobalData.rootDir "\src\AutoHotkey64.exe", GlobalData.rootDir "\src\Starter.ah2")
             RegWrite(cmd, "REG_SZ", "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run", "Starter")
             this.menu.check("开机启动")
         }

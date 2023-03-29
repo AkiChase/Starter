@@ -6,7 +6,7 @@
  * @LastEditTime: 2023-03-29
  * @Description: 介绍Starter 是一款AHK编写的快速启动工具，旨在方便快捷地启动文件、文件夹，提高电脑的使用效率。
  */
-
+#NoTrayIcon ; 先隐藏图标
 ListLines False
 #SingleInstance Force
 FileEncoding("UTF-8-RAW")
@@ -25,6 +25,9 @@ FileEncoding("UTF-8-RAW")
 
 #Include .\Utils\GlobalData.ah2
 GlobalData.init()
+
+#Include .\Gui\PluginGui.ah2
+PluginGui.init() ;同时加载了插件
 
 #Include .\Gui\BootGui.ah2
 BootGui.init()
@@ -45,9 +48,6 @@ AboutGui.init()
 
 #Include .\Gui\TrayMenu.ah2
 TrayMenu.init()
-
-#Include .\Gui\PluginGui.ah2
-PluginGui.init() ;同时加载了插件
 
 #Include .\Utils\PluginHelper.ah2
 PluginHelper.init() ;同时执行所有插件的入口函数
