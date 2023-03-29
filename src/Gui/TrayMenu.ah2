@@ -1,3 +1,12 @@
+/**
+ * @Name: TrayMenu
+ * @Version: 0.0.2
+ * @Author: ruchuby
+ * @LastEditors: ruchuby
+ * @LastEditTime: 2023-03-29
+ * @Description: 菜单栏
+ */
+
 class TrayMenu {
     ; static menu := unset
 
@@ -12,6 +21,7 @@ class TrayMenu {
         this.menu.Add("编辑启动模式`t(&S)", (*) => StartupEditGui.showGui())
         this.menu.Add("编辑智能模式`t(&I)", (*) => IntelligentEditGui.showGui())
         this.menu.Add("自启界面`t(&B)", (*) => BootGui.showGui())
+        this.menu.Add("插件界面`t(&P)", (*) => PluginGui.showGui())
         this.menu.Add("关于界面`t(&A)", (*) => AboutGui.showGui())
         this.menu.Add()
         this.menu.Add("开机启动", (*) => this.toggleStartupState())
@@ -28,7 +38,8 @@ class TrayMenu {
         this.menu.SetIcon("2&", GlobalData.imgDir "\edit.ico")
         this.menu.SetIcon("3&", GlobalData.imgDir "\edit.ico")
         this.menu.SetIcon("4&", GlobalData.imgDir "\run.ico")
-        this.menu.SetIcon("5&", GlobalData.imgDir "\info.ico")
+        this.menu.SetIcon("5&", GlobalData.imgDir "\plugin.ico")
+        this.menu.SetIcon("6&", GlobalData.imgDir "\info.ico")
 
         if (this.getStartupState())
             this.menu.Check("开机启动")
