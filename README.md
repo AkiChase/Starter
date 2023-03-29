@@ -8,15 +8,13 @@
 
 
 
-### 1.1 下载方式
+### 1.1 开始使用
 
-1. Github下载: [Github Releases ](https://github.com/ruchuby/Starter/releases)
+1. Github下载: [Github Releases ](https://github.com/ruchuby/Starter/releases) 或 蓝奏云下载: [蓝奏云](https://wwi.lanzoup.com/b01kb1g4j) 密码: 9vge 
 
-2. 蓝奏云下载: [蓝奏云](https://wwi.lanzoup.com/b01kb1g4j) 密码: 9vge 
+2. 若需要截图中的字体，可在上方蓝奏云链接下载后安装，Starter将**优先使用**该字体
 
-3. 若需要截图中的字体，可在上方蓝奏云链接下载后安装，Starter将**优先使用**该字体
-
-   
+3. 解压后运行`创建快捷方式.bat`, 运行创建好的`Starter.lnk`即可启动
 
 
 
