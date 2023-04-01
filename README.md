@@ -1,14 +1,21 @@
 # Starter
 
+![Starter](./resource/img/Starter.png)
+
+<p align="center">
+智能、快捷地启动文件、文件夹，执行操作，提高电脑的使用效率
+</p>
 
 
-## 1. 介绍
+<p align="center">
+  <a href="https://github.com/ruchuby/starter"><img src="https://img.shields.io/github/license/ruchuby/starter" alt="License"></a>
+  <a href="https://github.com/ruchuby/starter/releases"><img src="https://img.shields.io/github/v/release/ruchuby/starter" alt="Version"></a>
+  <a href="https://github.com/ruchuby/starter/releases"><img src="https://img.shields.io/github/downloads/ruchuby/starter/total" alt="Downloads"></a>
+    <img src="https://img.shields.io/github/stars/ruchuby/starter" alt="Stars"></a>
+</p>
 
-`Starter` 是一款`AHK`编写的快速启动工具，旨在智能、快捷地启动文件、文件夹，执行操作，提高电脑的使用效率。
 
-
-
-### 1.1 开始使用
+## 1. 开始使用
 
 1. Github下载: [Github Releases ](https://github.com/ruchuby/Starter/releases) 或 蓝奏云下载: [蓝奏云](https://wwi.lanzoup.com/b01kb1g4j) 密码: 9vge 
 

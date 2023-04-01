@@ -16,7 +16,7 @@ FileEncoding("UTF-8-RAW")
 
 #Include .\Utils\GlobalData.ah2
 GlobalData.init()
-TraySetIcon(GlobalData.imgDir "\Starter.ico", , true) ; 设置图标
+TraySetIcon(GlobalData.imgDir "\Starter.png", , true) ; 设置图标
 
 #Include .\Utils\Class_Loader.ah2
 #Include .\Utils\Gdip.ah2
