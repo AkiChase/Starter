@@ -28,13 +28,13 @@ class GlobalData {
         this.rootDir := tmp
 
         this.imgDir := this.rootDir "\resource\img"
-        this.bootDir := this.rootDir "\boot"
         this.pluginDir := this.rootDir "\src\plugin"
         this.dataDir := this.rootDir "\resource\data"
         this.customImgDir := this.dataDir "\customImg"
+        this.bootDir := this.dataDir "\boot"
 
 
-        for dirPath in [this.bootDir, this.dataDir, this.customImgDir]
+        for dirPath in [this.dataDir, this.bootDir, this.customImgDir, this.pluginDir]
             if (!FileExist(dirPath))
                 DirCreate(dirPath)
 
