@@ -3,7 +3,7 @@
  * @Version: 0.0.1
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-03-29
+ * @LastEditTime: 2023-03-30
  * @Description: 插件界面
  */
 
@@ -14,7 +14,8 @@ class PluginGui {
     static IL := 0
 
     static init() {
-        this.loadPlugins()
+        if (!IsSet(DEBUG) || !DEBUG)
+            this.loadPlugins()
         this.gui := Gui("-Resize", "插件界面")
         this.gui.SetFont("s12 q5 c333333", "NSimSun")
         this.gui.SetFont(, "雅痞-简")    ;优先使用更好看的字体
