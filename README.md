@@ -2,10 +2,8 @@
 
 <p align="center"><img src="./resource/img/Starter.png" alt="Starter"></p>
 
-<p align="center">
-智能、快捷地启动文件、文件夹，执行操作，提高电脑的使用效率
-</p>
-
+<h1 align="center">Starter</h1>
+<p align="center">智能、快捷地启动文件、文件夹，执行操作，提高电脑的使用效率</p>
 
 <p align="center">
   <a href="https://github.com/ruchuby/starter"><img src="https://img.shields.io/github/license/ruchuby/starter" alt="License"></a>
