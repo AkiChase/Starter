@@ -7,6 +7,7 @@
  * @Description: 介绍Starter 是一款AHK编写的快速启动工具，旨在方便快捷地启动文件、文件夹，提高电脑的使用效率。
  */
 #NoTrayIcon ; 先隐藏图标
+
 ListLines False
 #SingleInstance Force
 FileEncoding("UTF-8-RAW")
@@ -15,6 +16,7 @@ FileEncoding("UTF-8-RAW")
 
 #Include .\Utils\GlobalData.ah2
 GlobalData.init()
+TraySetIcon(GlobalData.imgDir "\Starter.ico", , true) ; 设置图标
 
 #Include .\Utils\Class_Loader.ah2
 #Include .\Utils\Gdip.ah2

@@ -13,7 +13,6 @@ class TrayMenu {
     ; static gui:=unset
 
     static init() {
-        TraySetIcon(GlobalData.imgDir "\Starter.png", , true)
         A_IconTip := "Starter"
 
         this.menu := A_TrayMenu

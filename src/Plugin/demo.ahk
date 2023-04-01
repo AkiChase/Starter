@@ -3,7 +3,7 @@
  * @Version: 0.0.1
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-03-29
+ * @LastEditTime: 2023-04-01
  * @Description: 插件示例
  */
 
@@ -36,7 +36,7 @@ class Plugin_Demo {
 
     static guiInit() {
         g := Gui(, "插件基本示例1")
-        g.BackColor:="FFFFFF"
+        g.BackColor := "FFFFFF"
         g.AddText(, "一个简单的Gui示例")
 
         SplitPath(A_LineFile, &pluginName)
@@ -59,6 +59,7 @@ class Plugin_Demo {
         this.menu.Add("其他", (*) => MsgBox("自定义其他的功能吧！"))
 
         ; PluginHelper是方便插件规范调用Starter API的静态类
+        ; 插件相关菜单最好加入pluginMenu菜单项，更加规范
         PluginHelper.pluginMenu.Add("demo.ahk", this.menu)
         ; MsgBox("插件已加载 demo.ahk")
     }
