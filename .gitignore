@@ -1,5 +1,3 @@
 .vscode/
 resource/data/
-boot/
-dist/
-src/Starter.exe
+Starter.lnk

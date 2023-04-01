@@ -3,6 +3,7 @@ class GlobalData {
     ; static imgDir := unset
     ; static bootDir := unset
     ; static dataDir := unset
+    ; static pluginDir := unset
     ; static customImgDir := unset
 
     ; static startupData := unset
@@ -27,12 +28,13 @@ class GlobalData {
         this.rootDir := tmp
 
         this.imgDir := this.rootDir "\resource\img"
-        this.bootDir := this.rootDir "\boot"
+        this.pluginDir := this.rootDir "\src\plugin"
         this.dataDir := this.rootDir "\resource\data"
         this.customImgDir := this.dataDir "\customImg"
+        this.bootDir := this.dataDir "\boot"
 
 
-        for dirPath in [this.bootDir, this.dataDir, this.customImgDir]
+        for dirPath in [this.dataDir, this.bootDir, this.customImgDir, this.pluginDir]
             if (!FileExist(dirPath))
                 DirCreate(dirPath)
 
@@ -158,12 +160,17 @@ class GlobalData {
 
     ; 重新读取配置文件
     static refreshConfig() {
-        if (FileExist(this.configPath))
+        if (FileExist(this.configPath)) {
             this.config := DataHelper.loadJSONFile(this.configPath)
-        else
-        {
-            FileAppend("{}", this.configPath)
-            this.config := Map()
+            if (Type(this.config) != "Map")
+                this.config := Map("plugin", [])
+
+            if (!this.config.Has("plugin"))
+                this.config["plugin"] := []
+
+        } else {
+            FileAppend('{"plugin":[]}', this.configPath)
+            this.config := Map("plugin", [])
         }
     }
 

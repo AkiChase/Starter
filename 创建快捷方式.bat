@@ -1,0 +1,3 @@
+echo Creating...
+start CreateShortcut.vbs
+echo Finished!

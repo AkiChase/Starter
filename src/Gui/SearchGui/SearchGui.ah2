@@ -108,8 +108,18 @@ class SearchGui {
 
     ; 热键初始化
     static hotkeyInit() {
-        ; 以启动模式激活
-        Hotkey("~CapsLock Up", key => (A_ThisHotkey = A_PriorHotkey and A_TimeSincePriorHotkey < 300) ? StartupMode.showGui() : 0)
+        capsLockHandler(key) {
+            if (KeyWait("CapsLock", "T0.5")) {
+                if (A_ThisHotkey = A_PriorHotkey and A_TimeSincePriorHotkey < 300) {
+                    StartupMode.showGui()
+                }
+            } else {
+                IntelligentMode.showGui(GetSelectedText())
+                KeyWait("CapsLock")    ;等待松开
+            }
+        }
+
+        Hotkey("~CapsLock", capsLockHandler)
 
         ; 根据模式和热键内容执行
         hotkeyHandler(key) {

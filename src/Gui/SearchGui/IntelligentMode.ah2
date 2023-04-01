@@ -83,7 +83,7 @@ class IntelligentMode {
         searchTxt := SearchGui.searchText
         if (item["match"]["mode"] == "reg") {
             reg := GlobalData.intelligentRegMap[item]
-            searchTxt:=RegExReplace(searchTxt, reg.exp, reg.replace, , 1)
+            searchTxt := RegExReplace(searchTxt, reg.exp, reg.replace, , 1)
         }
 
         if (item["script"]["mode"] == "arg") {    ; 传递单命令行参数
@@ -99,10 +99,10 @@ class IntelligentMode {
     ; search处理函数
     static searchHandler(item) {
         searchTxt := SearchGui.searchText
-        
+
         if (item["match"]["mode"] == "reg") {
             reg := GlobalData.intelligentRegMap[item]
-            searchTxt:=RegExReplace(searchTxt, reg.exp, reg.replace, , 1)
+            searchTxt := RegExReplace(searchTxt, reg.exp, reg.replace, , 1)
         }
 
         Run(Format(item["url"], searchTxt))
@@ -162,6 +162,18 @@ class IntelligentMode {
 
     ; 搜索即重置列表显示匹配的内容
     static search() {
+        static customSort(itemA, itemB) {
+            if (itemA["match"]["mode"] != itemB["match"]["mode"]) {
+                ; 优先级大的在前
+                return GlobalData.intelligentMatchPriority[itemB["match"]["mode"]] - GlobalData.intelligentMatchPriority[itemA["match"]["mode"]]
+            } else if (itemA["match"]["mode"]=="reg") {
+                ; 次序小的在前
+                return GlobalData.intelligentRegMap[itemA].index - GlobalData.intelligentRegMap[itemB].index
+            }
+            return 0
+        }
+
+
         keyword := SearchGui.searchText
         if (StrLen(keyword)) {
             GlobalData.intelligentSearchResult := []
@@ -176,7 +188,7 @@ class IntelligentMode {
                         else if (item["match"]["mode"] == "reg") {
                             for index, exp in item["match"]["exp"]
                                 if RegExMatch(keyword, exp) {
-                                    GlobalData.intelligentRegMap[item] := { exp: exp, replace: item["match"]["replace"][A_Index] }
+                                    GlobalData.intelligentRegMap[item] := { exp: exp, replace: item["match"]["replace"][index], index: index }
                                     GlobalData.intelligentSearchResult.Push(item)
                                     break
                                 }
@@ -185,7 +197,7 @@ class IntelligentMode {
                 }
             }
             ; 按拟定的优先级降序排列
-            QuickSort(GlobalData.intelligentSearchResult, (itemA, itemB) => GlobalData.intelligentMatchPriority[itemB["match"]["mode"]] - GlobalData.intelligentMatchPriority[itemA["match"]["mode"]])
+            QuickSort(GlobalData.intelligentSearchResult, customSort)
         } else    ; 搜索词为空什么都不显示
             GlobalData.intelligentSearchResult := []
 
@@ -209,9 +221,9 @@ class IntelligentMode {
     }
 
     ; 以智能模式显示gui
-    static showGui() {
+    static showGui(searchText := "") {
         SearchGui.mode := 1
-        SearchGui.edit.Value := SearchGui.searchText := ""
+        SearchGui.edit.Value := SearchGui.searchText := searchText
         SearchGui.gui.Show()
         SearchGui.edit.Focus()
         IME_SET(0)
