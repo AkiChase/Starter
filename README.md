@@ -1,6 +1,6 @@
 # Starter
 
-![Starter](./resource/img/Starter.png)
+<p align="center"><img src="./resource/img/Starter.png" alt="Starter"></p>
 
 <p align="center">
 智能、快捷地启动文件、文件夹，执行操作，提高电脑的使用效率
