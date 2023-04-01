@@ -1,5 +1,5 @@
 class AboutGui {
-    static version := "0.2.0"
+    static version := "0.2.1"
     ; static gui:=unset
 
     static init() {
