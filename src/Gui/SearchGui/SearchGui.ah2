@@ -114,14 +114,11 @@ class SearchGui {
                     StartupMode.showGui()
                 }
             } else {
-                StartupMode.showGui(GetSelectedText())
+                IntelligentMode.showGui(GetSelectedText())
                 KeyWait("CapsLock")    ;等待松开
-                SetCapsLockState(!GetKeyState("CapsLock", "T"))    ; 长按会修改1次状态，此处修改回原来的
-                ; 搜索获取选中内容
             }
         }
 
-        ; 以启动模式激活
         Hotkey("~CapsLock", capsLockHandler)
 
         ; 根据模式和热键内容执行
