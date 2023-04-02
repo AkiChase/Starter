@@ -180,6 +180,8 @@ class StartupMode {
                 ext := SubStr(item[1], -4)    ;对原文件类型进行判断
                 if (ext = '.lnk' and FileExist(item[1])) {    ;快捷方式则转为其指向文件
                     FileGetShortcut(item[1], &target,,,,&outIcon)
+                    if (!outIcon)
+                        outIcon:=target
                     item[2] := outIcon
                     ext := SubStr(target, -4)
                 }
