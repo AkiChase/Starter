@@ -7,7 +7,7 @@
  * @Description: 关于界面显示版本信息、项目主页、检查更新
  */
 class AboutGui {
-    static version := "0.2.1"
+    static version := "0.2.2"
     ; static gui:=unset
 
     static init() {
