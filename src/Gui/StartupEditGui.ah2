@@ -251,7 +251,7 @@ class StartupEditGui {
         if (key == "filePath")
             res := FileSelect("35", oldPath, "请选择文件")
         else if (key == "icoPath")
-            res := FileSelect("3", oldPath, "请选择图标路径")
+            res := FileSelect("35", oldPath, "请选择图标路径")
         else
             return
 
