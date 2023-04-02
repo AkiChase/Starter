@@ -3,7 +3,7 @@
  * @Version: 0.0.2
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-01
+ * @LastEditTime: 2023-04-02
  * @Description: 菜单栏
  */
 
@@ -101,11 +101,11 @@ class TrayMenu {
             fList.Push(GlobalData.pluginDir)
 
         if (!fList.Length) {
-            MsgBox("至少选择一项内容", "提示", 0x2040)
+            WiseGuiHelper.tooltip("提示", "至少选择一项内容", 1500)
             return
         }
         if (!StrLen(path)) {
-            MsgBox("请选择保存目录", "提示", 0x2040)
+            WiseGuiHelper.tooltip("提示", "请选择保存目录", 1500)
             return
         }
 
@@ -116,7 +116,7 @@ class TrayMenu {
             _files .= v "`n"
         this.zipper.Add(newPath, _files, "-tzip -r -mx5 -mmt=2")
         g.Destroy()
-        MsgBox("用户数据已导出: " newPath, "提示", 0x2040)
+        WiseGuiHelper.tooltip("提示", "用户数据已导出: " newPath, 2500)
     }
 
     ; 导入用户数据
@@ -124,11 +124,11 @@ class TrayMenu {
         if (!this.HasOwnProp("7z"))
             this.zipper := SevenZip()
         if !(options[1] || options[2]) {
-            MsgBox("至少选择一项内容", "提示", 0x2040)
+            WiseGuiHelper.tooltip("提示", "至少选择一项内容", 1500)
             return
         }
         if (!StrLen(path)) {
-            MsgBox("请选择保存目录", "提示", 0x2040)
+            WiseGuiHelper.tooltip("提示", "请选择保存目录", 1500)
             return
         }
 
@@ -145,10 +145,13 @@ class TrayMenu {
                 DirCopy(dir, GlobalData.pluginDir, true), res .= "插件导入成功`n"
         }
         if (StrLen(res)) {
-            GlobalData.onExitHandler := (*) => MsgBox(res "`n即将重启", "提示", 0x2040) ;修改退出保存为弹窗提示
+            GlobalData.onExitHandler := (*) => 0
+            WiseGuiHelper.tooltip("提示", res "1s后软件重启")
+            Sleep(1000)
             Reload()
+            ;清除退出保存重启
         } else {
-            MsgBox("导入失败", "提示", 0x2040)
+            WiseGuiHelper.tooltip("提示", "导入失败")
         }
     }
 

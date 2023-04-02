@@ -270,7 +270,7 @@ class StartupEditGui {
                 this.itemEdit(Min(this.curItem.index, GlobalData.startupData.Length))
             else {
                 this.hideGui()
-                MsgBox("启动列表内无可编辑项，请添加文件", "提示", 0x2040)
+                WiseGuiHelper.tooltip("提示", "启动列表内无可编辑项，请添加文件", 2500)
             }
         }
     }
@@ -279,7 +279,7 @@ class StartupEditGui {
     static saveCurItem() {
         for name in ["name", "filePath", "icoPath"] {
             if (!StrLen(this.curItem[name])) {
-                MsgBox("请完整输入参数", "提示", 0x2040)
+                WiseGuiHelper.tooltip("提示", "请完整输入参数", 1500)
                 return
             }
         }
@@ -341,7 +341,7 @@ class StartupEditGui {
 
             ; 提示文件路径不存在
             if (!FileExist(this._curItem[1])) {
-                MsgBox("文件路径不存在，当前启动项无效", "提示", 0x2040)
+                WiseGuiHelper.tooltip("提示", "文件路径不存在，当前启动项无效", 2500)
             }
         }
     }

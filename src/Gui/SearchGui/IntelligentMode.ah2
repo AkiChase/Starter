@@ -117,8 +117,6 @@ class IntelligentMode {
             item := GlobalData.intelligentSearchResult[rowNum]
             if (handler.Has(item["group"]))
                 handler[item["group"]](this, item)
-            else
-                MsgBox("非法项目", "提示", 0x2040)
 
             this.hideGui()
         }

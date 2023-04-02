@@ -3,7 +3,7 @@
  * @Version: 0.0.1
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-03-30
+ * @LastEditTime: 2023-04-02
  * @Description: 插件界面
  */
 
@@ -84,8 +84,6 @@ class PluginGui {
             return
         }
 
-        ; 启动Gdip用于加载图标
-        Gdip.Startup()
         s := "===Starter Plugin Info==>", e := "<==Starter Plugin Info===", len := StrLen(s)
         pluginCopy := GlobalData.config["plugin"].Clone()
 
@@ -117,9 +115,9 @@ class PluginGui {
             ; 加载图标至图像列表
             base64 := info["icon"]
             if (base64) {
-                hBitmap := Gdip.CreateHBITMAPFromBitmap(Gdip.BitmapFromBase64(&base64))
-                info["icon"] := IL_Add(this.IL, "HBITMAP:*" hBitmap)
-                info["iconHBitmap"] := hBitmap
+                hIcon := LoadIconFromBase64(base64, 32, 32)
+                info["icon"] := IL_Add(this.IL, "HICON:*" hIcon)
+                info["iconHIcon"] := hIcon
             } else
                 info["icon"] := 0
 
@@ -139,7 +137,6 @@ class PluginGui {
         this.LV.ModifyCol(2, "AutoHdr Center")
 
         this.LV.Opt("Redraw")
-        Gdip.Shutdown() ; 关闭Gdip
 
         this.gui.Title := "插件界面"
     }

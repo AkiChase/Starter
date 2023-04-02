@@ -1,3 +1,4 @@
 .vscode/
 resource/data/
 Starter.lnk
+src/Plugin/*.txt
