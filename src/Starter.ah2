@@ -3,7 +3,7 @@
  * @Version: 0.2.0
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-01
+ * @LastEditTime: 2023-04-02
  * @Description: 介绍Starter 是一款AHK编写的快速启动工具，旨在方便快捷地启动文件、文件夹，提高电脑的使用效率。
  */
 #NoTrayIcon ; 先隐藏图标
@@ -16,12 +16,12 @@ FileEncoding("UTF-8-RAW")
 
 #Include .\Utils\GlobalData.ah2
 GlobalData.init()
-TraySetIcon(GlobalData.imgDir "\Starter.png", , true) ; 设置图标
+TraySetIcon(GlobalData.imgDir "\Starter.ico", , true) ; 设置图标
 
 #Include .\Utils\Class_Loader.ah2
-#Include .\Utils\Gdip.ah2
+#Include .\Utils\LoadIconFromBase64.ah2
 #Include .\Gui\PluginGui.ah2
-PluginGui.init() ;同时重启加载插件
+PluginGui.init() ;同时重启以加载插件
 
 #Include .\Utils\ChineseFirstChar.ah2
 #Include .\Utils\MapArrClone.ah2
@@ -32,7 +32,12 @@ PluginGui.init() ;同时重启加载插件
 #Include .\Utils\QuickSort.ah2
 #Include .\Utils\DataHelper.ah2
 #Include .\Utils\Start.ah2
+#Include .\Utils\WiseGuiHelper.ah2
 #Include .\Utils\7Zip\SevenZip.ahk
+
+WiseGuiHelper.setTooltipOpt(, , "s14 Bold, 雅痞-简", "s12, 雅痞-简", 225
+    , "0x805D6B,0xFFFFFF,0xF5F5DC,*" . LoadPicture(GlobalData.imgDir "\Starter.ico", , &ImageType) ;加*使用副本
+    , , , "4,1,1,3", true, , "RollWest@250", "RollEast@250")
 
 #Include .\Gui\BootGui.ah2
 BootGui.init()
