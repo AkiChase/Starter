@@ -1,3 +1,11 @@
+/**
+ * @Name: 关于界面
+ * @Version: 0.0.3
+ * @Author: ruchuby
+ * @LastEditors: ruchuby
+ * @LastEditTime: 2023-04-02
+ * @Description: 关于界面显示版本信息、项目主页、检查更新
+ */
 class AboutGui {
     static version := "0.2.1"
     ; static gui:=unset
@@ -41,15 +49,16 @@ class AboutGui {
     static checkUpdates(silent := false) {
         this.gui.Title := "正在检查更新..."
         try {
-            res := WinHttp().Download("https://gitee.com/api/v5/repos/ruchuby/Starter/tags")
+            res := WinHttp().Download("https://gitee.com/api/v5/repos/ruchuby/Starter/tags?access_token=14eff4e12ee77cfd7ea5410727cb1526")
             res_json := Jxon_Load(&res)
             latest := SubStr(res_json[1]["name"], 2)
-
-            if (this.versionCompare(latest, this.version) > 0)
-                MsgBox("检测到新版本: " latest ", 请自行前往项目主页下载`n右键右下角托盘图标导出用户数据后可以导入新版本中", "提示", 0x2040)
-            else if (!silent)
-                MsgBox("无需更新，最新版本: " latest "", "提示", 0x2040)
-        }
+            if (this.versionCompare(latest, this.version) > 0) {
+                WiseGuiHelper.tooltip("检测到新版本: " latest
+                    , "请自行前往项目主页下载, 右键右下角托盘图标导出用户数据后可以导入新版本中")
+            } else if (!silent)
+                WiseGuiHelper.tooltip("更新提示", "无需更新，已更新至最新版本: " latest)
+        } catch
+            WiseGuiHelper.tooltip("错误", "检查更新失败")
         this.gui.Title := "关于界面"
     }
 }
