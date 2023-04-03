@@ -3,7 +3,7 @@
  * @Version: 0.0.1
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-02
+ * @LastEditTime: 2023-04-03
  * @Description: 插件界面
  */
 
@@ -114,6 +114,7 @@ class PluginGui {
 
             ; 加载图标至图像列表
             base64 := info["icon"]
+            info["iconBase64"] := base64
             if (base64) {
                 hIcon := LoadIconFromBase64(base64, 32, 32)
                 info["icon"] := IL_Add(this.IL, "HICON:*" hIcon)
