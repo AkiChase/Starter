@@ -4,11 +4,7 @@ class SearchGui {
     ; static thumbList := unset
     ; static thumb := unset
 
-    /*
-    TODO autoHide后10s内的showGui都仅仅显示GUI，不做任何修改
-        实现：autoHide生效的同时记录A_now,之后的showGui对比
-    TODO 设置界面 可设置是否autohide, aotohide后保留时间
-    */
+    static hideTime := 0
 
     ;#region 设置搜索框占位符
     static placeholder {
@@ -107,6 +103,8 @@ class SearchGui {
         PluginMode.init()
 
         this.hotkeyInit()
+
+        this.hideTime := DateAdd(A_Now, -10, "m") ; 保证初始hideTime足够早
     }
 
     ; 拖拽添加
@@ -167,12 +165,30 @@ class SearchGui {
         HotIf()
     }
 
+    ; 隐藏时间是否在时限
+    static hideTimeDiff() {
+        return DateDiff(A_Now, SearchGui.hideTime, "s") < 15
+    }
+
+    static recoverGui() {
+        if (this.mode == 0) {
+            StartupMode.autoHideFlag := 1
+        } else if (this.mode == 1) {
+            IntelligentMode.autoHideFlag := 1
+        } else {
+            PluginMode.autoHideFlag := 1
+        }
+        this.gui.show()
+    }
+
     ; 根据模式隐藏主界面
     static hideGui() {
-        if (this.mode) {
+        if (this.mode == 0) {
+            StartupMode.hideGui()
+        } else if (this.mode == 1) {
             IntelligentMode.hideGui()
         } else {
-            StartupMode.hideGui()
+            PluginMode.hideGui()
         }
     }
 }

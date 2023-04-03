@@ -31,7 +31,7 @@ class IntelligentMode {
         set {
             _autoHideFunc() {
                 if (!WinActive(SearchGui.gui))
-                    IntelligentMode.hideGui()
+                    IntelligentMode.hideGui(), SearchGui.hideTime := A_Now
             }
             SetTimer(_autoHideFunc, value ? 1000 : 0)
         }
@@ -170,6 +170,11 @@ class IntelligentMode {
 
     ; 以智能模式显示gui
     static showGui(searchText := "") {
+        if (SearchGui.hideTimeDiff()) {
+            SearchGui.recoverGui()
+            return
+        }
+
         SearchGui.mode := 1
         SearchGui.edit.Value := SearchGui.searchText := searchText
         SearchGui.gui.Show()

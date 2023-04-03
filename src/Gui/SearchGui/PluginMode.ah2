@@ -53,7 +53,7 @@ class PluginMode {
         set {
             _autoHideFunc() {
                 if (!WinActive(SearchGui.gui))
-                    PluginMode.hideGui()
+                    PluginMode.hideGui(), SearchGui.hideTime := A_Now
             }
             SetTimer(_autoHideFunc, value ? 1000 : 0)
         }
@@ -72,7 +72,7 @@ class PluginMode {
 
         ; 插件模式热键处理函数
         this.hotkeyHandlerMap["+Esc"] := () => StrLen(SearchGui.searchText) ?
-            SearchGui.searchText := SearchGui.edit.Value := "" : this.hideGui()
+            SearchGui.searchText := SearchGui.edit.Value := "" : SearchGui.mode := this.oldMode ;切回原来的模式
 
         this.hotkeyHandlerMap["~Left Up"] := () => (A_ThisHotkey == A_PriorHotkey && A_TimeSincePriorHotkey < 250) ? this.pluginRun(, true) : 0
 
@@ -102,6 +102,8 @@ class PluginMode {
 
 
     static showPluginMode(pluginSearchData, searchHandler, runHandler, doubleLeftHandler?, loadImgsHandler?, menuInitHandler?, searchText := "", placeholder := "") {
+        this.oldMode := SearchGui.mode
+
         SearchGui.mode := -1
 
         this.pluginSearchData := pluginSearchData

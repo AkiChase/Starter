@@ -32,7 +32,7 @@ class StartupMode {
         set {
             _autoHideFunc() {
                 if (!WinActive(SearchGui.gui))
-                    StartupMode.hideGui()
+                    StartupMode.hideGui(), SearchGui.hideTime := A_Now
             }
             SetTimer(_autoHideFunc, value ? 1000 : 0)
         }
@@ -104,6 +104,10 @@ class StartupMode {
 
     ; 以启动模式显示搜索界面
     static showGui(searchText := "") {
+        if (SearchGui.hideTimeDiff()) {
+            SearchGui.recoverGui()
+            return
+        }
         SearchGui.mode := 0
         SearchGui.edit.Value := SearchGui.searchText := searchText
         SearchGui.gui.Show()
