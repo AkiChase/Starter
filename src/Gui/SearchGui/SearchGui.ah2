@@ -2,6 +2,13 @@ class SearchGui {
     ; static gui := unset
     ; static edit := unset
     ; static thumbList := unset
+    ; static thumb := unset
+
+    /*
+    TODO autoHide后10s内的showGui都仅仅显示GUI，不做任何修改
+        实现：autoHide生效的同时记录A_now,之后的showGui对比
+    TODO 设置界面 可设置是否autohide, aotohide后保留时间
+    */
 
     ;#region 设置搜索框占位符
     static placeholder {
@@ -9,35 +16,40 @@ class SearchGui {
     }
     ;#endregion
 
-    ;#region 设置搜索模式 0: 启动模式, 1: 智能模式
-    static _mode := 0
+    ;#region 设置搜索模式 0: 启动模式, 1: 智能模式 ,-1: 插件模式
+    static _mode := -2
     static mode {
         get => this._mode
         set {
             if (this._mode == value)    ; 不需要切换时直接返回
                 return
             this._mode := value
-            if (this._mode) {    ; IntelligentMode
-                this.thumbList[1].Visible := false
-                this.thumbList[2].Visible := true
+            if (this._mode == 1) {    ; IntelligentMode
+                this.thumb.Value := "hBitmap:*" this.thumbList[2]
                 this.placeholder := "Hi, type something 😃"
-                StartupMode.autoHideFlag := false    ; 关闭另一模式下的自动隐藏
-                StartupMode.listView.Visible := false    ; 隐藏另一模式的列表
+                for c in [StartupMode, PluginMode]
+                    c.autoHideFlag := c.listView.Visible := false
                 IntelligentMode.listView.Visible := true
 
                 this.searchText := this.searchText    ;不清空内容直接搜索
                 IntelligentMode.autoHideFlag := true    ; 启动本模式自动隐藏
 
-            } else {    ; StartupMode
-                this.thumbList[1].Visible := true
-                this.thumbList[2].Visible := false
+            } else if (this._mode == 0) {    ; StartupMode
+                this.thumb.Value := "hBitmap:*" this.thumbList[1]
                 this.placeholder := "Hi, Starter"
-                IntelligentMode.autoHideFlag := false    ; 关闭另一模式下的自动隐藏
-                IntelligentMode.listView.Visible := false    ; 隐藏另一模式的列表
+                for c in [IntelligentMode, PluginMode]
+                    c.autoHideFlag := c.listView.Visible := false
                 StartupMode.listView.Visible := true
 
                 this.searchText := this.searchText    ;不清空内容直接搜索
                 StartupMode.autoHideFlag := true    ; 启动本模式自动隐藏
+            } else { ; PluginMode
+                this.thumb.Value := "hBitmap:*" PluginMode.thumb
+                for c in [IntelligentMode, StartupMode]
+                    c.autoHideFlag := c.listView.Visible := false
+                PluginMode.listView.Visible := true
+                PluginMode.autoHideFlag := true    ; 启动本模式自动隐藏
+                ; searchText的调整留给切换程序
             }
         }
     }
@@ -49,10 +61,12 @@ class SearchGui {
         get => this._searchText
         set {
             this._searchText := Value
-            if (this.mode) {
+            if (this.mode == 1) {
                 IntelligentMode.search()
-            } else {
+            } else if (this.mode == 0) {
                 StartupMode.search()
+            } else {
+                PluginMode.searchHandler(Value)
             }
         }
     }
@@ -78,15 +92,19 @@ class SearchGui {
         this.edit.OnEvent("Change", search)    ; 文本变动事件
         this.gui.OnEvent("DropFiles", (g, c, fileList, *) => this.dropAddItem(fileList))    ; 文件拖入事件
 
-        this.thumbList := [this.gui.AddPicture("x460 y10 w30 h30", GlobalData.imgDir "\Starter.png")
-            , this.gui.AddPicture("x460 y10 w30 h30 Hidden", GlobalData.imgDir "\AI.png")]
+
+        this.thumbList := [LoadPicture(GlobalData.imgDir "\Starter.png", "w64"), LoadPicture(GlobalData.imgDir "\AI.png", "w64")]
+        this.thumb := this.gui.AddPicture("x460 y10 w30 h30", "hBitmap:*" this.thumbList[1])
 
         ; 回车触发
-        this.gui.AddButton("Default Hidden").OnEvent("Click", (*) => this.mode ? IntelligentMode.intelligentRun() : StartupMode.startSelectedFile())
+        this.gui.AddButton("Default Hidden").OnEvent("Click", (*) => this.mode == 0 ?
+            StartupMode.startupRun() : this.mode == 1 ?
+                IntelligentMode.intelligentRun() : PluginMode.pluginRun())
 
         this.gui.Show("Hide y" Round(A_ScreenHeight / 5))
         StartupMode.init()
         IntelligentMode.init()
+        PluginMode.init()
 
         this.hotkeyInit()
     }
@@ -123,19 +141,22 @@ class SearchGui {
 
         ; 根据模式和热键内容执行
         hotkeyHandler(key) {
-            if (this.mode) {
+            if (this.mode == 1) {
                 if (IntelligentMode.hotkeyHandlerMap.Has(key))
                     IntelligentMode.hotkeyHandlerMap[key]()
-            } else {
+            } else if (this.mode == 0) {
                 if (StartupMode.hotkeyHandlerMap.Has(key))
                     StartupMode.hotkeyHandlerMap[key]()
+            } else {
+                if (PluginMode.hotkeyHandlerMap.Has(key))
+                    PluginMode.hotkeyHandlerMap[key]()
             }
         }
 
         ;===仅当窗口激活时有效===
         HotIfWinActive("ahk_id " this.gui.Hwnd)
 
-        Hotkey("Tab Up", key => this.mode := !this.mode)
+        Hotkey("Tab Up", key => this.mode >= 0 ? this.mode := !this.mode : 0) ;0,1模式下互相切换,-1模式下忽略
         ; 清空、隐藏
         Hotkey("+Esc", hotkeyHandler)
         ; 文件夹中显示

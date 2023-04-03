@@ -5,15 +5,20 @@ class IntelligentMode {
     static imgPathToImgListIndex := Map()
     static hotkeyHandlerMap := Map()
 
+    static pluginData := []
+    static pluginSearchResult := []
+
+    static startupFocusedRow => this.focusedRow - this.pluginSearchResult.Length
+
     ;#region 聚焦行
     static focusedRow
     {
         get => this.listView.GetNext()
         set {
-            if (value > GlobalData.intelligentSearchResult.Length)
+            if (value > GlobalData.intelligentSearchResult.Length + this.pluginSearchResult.Length)
                 value := 1
             else if (value == 0)
-                value := GlobalData.startupSearchResult.Length
+                value := GlobalData.startupSearchResult.Length + this.pluginSearchResult.Length
             this.listView.Modify(value, "Select Focus Vis")
         }
     }
@@ -109,35 +114,36 @@ class IntelligentMode {
     }
 
     ; 根据项目执行对应操作
-    static intelligentRun(rowNum := -1) {
+    static intelligentRun(rowNum?) {
         static handler := Map("run-with", this.runWithHandler, "search", this.searchHandler)
-        if (rowNum == -1)    ;说明需要获取焦点所在行
-            rowNum := this.listView.GetNext(, "F")
-        if (rowNum) {
+        if (!IsSet(rowNum))
+            rowNum := this.focusedRow
+        if (rowNum > this.pluginSearchResult.Length) { ; 执行项
             item := GlobalData.intelligentSearchResult[rowNum]
             if (handler.Has(item["group"]))
                 handler[item["group"]](this, item)
-
             this.hideGui()
+        } else if (rowNum > 0) { ; 插件项
+            plugin := this.pluginSearchResult[rowNum] ;当前搜索结果对应的正则
+            content := RegExReplace(SearchGui.searchText, plugin.curReg[1], plugin.curReg[2], , 1)
+            plugin.runHandler(content) ;传递正则替换后的结果
         }
     }
 
     ; 重新加载搜索列表图标资源
     static loadImgs(reloadIL := true) {
-        SearchGui.placeholder := "正在加载智能列表..."
+        SearchGui.placeholder := "正在加载智能模式搜索列表..."
         SearchGui.edit.Value := ""    ;清空搜索框
         this.listView.Delete()    ;清空智能列表
         if (reloadIL) {    ; reloadIL为false时是为了仅添加新资源
             this.imgPathToImgListIndex := Map()    ;重置图片路径与序号映射
-            oldImgListID := 0
-            if (this.imgListID)
-                oldImgListID := this.imgListID    ;标记需要删除旧图片列表
+            oldImgListID := this.imgListID ? this.imgListID : 0 ;标记需要删除旧图片列表
             this.imgListID := DllCall("ImageList_Create", "Int", 32, "Int", 32, "Int", 32, "Int", 1, "Int", 1)    ;创建新图片列表
             this.listView.SetImageList(this.imgListID, 1)
 
-            ; 载入图片错误和根目录的图标
-            this.imgPathToImgListIndex[GlobalData.imgDir "\folder.png"] := IL_Add(this.imgListID, GlobalData.imgDir "\folder.png")
-            this.imgPathToImgListIndex[GlobalData.imgDir "\noImg.png"] := IL_Add(this.imgListID, GlobalData.imgDir "\noImg.png")
+            ; 载入图片错误、根目录、插件的图标
+            for name in ["\folder.png", "\noImg.png", "\plugin.ico"]
+                this.imgPathToImgListIndex[GlobalData.imgDir name] := IL_Add(this.imgListID, GlobalData.imgDir name)
         }
 
         ; 为每个项目按需载入图标
@@ -153,9 +159,28 @@ class IntelligentMode {
             }
         }
 
+        ; 重载插件图标
+        this.pluginLoadImgs()
+
         if (reloadIL and oldImgListID)    ; 有需要销毁的图片列表
             DllCall("ImageList_Destroy", "Uint", oldImgListID)
-        SearchGui.placeholder := "Hi, Starter"
+
+        SearchGui.placeholder := "Hi, type something 😃"
+    }
+
+    ; 以智能模式显示gui
+    static showGui(searchText := "") {
+        SearchGui.mode := 1
+        SearchGui.edit.Value := SearchGui.searchText := searchText
+        SearchGui.gui.Show()
+        SearchGui.edit.Focus()
+        IME_SET(0)
+    }
+
+    ; 智能模式下隐藏主界面
+    static hideGui() {
+        this.autoHideFlag := 0
+        SearchGui.gui.hide()
     }
 
     ; 搜索即重置列表显示匹配的内容
@@ -164,7 +189,7 @@ class IntelligentMode {
             if (itemA["match"]["mode"] != itemB["match"]["mode"]) {
                 ; 优先级大的在前
                 return GlobalData.intelligentMatchPriority[itemB["match"]["mode"]] - GlobalData.intelligentMatchPriority[itemA["match"]["mode"]]
-            } else if (itemA["match"]["mode"]=="reg") {
+            } else if (itemA["match"]["mode"] == "reg") {
                 ; 次序小的在前
                 return GlobalData.intelligentRegMap[itemA].index - GlobalData.intelligentRegMap[itemB].index
             }
@@ -202,6 +227,9 @@ class IntelligentMode {
         ;显示新列表
         this.listView.Opt("-Redraw")    ;禁用重绘
         this.listView.Delete()
+        ;插件搜索并添加插件项到列表
+        this.pluginSearchAndAdd()
+        ; 添加执行项到列表
         for item in GlobalData.intelligentSearchResult {
             if (this.imgPathToImgListIndex.Has(item["thumb"]))
                 this.listView.Add("Icon" this.imgPathToImgListIndex[item["thumb"]], "  " item["title"])
@@ -210,7 +238,8 @@ class IntelligentMode {
         }
 
         ;重置listView和gui高度
-        LVHeight := Round((GlobalData.intelligentSearchResult.Length >= 8 ? 8 : GlobalData.intelligentSearchResult.Length) * 26.4)    ; 此处不需要DPI缩放计算
+        len := GlobalData.intelligentSearchResult.Length + this.pluginSearchResult.Length
+        LVHeight := Round((len >= 8 ? 8 : len) * 26.4)    ; 此处不需要DPI缩放计算
         this.listView.Move(, , , LVHeight)
         this.listView.ModifyCol(1, "480")
         this.listView.Modify(1, "Select Focus Vis")    ;聚焦第一行
@@ -218,19 +247,42 @@ class IntelligentMode {
         WinMove(, , 500 * (A_ScreenDPI / 96), Round((LVHeight + 55) * (A_ScreenDPI / 96)), SearchGui.gui)
     }
 
-    ; 以智能模式显示gui
-    static showGui(searchText := "") {
-        SearchGui.mode := 1
-        SearchGui.edit.Value := SearchGui.searchText := searchText
-        SearchGui.gui.Show()
-        SearchGui.edit.Focus()
-        IME_SET(0)
-        this.autoHideFlag := 1
+    ; 载入插件图片
+    static pluginLoadImgs() {
+        ; 为插件项目载入图标
+        for i, plugin in this.pluginData {
+            hIcon := plugin.HasOwnProp("hIcon") ? plugin.hIcon : PluginHelper.getPluginHIcon(plugin.name)
+            plugin.index := i ;为每个插件项编号
+            if (hIcon && index := IL_Add(this.imgListID, "HICON:*" hIcon))
+                this.imgPathToImgListIndex[Format("Plugin:{}:{}", plugin.name, plugin.index)] := index
+            ; 否则在search时使用默认图片
+        }
     }
 
-    ; 智能模式下隐藏主界面
-    static hideGui() {
-        this.autoHideFlag := 0
-        SearchGui.gui.hide()
+    ; 插件搜索并添加插件项到列表
+    static pluginSearchAndAdd() {
+        keyword := SearchGui.searchText
+        if (StrLen(keyword)) {
+            this.pluginSearchResult := []
+            ; 匹配所有符合项
+            for item in this.pluginData {
+                for index, reg in item.reg
+                    if RegExMatch(keyword, reg[1]) {
+                        item.curReg := reg
+                        this.pluginSearchResult.Push(item)
+                        break
+                    }
+            }
+        } else    ; 搜索词为空什么都不显示
+            GlobalData.intelligentSearchResult := []
+
+        ; 添加到搜索列表
+        for item in this.pluginSearchResult {
+            path := Format("Plugin:{}:{}", item.name, item.index)
+            if (!this.imgPathToImgListIndex.Has(path))    ; 图标载入失败则使用默认图标
+                this.listView.Add("Icon" this.imgPathToImgListIndex[GlobalData.imgDir "\plugin.ico"], "  " item.title)
+            else
+                this.listView.Add("Icon" this.imgPathToImgListIndex[path], "  " item.title)
+        }
     }
 }
