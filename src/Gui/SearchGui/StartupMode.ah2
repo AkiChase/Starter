@@ -6,15 +6,20 @@ class StartupMode {
     static imgPathToImgListIndex := Map()
     static hotkeyHandlerMap := Map()
 
+    static pluginData := []
+    static pluginSearchResult := []
+
+    static startupFocusedRow => this.focusedRow - this.pluginSearchResult.Length
+
     ;#region 聚焦行
     static focusedRow
     {
         get => this.listView.GetNext()
         set {
-            if (value > GlobalData.startupSearchResult.Length)
+            if (value > GlobalData.startupSearchResult.Length + this.pluginSearchResult.Length)
                 value := 1
             else if (value == 0)
-                value := GlobalData.startupSearchResult.Length
+                value := GlobalData.startupSearchResult.Length + this.pluginSearchResult.Length
             this.listView.Modify(value, "Select Focus Vis")
         }
     }
@@ -27,7 +32,7 @@ class StartupMode {
         set {
             _autoHideFunc() {
                 if (!WinActive(SearchGui.gui))
-                    StartupMode.hideGui()
+                    StartupMode.hideGui(), SearchGui.hideTime := A_Now
             }
             SetTimer(_autoHideFunc, value ? 1000 : 0)
         }
@@ -43,13 +48,23 @@ class StartupMode {
         this.search()
 
         ; 鼠标双击运行
-        this.listView.OnEvent("DoubleClick", (_lv, rowNum) => this.startSelectedFile(rowNum))
+        this.listView.OnEvent("DoubleClick", (_lv, rowNum) => rowNum ? this.startupRun(rowNum) : 0)
         ; 菜单栏
-        this.listView.OnEvent("ContextMenu", (_lv, rowNum, *) => rowNum ? this.menu.Show() : 0)
+        this.listView.OnEvent("ContextMenu", (_lv, rowNum, *) => !rowNum ?
+            0 : rowNum > this.pluginSearchResult.Length ?
+                this.menu.Show() : this.pluginSearchResult[rowNum].HasOwnProp("menu") ?
+                    this.pluginSearchResult[rowNum].menu.Show() : 0
+            )
 
         ; 启动模式热键处理函数
-        this.hotkeyHandlerMap["+Esc"] := () => StrLen(SearchGui.searchText) ? SearchGui.searchText := SearchGui.edit.Value := "" : this.hideGui()
-        this.hotkeyHandlerMap["~Left Up"] := () => (A_ThisHotkey = A_PriorHotkey and A_TimeSincePriorHotkey < 250) ? this.openSelectedFileInFolder() : 0
+        this.hotkeyHandlerMap["~Esc"] := () => StrLen(SearchGui.searchText) ?
+            SearchGui.searchText := SearchGui.edit.Value := "" : this.hideGui()
+
+        this.hotkeyHandlerMap["~Left Up"] := () => (A_ThisHotkey != A_PriorHotkey || A_TimeSincePriorHotkey > 250) ?
+            0 : this.focusedRow > this.pluginSearchResult.Length ?
+                this.openSelectedFileInFolder() : !this.pluginSearchResult[this.focusedRow].HasOwnProp("doubleLeftHandler") ?
+                    0 : this.pluginSearchResult[this.focusedRow].doubleLeftHandler(SearchGui.searchText)
+
         this.hotkeyHandlerMap["Down"] := () => this.focusedRow++
         this.hotkeyHandlerMap["Up"] := () => this.focusedRow--
 
@@ -89,12 +104,15 @@ class StartupMode {
 
     ; 以启动模式显示搜索界面
     static showGui(searchText := "") {
+        if (SearchGui.hideTimeDiff()) {
+            SearchGui.recoverGui()
+            return
+        }
         SearchGui.mode := 0
         SearchGui.edit.Value := SearchGui.searchText := searchText
         SearchGui.gui.Show()
         SearchGui.edit.Focus()
         IME_SET(0)
-        this.autoHideFlag := 1
     }
 
     ; 启动模式下隐藏搜索
@@ -124,12 +142,23 @@ class StartupMode {
         Critical('Off')
     }
 
+    ; 回车和双击触发
+    static startupRun(rowNum?) {
+        if (!IsSet(rowNum))
+            rowNum := this.focusedRow
+        if (rowNum > this.pluginSearchResult.Length) { ; 启动项
+            rowNum -= this.pluginSearchResult.Length
+            this.startSelectedFile(rowNum)
+        } else if (rowNum > 0) { ; 插件项
+            this.pluginSearchResult[rowNum].startHandler(SearchGui.searchText)
+        }
+    }
 
     ; 运行选中文件
-    static startSelectedFile(rowNum := -1) {
-        if (rowNum == -1)    ;说明需要获取焦点所在行
-            rowNum := this.listView.GetNext(, "F")
-        if (rowNum) {
+    static startSelectedFile(rowNum?) {
+        if (!IsSet(rowNum))
+            rowNum := this.startupFocusedRow
+        if (rowNum > 0) {
             if (GlobalData.startupSearchResult[rowNum][3] < 999)
                 GlobalData.startupSearchResult[rowNum][3]++
 
@@ -138,10 +167,10 @@ class StartupMode {
     }
 
     ; 在文件夹中显示选中文件
-    static openSelectedFileInFolder(rowNum := -1) {
-        if (rowNum == -1)    ;说明需要获取焦点所在行
-            rowNum := this.listView.GetNext(, "F")
-        if (rowNum) {
+    static openSelectedFileInFolder(rowNum?) {
+        if (!IsSet(rowNum))
+            rowNum := this.startupFocusedRow
+        if (rowNum > 0) {
             if (GlobalData.startupSearchResult[rowNum][3] < 999)
                 GlobalData.startupSearchResult[rowNum][3]++
 
@@ -153,15 +182,13 @@ class StartupMode {
 
     ; 重新加载搜索列表图标资源
     static loadImgs(reloadIL := true) {
-        SearchGui.placeholder := "正在加载搜索列表..."
+        SearchGui.placeholder := "正在加载启动模式搜索列表..."
         this.listView.Delete()    ;清空搜索列表
 
         if (reloadIL) {    ;完全重新加载，否则仅加载未载入的
-            general := ["error.png", "autohotkey.png", "img.png", "folder.png", "program.png", "txt.png"]
+            general := ["error.png", "autohotkey.png", "img.png", "folder.png", "program.png", "txt.png", "plugin.ico"]
             this.imgPathToImgListIndex := Map()    ;重置图片路径与序号映射
-            oldImgListID := 0
-            if (this.imgListID)
-                oldImgListID := this.imgListID    ;标记需要删除旧图片列表
+            oldImgListID := this.imgListID ? this.imgListID : 0 ;标记需要删除旧图片列表
             this.imgListID := DllCall("ImageList_Create", "Int", 32, "Int", 32, "Int", 32, "Int", 1, "Int", 1)    ;创建新图片列表
             this.listView.SetImageList(this.imgListID, 1)
             ; 载入通用图标
@@ -179,7 +206,9 @@ class StartupMode {
             } else if (!this.imgPathToImgListIndex.Has(item[2])) {    ;未载入则添加进字典中
                 ext := SubStr(item[1], -4)    ;对原文件类型进行判断
                 if (ext = '.lnk' and FileExist(item[1])) {    ;快捷方式则转为其指向文件
-                    FileGetShortcut(item[1], &target,,,,&outIcon)
+                    FileGetShortcut(item[1], &target, , , , &outIcon)
+                    if (!outIcon)
+                        outIcon := target
                     item[2] := outIcon
                     ext := SubStr(target, -4)
                 }
@@ -201,6 +230,10 @@ class StartupMode {
             }
             ; 否则图标已加载
         }
+
+        ; 重载插件图标
+        this.pluginLoadImgs()
+
         if (reloadIL and oldImgListID)
             DllCall("ImageList_Destroy", "Uint", oldImgListID)
 
@@ -232,6 +265,9 @@ class StartupMode {
         ;显示新列表
         this.listView.Opt("-Redraw")    ;禁用重绘
         this.listView.Delete()
+        ;插件搜索并添加插件项到列表
+        this.pluginSearchAndAdd()
+        ; 添加启动项到列表
         for item in GlobalData.startupSearchResult {
             if (!FileExist(item[1]))    ; 文件不存在则使用error图标
                 this.listView.Add("Icon" this.imgPathToImgListIndex[GlobalData.imgDir "\error.png"], "  " item[4])
@@ -239,13 +275,54 @@ class StartupMode {
                 this.listView.Add("Icon" this.imgPathToImgListIndex[item[2]], "  " item[4])
         }
         ;重置listView和gui高度
-        LVHeight := Round((GlobalData.startupSearchResult.Length >= 8 ? 8 : GlobalData.startupSearchResult.Length) * 26.4)    ; 此处不需要DPI缩放计算
+        len := GlobalData.startupSearchResult.Length + this.pluginSearchResult.Length
+        LVHeight := Round((len >= 8 ? 8 : len) * 26.4)    ; 此处不需要DPI缩放计算
         this.listView.Move(, , , LVHeight)
         this.listView.ModifyCol(1, "480")
         this.focusedRow := 1    ;聚焦第一行
-
         this.listView.Opt("Redraw")
-
         WinMove(, , 500 * (A_ScreenDPI / 96), Round((LVHeight + 55) * (A_ScreenDPI / 96)), SearchGui.gui)
+    }
+
+    ; 载入插件图片
+    static pluginLoadImgs() {
+        ; 为插件项目载入图标
+        for i, plugin in this.pluginData {
+            hIcon := plugin.HasOwnProp("hIcon") ? plugin.hIcon : PluginHelper.getPluginHIcon(plugin.name)
+            plugin.index := i ;为每个插件项编号
+            if (hIcon && index := IL_Add(this.imgListID, "HICON:*" hIcon))
+                this.imgPathToImgListIndex[Format("Plugin:{}:{}", plugin.name, plugin.index)] := index
+            ; 否则在search时使用默认图片
+        }
+    }
+
+    ; 插件搜索并添加插件项到列表
+    static pluginSearchAndAdd() {
+        keyword := SearchGui.searchText
+        if (StrLen(keyword)) {
+            this.pluginSearchResult := []
+            ;匹配（标题或任意关键词包含搜索内容时匹配）
+            for item in this.pluginData {
+                if (InStr(item.title, keyword)) {
+                    this.pluginSearchResult.Push(item)
+                    continue
+                }
+                for kw in item.keywords {
+                    if (InStr(kw, keyword)) {
+                        this.pluginSearchResult.Push(item)
+                        break
+                    }
+                }
+            }
+        } else    ;搜索词为空时显示所有
+            this.pluginSearchResult := this.pluginData
+
+        for item in this.pluginSearchResult {
+            path := Format("Plugin:{}:{}", item.name, item.index)
+            if (!this.imgPathToImgListIndex.Has(path))    ; 图标载入失败则使用默认图标
+                this.listView.Add("Icon" this.imgPathToImgListIndex[GlobalData.imgDir "\plugin.ico"], "  " item.title)
+            else
+                this.listView.Add("Icon" this.imgPathToImgListIndex[path], "  " item.title)
+        }
     }
 }

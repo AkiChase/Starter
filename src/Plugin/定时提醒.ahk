@@ -33,7 +33,7 @@ class Plugin_定时提醒 {
             this.menu.Uncheck("开启")
         } else {
             SetTimer(this.f, this.time * 60 * 1000) ;开启计时器
-            PluginHelper.tooltip("定时提醒已开启", "提醒间隔时间: " this.time "分钟", 2500)
+            PluginHelper.Utils.tip("定时提醒已开启", "提醒间隔时间: " this.time "分钟", 2500)
             this.menu.check("开启")
         }
         this.state := !this.state
@@ -87,7 +87,7 @@ class Plugin_定时提醒 {
         this.menu.Add("开启", (*) => this.toggleState())
         this.menu.Add("设置", (*) => this.setting())
         PluginHelper.pluginMenu.Add("定时提醒", this.menu)
-        this.f := (*) => PluginHelper.tooltip(Format("定时提醒: {}min", this.time), this.words)
+        this.f := (*) => PluginHelper.Utils.tip(Format("定时提醒: {}min", this.time), this.words)
         this.loadDataAndStart()
     }
 }

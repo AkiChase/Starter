@@ -3,7 +3,7 @@
  * @Version: 0.0.1
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-02
+ * @LastEditTime: 2023-04-03
  * @Description: WiseGui辅助类，便于对象化调用WiseGui
  */
 
@@ -15,123 +15,107 @@
 ;     , "zoom@1000", "RollSouth@1000"  ;roll slide效果较稳定
 ; )
 ; F2:: w1.close() ;关闭或者点击窗口进行关闭
-; WiseGuiHelper.setTooltipOpt(, , "s14 Bold, 雅痞-简", "s12, 雅痞-简", 225, , , , "4,1,1,3", true, , "RollWest@250")
-; WiseGuiHelper.tooltip("检测到新版本: 0.2.2", "请自行前往项目主页下载")
+; WiseGuiHelper.setOpt(, , "s14 Bold, 雅痞-简", "s12, 雅痞-简", 225, , , , "4,1,1,3", true, , "RollWest@250")
+; Tip.show("检测到新版本: 0.2.2", "请自行前往项目主页下载")
 
 
 class WiseGuiHelper {
-    static tooltipOpt := Map()
+    opt := Map()
 
     /**
-     * @description: 重置tooltip样式
+     * @param id 窗口id
      */
-    static resetTooltipOpt() {
-        this.tooltipOpt := Map()
+    __New(id) {
+        this.id := id
+        this.opt.CaseSensitive := "Off"
     }
 
     /**
-     * @description: 设置tooltip样式
-     */
-    static setTooltipOpt(
-        mainAlign?, subAlign?, fontMain?, fontSub?, textWidth?, theme?
-        , timer?, move?, margins?, shadow?, transparency?, show?, hide?
-    ) {
-        for k in ["mainAlign", "subAlign", "fontMain", "fontSub", "textWidth", "timer"
-            , "theme", "move", "margins", "shadow", "transparency", "show", "hide"] {
-            if (IsSet(%k%))
-                this.tooltipOpt[k] := %k%
-        }
-    }
-
-    /**
-     * @description: WiseGui版Tooltip
      * @param title 标题
      * @param content 内容
-     * @param time 计时消失时间(选填)
-     * @param theme 主题 Info,Warning,Success,Error
+     * @param time 计时消失时间(选填) 若指定则无视opt中theme相关内容
+     * @param theme 主题(选填) Info,Warning,Success,Error 若指定则无视opt中theme相关内容
      */
-    static tooltip(title, content, time?, theme?) {
-        opts := ["MainText: " title, "subText: " content]
-        for k, v in this.tooltipOpt
+    show(title, content, time?, theme?) {
+        opts := ["mainText: " title, "subText: " content]
+        for k, v in this.opt
             opts.Push(Format("{}:{}", k, v))
         if (IsSet(time))
             opts.Push("timer: " time)
         if (IsSet(theme))
             opts.Push("theme: " theme)
 
-        this.WiseGui("tooltip", opts*)
+        WiseGuiHelper.WiseGui(this.id, opts*)
     }
 
     /**
-     * @description: 生成WiseGui参数格式的文本内容、样式
-     * @param mainText 主文本(加粗)
+     * @description: 设置样式
      * @param mainAlign 主文本对齐 -1=Left, 0=Center, 1=Right
-     * @param subText 副文本
      * @param subAlign 副文本对齐 -1=Left, 0=Center, 1=Right
      * @param fontMain 主文本字体 options, fontName
      * @param fontSub 副文本字体 options, fontName
      * @param textWidth 主副文本宽度
-     */
-    static textHelper(mainText, mainAlign?, subText?, subAlign?, fontMain?, fontSub?, textWidth?) {
-        out := ["MainText: " mainText]
-        for name in ["mainAlign", "subText", "subAlign", "fontMain", "fontSub", "textWidth"] {
-            if (IsSet(%name%))
-                out.Push(Format("{}:{}", name, %name%))
-        }
-        return out
-    }
-
-    /**
-     * @param name 名称 需要带有唯一性
-     * @param textOrtextHelper 字符串或使用textHelper
      * @param theme 主题 Warning,Info,Success,Error(带有首字母即可)
      *              或者自定义主题: "TextColor, WindowColor, BorderColor, [HICON]" 
      *              HICON=0时取消icon部分，如"0xF0F0F0, 0x778899, 0x556677, 0"
-     * @param noClose false: 可点击或者timer计时关闭，true: 必须使用close方法关闭
      * @param timer 计时关闭 ms
      * @param move xAxis, yAxis, Monitor (默认右下角:1,1; 左上角:-1,-1,居中: , )
      * @param margins xMargin, yMargin, ySpacing, IconMargin
      * @param shadow 是否添加窗口阴影
      * @param transparency 窗口透明度 64 to 255
-     * @param show "type@duration"
+     * @param show 出现动画 "type@duration"
      * Valid duration: 25ms to 2500ms
      * Valid types: Fade,Zoom,SlideEast,SlideNorthEast,SlideNorth,
      *              SlideNorthWest,SlideWest,SlideSouthWest,SlideSouth,
      *              SlideSouthEast,RollEast,RollNorthEast,RollNorth,
      *              RollNorthWest,RollWest,RollSouth,RollSouthEast
-     * @param hide "type@duration" 同show
-     * @param opts Array 其他参数 ["key1:val1","key2:val2",...]
+     * @param hide 消失动画 "type@duration" 同show
      */
-    __New(name, textOrtextHelper, theme?, noClose?, timer?, move?, margins?, shadow?, transparency?, show?, hide?, opts?) {
-        this.name := name
-        this.update(textOrtextHelper, theme?, noClose?, timer?, move?, margins?, shadow?, transparency?, show?, hide?, opts?)
+    setOpt(mainAlign?, subAlign?, fontMain?, fontSub?, textWidth?, theme?, timer?, move?, margins?, shadow?, transparency?, show?, hide?) {
+        for k in ["mainAlign", "subAlign", "fontMain", "fontSub", "textWidth", "timer"
+            , "theme", "move", "margins", "shadow", "transparency", "show", "hide"] {
+            if (IsSet(%k%))
+                this.opt[k] := %k%
+        }
     }
 
+    /**
+     * @description: 重置样式
+     */
+    resetOpt() {
+        this.opt := Map()
+        this.opt.CaseSensitive := "Off"
+    }
+
+    /**
+     * @description: 删除指定样式
+     */
+    delOpt(key) {
+        if (this.opt.Has(key))
+            this.opt.Delete(key)
+    }
+
+    /**
+     * @description: 设置窗口是否不可普通关闭
+     */
+    setNoClose(flag := true) {
+        if (flag) {
+            this.opt["close"].Push(0)
+            this.noClose := 1
+        } else {
+            this.delOpt("close")
+            this.noClose := 0
+        }
+    }
+
+    /**
+     * @description: 关闭窗口(包括不可普通关闭的)
+     */
     close() {
         if (this.HasOwnProp("noClose") && this.noClose)
-            WiseGuiHelper.WiseGui(this.name, "Close: 1")
+            WiseGuiHelper.WiseGui(this.id, "Close: 1")
         else
-            WiseGuiHelper.WiseGui(this.name)
-    }
-
-    update(textOrtextHelper, theme?, noClose?, timer?, move?, margins?, shadow?, transparency?, show?, hide?, opts?) {
-        opt := Type(textOrtextHelper) == "Array" ? textOrtextHelper : ["MainText: " textOrtextHelper]
-
-        ; 关闭方式相关
-        if (IsSet(noClose) && noClose)
-            opt.Push("Close: 0"), this.noClose := 1
-        else if (IsSet(timer))
-            opt.Push("Timer: " timer)
-
-        for k in ["theme", "move", "margins", "shadow", "transparency", "show", "hide"] {
-            if (IsSet(%k%))
-                opt.Push(Format("{}:{}", k, %k%))
-        }
-
-        if (IsSet(opts))
-            opt.Push(opts*)
-
-        WiseGuiHelper.WiseGui(this.name, opt*)
+            WiseGuiHelper.WiseGui(this.id)
     }
 
     static WiseGui(Name, Options*) ;  v0.96a by SKAN for ah2 on D48F/D491 @ autohotkey.com/r?t=94044   -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  RM145

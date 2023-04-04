@@ -7,7 +7,7 @@
  * @Description: 关于界面显示版本信息、项目主页、检查更新
  */
 class AboutGui {
-    static version := "0.2.2"
+    static version := "0.3.0"
     ; static gui:=unset
 
     static init() {
@@ -53,12 +53,12 @@ class AboutGui {
             res_json := Jxon_Load(&res)
             latest := SubStr(res_json[1]["name"], 2)
             if (this.versionCompare(latest, this.version) > 0) {
-                WiseGuiHelper.tooltip("检测到新版本: " latest
+                Tip.show("检测到新版本: " latest
                     , "请自行前往项目主页下载, 右键右下角托盘图标导出用户数据后可以导入新版本中")
             } else if (!silent)
-                WiseGuiHelper.tooltip("更新提示", "无需更新，已更新至最新版本: " latest)
+                Tip.show("更新提示", "无需更新，已更新至最新版本: " latest)
         } catch
-            WiseGuiHelper.tooltip("错误", "检查更新失败")
+            Tip.show("错误", "检查更新失败")
         this.gui.Title := "关于界面"
     }
 }

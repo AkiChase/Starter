@@ -101,11 +101,11 @@ class TrayMenu {
             fList.Push(GlobalData.pluginDir)
 
         if (!fList.Length) {
-            WiseGuiHelper.tooltip("提示", "至少选择一项内容", 1500)
+            Tip.show("提示", "至少选择一项内容", 1500)
             return
         }
         if (!StrLen(path)) {
-            WiseGuiHelper.tooltip("提示", "请选择保存目录", 1500)
+            Tip.show("提示", "请选择保存目录", 1500)
             return
         }
 
@@ -116,7 +116,7 @@ class TrayMenu {
             _files .= v "`n"
         this.zipper.Add(newPath, _files, "-tzip -r -mx5 -mmt=2")
         g.Destroy()
-        WiseGuiHelper.tooltip("提示", "用户数据已导出: " newPath, 2500)
+        Tip.show("提示", "用户数据已导出: " newPath, 2500)
     }
 
     ; 导入用户数据
@@ -124,11 +124,11 @@ class TrayMenu {
         if (!this.HasOwnProp("7z"))
             this.zipper := SevenZip()
         if !(options[1] || options[2]) {
-            WiseGuiHelper.tooltip("提示", "至少选择一项内容", 1500)
+            Tip.show("提示", "至少选择一项内容", 1500)
             return
         }
         if (!StrLen(path)) {
-            WiseGuiHelper.tooltip("提示", "请选择保存目录", 1500)
+            Tip.show("提示", "请选择保存目录", 1500)
             return
         }
 
@@ -146,12 +146,12 @@ class TrayMenu {
         }
         if (StrLen(res)) {
             GlobalData.onExitHandler := (*) => 0
-            WiseGuiHelper.tooltip("提示", res "1s后软件重启")
+            Tip.show("提示", res "1s后软件重启")
             Sleep(1000)
             Reload()
             ;清除退出保存重启
         } else {
-            WiseGuiHelper.tooltip("提示", "导入失败")
+            Tip.show("提示", "导入失败")
         }
     }
 
