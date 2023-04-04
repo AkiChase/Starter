@@ -150,8 +150,8 @@ class WinHttp {
       wr.Option[6] := oOptions["EnableRedirects"]
 
     if (oOptions.Has("Proxy") and oOptions["Proxy"] != "")
-      wr.SetProxy(2, oOptions["Proxy"], oOptions["ProxyBypassList"])  ; 首个参数为0表示遵循 Proxycfg.exe 的设置。1表示忽略代理直连。2表示使用代理。
-
+      wr.SetProxy(2, oOptions["Proxy"] ; 首个参数为0表示遵循 Proxycfg.exe 的设置。1表示忽略代理直连。2表示使用代理。
+      , oOptions.Has("ProxyBypassList") ? oOptions["ProxyBypassList"] : "")
     Timeout := this.ValidateTimeout(oOptions.Has("Timeout") ? oOptions["Timeout"] : 0
       , oOptions.Has("ConnectTimeout") ? oOptions["ConnectTimeout"] : 0
         , oOptions.Has("DownloadTimeout") ? oOptions["DownloadTimeout"] : 0)
@@ -162,7 +162,6 @@ class WinHttp {
       , ValidatedConnectTimeout
       , ValidatedConnectTimeout
       , ValidatedConnectTimeout)
-
     ; HTTP/1.1 支持以下9种请求方法。
     Methods := ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "CONNECT", "OPTIONS", "TRACE"]
     flag := true
@@ -176,9 +175,7 @@ class WinHttp {
     }
     if (flag)
       oOptions["Method"] := Data = "" ? "GET" : "POST"  ; 请求方法为空或错误，则根据 Data 是否有值自动判断方法。
-
     wr.Open(oOptions["Method"], URL, true)  ; true 为异步获取。默认是 false ，龟速的根源！！！卡顿的根源！！！
-
     ; 如果自己不设置 User-Agent 那么实际上会被自动设置为 Mozilla/4.0 (compatible; Win32; WinHttp.WinHttpRequest.5) 。影响数据抓取。
     if !(oOptions.Has("User-Agent") and oOptions["User-Agent"] != "")
       oRequestHeaders["User-Agent"] := "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36"
@@ -188,21 +185,17 @@ class WinHttp {
       oRequestHeaders.Delete("Connection")  ; 删掉含 “Keep-Alive” 的 “Connection” ，因为默认就会发送这个值，删掉避免重复发送。
     for k, v in oRequestHeaders  ; 原来的 MSDN 推荐在设置 Cookie 前手动添加一个值，新版找不到这个推荐了，并且 Fiddler 抓包发现这样会让 Cookie 变多，故取消手动添加。
       wr.SetRequestHeader(k, v)  ; SetRequestHeader() 必须 Open() 之后才有效。
-
     ; 为 NumberOfRetries 设置初始值
     if !(oOptions.Has("NumberOfRetries") and oOptions["NumberOfRetries"] != "")
       oOptions["NumberOfRetries"] := 1
-
     loop
     {
       wr.Send(Data)
       ValidatedDownloadTimeout := Timeout[2]
       if (wr.WaitForResponse(ValidatedDownloadTimeout) != -1)  ; 根据测试，返回-1代表正确，返回空值或0一般是超时了。
-        this.SaveError("超时。", URL, Options, RequestHeaders, Data, FilePath)
-
+        this.SaveError("请求超时", URL, Options, RequestHeaders, Data, FilePath)
       this.StatusCode := wr.Status()  ; 获取状态码，一般 StatusCode 为200说明请求成功。
       this.StatusText := wr.StatusText()
-
       if (!oOptions.Has("ExpectedStatusCode") or oOptions["ExpectedStatusCode"] = this.StatusCode)
         break
       ; 尝试指定次数后服务器返回的状态码依旧与预期状态码不一致，则记录错误信息。
@@ -213,12 +206,10 @@ class WinHttp {
         break
       }
     }
-
     this.ResponseHeaders := this.解析信息为对象(wr.GetAllResponseHeaders())  ; 存响应头
     temp_ResponseHeaders := this.解析信息为对象(wr.GetAllResponseHeaders())  ; 解析SetCookie为Cookie() 会改变传入的值，所以这里创建一个备份用于解析
     this.解析SetCookie为Cookie(temp_ResponseHeaders)  ; 存 Cookie
     this.Cookie := temp_ResponseHeaders.Has("Cookie") ? temp_ResponseHeaders["Cookie"] : ""
-
     if (FilePath != "")
       return this.BinArr_ToFile(wr.ResponseBody(), FilePath)  ; 存为文件
     else if (oOptions.Has("Charset") and oOptions["Charset"] != "")
