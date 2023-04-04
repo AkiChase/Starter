@@ -183,7 +183,9 @@ class SearchGui {
         } else {
             PluginMode.autoHideFlag := 1
         }
-        this.gui.show()
+        this.gui.Show()
+        this.edit.Focus()
+        IME_SET(0)
     }
 
     ; 根据模式隐藏主界面

@@ -14,8 +14,8 @@ FileEncoding("UTF-8-RAW")
 
 ; 调试模式下，退出时不保存用户数据，不会动态载入插件
 ; 手动#inclide 需要调试的插件
-DEBUG := true
-#Include .\Plugin\网页搜索.ahk
+; DEBUG := true
+; #Include .\Plugin\网页搜索.ahk
 ; #Include .\Plugin\demo.ahk
 
 #Include .\Utils\GlobalData.ah2
