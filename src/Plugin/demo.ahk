@@ -3,7 +3,7 @@
  * @Version: 0.0.4
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-03
+ * @LastEditTime: 2023-04-04
  * @Description: 插件示例
  */
 
@@ -122,7 +122,10 @@ class Plugin_Demo {
         }
 
         hIcon := PluginHelper.getPluginHIcon("demo.ahk")
-        data := [{ title: "333a", iconPath: hIcon }, { title: "222b", iconPath: hIcon }, { title: "111a", iconPath: hIcon }]
+        data := []
+        loop 3 {
+            data.Push({ title: A_Index, iconPath: hIcon })
+        }
         ;#endregion
 
         ; 定义插件项被双击或者回车时执行的处理函数, 函数有两个参数 that: 指向插件项, searchText: 搜索框搜索的内容
@@ -130,12 +133,14 @@ class Plugin_Demo {
             PluginMode.showPluginMode( ; 启动插件模式
                 data,
                 search,
-                (that, rowNum) => PluginHelper.Utils.tip(this.name, that.pluginSearchResult[rowNum].title, 1500),
-                (that, rowNum) => PluginHelper.Utils.tip(this.name, "double Left" that.pluginSearchResult[rowNum].title, 1500),
-                loadImgs,
-                menuInit, ,
-                "输入搜索内容吧！"
-            )
+                (that, rowNum) => rowNum > 0 ?
+                    PluginHelper.Utils.tip(this.name, that.pluginSearchResult[rowNum].title, 1500) : 0,
+                (that, rowNum) => rowNum > 0 ?
+                    PluginHelper.Utils.tip(this.name, "double Left" that.pluginSearchResult[rowNum].title, 1500) : 0,
+                    loadImgs,
+                    menuInit, ,
+                    "输入搜索内容吧！"
+                )
         }
         ; 添加这个插件项到启动模式搜索界面，更详细的用法见PluginHelper.ahk
         PluginHelper.addPluginToStartupMode(

@@ -3,7 +3,7 @@
  * @Version: 0.0.3
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-03
+ * @LastEditTime: 2023-04-04
  * @Description: 插件API封装
  */
 
@@ -18,6 +18,8 @@ class PluginHelper {
         ;加载插件的图标
         StartupMode.pluginLoadImgs()
         IntelligentMode.pluginLoadImgs()
+
+        Hotkey("~CapsLock", "On") ;加载完毕，恢复热键
     }
 
     /**
@@ -101,6 +103,11 @@ class PluginHelper {
     }
 
     /**
+     * @description: 搜索框内容
+     */
+    static SearchText => SearchGui.searchText
+
+    /**
      * @description: 启动插件模式
      * @param pluginSearchData 用于插件模式搜索的数据
      * @param searchHandler 插件模式搜索处理函数 (that, searchText) => void
@@ -110,15 +117,37 @@ class PluginHelper {
      * @param menuInitHandler (可选)右键显示菜单栏初始化处理函数 (that) => void
      * @param searchText (可选)启动时设置搜索框文本
      * @param placeholder (可选)设置搜索框占位符
+     * @param thumb (可选)hICON 设置插件模式搜索框图标
      */
-    static showPluginMode(pluginSearchData, searchHandler, runHandler, doubleLeftHandler?, loadImgsHandler?, menuInitHandler?, searchText := "", placeholder := "") {
+    static showPluginMode(pluginSearchData, searchHandler, runHandler, doubleLeftHandler?, loadImgsHandler?, menuInitHandler?, searchText := "", placeholder := "", thumb?) {
         PluginMode.showPluginMode( ; 启动插件模式
             pluginSearchData, searchHandler, runHandler, doubleLeftHandler?,
-            loadImgsHandler?, menuInitHandler?, searchText, placeholder
+            loadImgsHandler?, menuInitHandler?, searchText, placeholder, thumb?
         )
     }
 
     class Utils {
+        /**
+         * @description: 正则全局模式
+         */
+        static globalMatch := (this, Haystack, NeedleRegEx, StartingPos := 1) => WinHttp.RegEx.GlobalMatch(Haystack, NeedleRegEx, StartingPos := 1)
+
+        /**
+         * @description: json转ahk数据
+         * @param src json文本的引用
+         */
+        static Jxon_Load := (this, &src, args*) => Jxon_Load(&src, args*)
+
+        /**
+         * @description: ahk数据转json文本
+         */
+        static Jxon_Dump := (this, obj, indent := "", lvl := 1) => Jxon_Dump(obj, indent := "", lvl := 1)
+
+        /**
+         * @description: WinHttp请求库
+         */
+        static WinHttp := (this, args*) => WinHttp(args*)
+
         /**
          * @description: 载入文件路径对应的图标为HICON 可以直接关联到图标源头
          */
