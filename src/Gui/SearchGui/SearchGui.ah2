@@ -40,7 +40,12 @@ class SearchGui {
                 this.searchText := this.searchText    ;不清空内容直接搜索
                 StartupMode.autoHideFlag := true    ; 启动本模式自动隐藏
             } else { ; PluginMode
-                this.thumb.Value := "hBitmap:*" PluginMode.thumb
+                ; 根据图像句柄类型载入
+                If (DllCall("GetObjectType", "Ptr", PluginMode.thumb) = 7) ;  OBJ_BITMAP = 7
+                    this.thumb.Value := "hBitmap:*" PluginMode.thumb
+                else
+                    this.thumb.Value := "hIcon:*" PluginMode.thumb
+
                 for c in [IntelligentMode, StartupMode]
                     c.autoHideFlag := c.listView.Visible := false
                 PluginMode.listView.Visible := true
@@ -135,7 +140,7 @@ class SearchGui {
             }
         }
 
-        Hotkey("~CapsLock", capsLockHandler)
+        Hotkey("~CapsLock", capsLockHandler, "Off") ;先不开启热键，等加载完毕后再开启
 
         ; 根据模式和热键内容执行
         hotkeyHandler(key) {
@@ -156,7 +161,7 @@ class SearchGui {
 
         Hotkey("Tab Up", key => this.mode >= 0 ? this.mode := !this.mode : 0) ;0,1模式下互相切换,-1模式下忽略
         ; 清空、隐藏
-        Hotkey("+Esc", hotkeyHandler)
+        Hotkey("~Esc", hotkeyHandler)
         ; 文件夹中显示
         Hotkey("~Left Up", hotkeyHandler)
         ; 上下移动焦点行
