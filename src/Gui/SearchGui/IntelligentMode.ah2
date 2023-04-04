@@ -87,7 +87,7 @@ class IntelligentMode {
         IntelligentEditGui.showGui([group, posIndex])
     }
 
-    ; run-with处理函数
+    ; run-with分组下的处理函数
     static runWithHandler(item) {
         searchTxt := SearchGui.searchText
         if (item["match"]["mode"] == "reg") {
@@ -105,7 +105,7 @@ class IntelligentMode {
             Run(searchTxt)
     }
 
-    ; search处理函数
+    ; search分组下的处理函数
     static searchHandler(item) {
         searchTxt := SearchGui.searchText
 
@@ -278,12 +278,16 @@ class IntelligentMode {
                 for index, reg in item.reg
                     if RegExMatch(keyword, reg[1]) {
                         item.curReg := reg
+                        item.regIndex := index
                         this.pluginSearchResult.Push(item)
                         break
                     }
             }
         } else    ; 搜索词为空什么都不显示
-            GlobalData.intelligentSearchResult := []
+            this.pluginSearchResult := []
+
+        ; 按regIndex从小到大
+        QuickSort(this.pluginSearchResult, (itemA, itemB) => itemA.regIndex - itemB.regIndex)
 
         ; 添加到搜索列表
         for item in this.pluginSearchResult {
