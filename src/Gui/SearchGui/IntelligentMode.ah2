@@ -51,7 +51,7 @@ class IntelligentMode {
         this.listView.OnEvent("ContextMenu", (_lv, rowNum, *) => rowNum ? this.menu.Show() : 0)
 
         ; 启动模式热键处理函数
-        this.hotkeyHandlerMap["+Esc"] := () => StrLen(SearchGui.edit.Value) ? SearchGui.searchText := SearchGui.edit.Value := "" : this.hideGui()
+        this.hotkeyHandlerMap["~Esc"] := () => StrLen(SearchGui.edit.Value) ? SearchGui.searchText := SearchGui.edit.Value := "" : this.hideGui()
         this.hotkeyHandlerMap["Down"] := () => this.focusedRow++
         this.hotkeyHandlerMap["Up"] := () => this.focusedRow--
 

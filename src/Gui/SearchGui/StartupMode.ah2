@@ -57,7 +57,7 @@ class StartupMode {
             )
 
         ; 启动模式热键处理函数
-        this.hotkeyHandlerMap["+Esc"] := () => StrLen(SearchGui.searchText) ?
+        this.hotkeyHandlerMap["~Esc"] := () => StrLen(SearchGui.searchText) ?
             SearchGui.searchText := SearchGui.edit.Value := "" : this.hideGui()
 
         this.hotkeyHandlerMap["~Left Up"] := () => (A_ThisHotkey != A_PriorHotkey || A_TimeSincePriorHotkey > 250) ?
