@@ -132,7 +132,7 @@ class StartupMode {
                     GlobalData.startupData.RemoveAt(index)
             }
         }
-        this.listView.Delete(rowNum)
+        this.listView.Delete(rowNum + this.pluginSearchResult.Length) ; 实际删除的列表行不同
 
         ;重置listView和gui高度
         LVHeight := Round((GlobalData.startupSearchResult.Length >= 8 ? 8 : GlobalData.startupSearchResult.Length) * 26.4)    ; 此处不需要DPI缩放计算
