@@ -20,9 +20,6 @@ class Start {
     }
 
     static openFileInFolder(path) {
-        if (SubStr(path, -4) = '.lnk')
-            FileGetShortcut(path, &path)
-
         if (FileExist(path)) {
             try Run('explorer.exe /select,"' path '"')
         } else {

@@ -3,11 +3,11 @@
  * @Version: 0.0.3
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-02
+ * @LastEditTime: 2023-04-04
  * @Description: 关于界面显示版本信息、项目主页、检查更新
  */
 class AboutGui {
-    static version := "0.3.0"
+    static version := "0.3.2"
     ; static gui:=unset
 
     static init() {
@@ -54,7 +54,7 @@ class AboutGui {
             latest := SubStr(res_json[1]["name"], 2)
             if (this.versionCompare(latest, this.version) > 0) {
                 Tip.show("检测到新版本: " latest
-                    , "请自行前往项目主页下载, 右键右下角托盘图标导出用户数据后可以导入新版本中")
+                    , "请自行前往项目主页下载, 右键右下角托盘图标导出用户数据后可以导入新版本中", , , true)
             } else if (!silent)
                 Tip.show("更新提示", "无需更新，已更新至最新版本: " latest)
         } catch

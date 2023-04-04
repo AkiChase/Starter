@@ -3,7 +3,7 @@
  * @Version: 0.0.1
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-03
+ * @LastEditTime: 2023-04-04
  * @Description: WiseGui辅助类，便于对象化调用WiseGui
  */
 
@@ -35,8 +35,10 @@ class WiseGuiHelper {
      * @param content 内容
      * @param time 计时消失时间(选填) 若指定则无视opt中theme相关内容
      * @param theme 主题(选填) Info,Warning,Success,Error 若指定则无视opt中theme相关内容
+     * @param unique 默认为false, true则使用A_TickCount作为id, 以保证不会被同id覆盖(用WiseGuiHelper.WiseGui(id)可关闭指定id的窗口)
+     * @return id
      */
-    show(title, content, time?, theme?) {
+    show(title, content, time?, theme?, unique := false) {
         opts := ["mainText: " title, "subText: " content]
         for k, v in this.opt
             opts.Push(Format("{}:{}", k, v))
@@ -45,7 +47,9 @@ class WiseGuiHelper {
         if (IsSet(theme))
             opts.Push("theme: " theme)
 
-        WiseGuiHelper.WiseGui(this.id, opts*)
+        id := unique ? A_TickCount : this.id
+        WiseGuiHelper.WiseGui(id, opts*)
+        return id
     }
 
     /**

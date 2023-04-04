@@ -128,6 +128,16 @@ class PluginHelper {
 
     class Utils {
         /**
+         * @description: UrlEncode编码
+         */
+        static UrlEncode := (this, str) => UrlEncode(str)
+        /**
+         * @description: UrlEncode解码
+         */
+        static UrlDecode := (this, str) => UrlDecode(str)
+
+
+        /**
          * @description: 正则全局模式
          */
         static globalMatch := (this, Haystack, NeedleRegEx, StartingPos := 1) => WinHttp.RegEx.GlobalMatch(Haystack, NeedleRegEx, StartingPos := 1)
@@ -172,9 +182,11 @@ class PluginHelper {
          * @param title 标题
          * @param content 内容
          * @param time 计时消失时间(选填)
+         * @param unique 默认为false, true则使用A_TickCount作为id, 以保证不会被同id覆盖(用WiseGuiHelper.WiseGui(id)可关闭指定id的窗口)
+         * @return id
          */
-        static tip(title, content, time?) {
-            Tip.show(title, content, time?)
+        static tip(title, content, time?, unique := false) {
+            return Tip.show(title, content, time?, , unique)
         }
 
         /**

@@ -74,7 +74,7 @@ class Plugin_网页搜索 {
         g.AddText(, "启用功能(重启生效)")
 
         checkboxMap := Map()
-        for name in ["百度搜索", "谷歌搜索"]
+        for name in ["谷歌搜索", "必应搜索", "百度搜索"]
             checkboxMap[name] := g.AddCheckbox(, name)
 
         for name in this.settings["enabled"]
@@ -105,89 +105,13 @@ class Plugin_网页搜索 {
             if (this.proxy)
                 opt .= Format("`nProxy:{}`nProxyBypassList:{}", this.proxy, this.proxyBypassList)
             return this.client.Download(url, opt)
-        } catch {
+        } catch Error as e {
             if (this.client.Error.Has("Message")) {
                 PluginHelper.Utils.tip(this.name, this.client.Error["Message"] "`n请检查网络或使用代理服务器")
-                PluginHelper.hideSearchGui()
+                ; PluginHelper.hideSearchGui()
             }
         }
         return 0
-    }
-
-    class 百度 {
-        static title := "百度搜索"
-        static outer := Plugin_网页搜索
-        static icon := "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABOFJREFUWEe9l3toW1Ucx7+/pFnbdbI5ujU3bV2Xe9KKinNMqfWB28CBgypuOoZDx7A4VDbdS+c/rkNEFArblIGOYREKe7Qi0yHqHw7BrhVFp/iguSfrbM1N17oNrOs60/uTc5sbb5KbRyd6IJCc+3t8zu91cgklrnAw2k5EG21xQreMi11eqnrIqE9eLUueG2swSzFNpQjpmvEUgLfdskx8MBaPPOvs6TXGQhD2g7Be7THz3lgi0l7MfqkAXwNYlmVsVJpiobMXDsoTRNyaAVkCRFEAURutY4uGvE4ylfRrg6OLE+GgXE3EJ3Nl6PKkf1b18HD9RL5IlALQwhb1ehkgi1uMkUifrhmHALR5yjCvMBKRU9cMEK6TEZriAU8DfkTksDB0zfgcwPL/BECIaDmPUwyEULYDaQo7ggUABqQpmgoVYkYKwiG5iZh32wqMT2VCbFFfUy24J8MQoVPGxaZpALkP4OeyHZXSCWkAz0IiOi7j+jrbSUgeA/OjqTlwkpmeiZn6r+q3qIneyT76DMAcF8QH0hQPl9yG4ZDsI+ZmD4XN0hTv2I6CURvASESOZ8ulDqAczmfmH5wZoIeM9WA8CMYQk/VVzGzscevaEWgI/tzgp8DZPLSnpClWFDuJ1/NwUO4h4oxhxEztsYS+15G3AUQwupyJVCXnLsZRmRD2dJvJqqsbqqyYujrK4KpsPYusVWfjjSplKA4AHJCmyCiwW2sSVX/6x+9ni28D4RIT/+gYdJzlH06ZYzpdhLpmqBQ05JySrU0y0dj5j2H7UlJA89yy2RWvB41dILzhGVTXiHZ1gW04s9WAQariGw0jMqkMebajywMxr3MKVGjRxxn0Xp607pQJ0ZFOQcbpfLQGjBsA9BEHthuJRT9NO5dPE/HBYnXAsNbGzMb3G2oGmv0+X59nBCxqjY3oH+UA5DO+qHpQKwsk48Wcp55fhoXWyUD5d+VTk7976HwjTXF7RhcUM6xrxjnAjgqaWyqxdcf16D99BQc6LuRR5bGp8rKIb9K6hYDXwBwGYQ6IPnEGW0kAojaqbsJ3AaTnuQLo6gnhQMfFAgB2cM9JU88t6izkvNexCEXbmEldsxmrdABbrVea4u5CEfYE0EPGC2C8rhSX3VGBxzbOxUNr3GMedgT6eyfsdKi14ZHpEtm6Yz6aWyrcKYpJU+j5IHIAwppcS+BupbBkaQV6TtbausNDSfw29Jf9vfmuyjSASocCcQMoqOwUOVd3NkgOgK4ZXwC4Vwl2vFVjn/zjD8exZfNI+oSOA+W4VABlTppiZ0EAddsx0TFHqKs7ZJ/2pe3ncfzIH/8WAMSBm5254tkF2ZPOAdiwNo7+09P/K1WOrzECIPK1GfHwYXcUMlKQHYGXX6nGE0/ORXTgKnZvG8WZb694Aqj6ePH58+n68KqBlNP0fwvPCKi3GjDOALBLe948Pw53aViytDyniFWRdR66hKMnahFpnOX5PGdQEe6RcfFl3gioB7pm7FeRdgupbrhv5WwPJxdsyJWrZqOuPuD53L3pp6kFA/GmsYIAi0OxJh9bKk8FB0i+vs63z+BtMTOyr2gbKoGm6l+uS5aVvQrgARBESukiAOczCtAgszXdmz4sIKabPN4NxgF8D8KbMi6OeMEVfTOa6UlTN2eIODCR3XL/C8BMgf8GNVpRPxjhCH0AAAAASUVORK5CYII="
-        static hIcon := 0
-        static lxUrl := "https://suggestion.baidu.com/su?wd="
-        static searchUrl := "https://www.baidu.com/s?word="
-
-        static addToSearchGui() {
-            ;#region 定义插件模式下搜索功能
-            searchHandler(that, searchText) {
-                if (searchText) {
-                    res := this.outer.request(this.lxUrl searchText)
-                    if (res && RegExMatch(res, "s:(\[.*\])", &res)) { ; 有搜索结果
-                        res := res[1]
-                        that.pluginSearchResult := PluginHelper.Utils.Jxon_Load(&res)
-                    } else
-                        that.pluginSearchResult := []
-                    if (that.pluginSearchResult.Has(1) && that.pluginSearchResult[1] !== searchText)
-                        that.pluginSearchResult.InsertAt(1, searchText)
-                } else ; 搜索内容为空时什么都不显示
-                    that.pluginSearchResult := []
-
-                ;重置列表
-                that.listView.Opt("-Redraw")    ;禁用重绘
-                that.listView.Delete()
-                ; 添加搜索结果到列表
-                for item in that.pluginSearchResult {
-                    that.listView.Add(, item)
-                }
-                that.resizeGui() ;根据搜索结果数量调整gui尺寸 并启用重绘
-            }
-
-            runHandler(that, rowNum) {
-                kw := rowNum ? that.pluginSearchResult[rowNum] : PluginHelper.SearchText
-                Run(this.searchUrl kw)
-                PluginHelper.hideSearchGui()
-            }
-
-            ; 添加插件项到启动模式搜索界面
-            PluginHelper.addPluginToStartupMode(
-                this.outer.name,
-                this.title,
-                ["BDSS", "baidu"],
-                (that, searchText) => (
-                    PluginMode.showPluginMode( ; 启动插件模式
-                        [], ;数据靠search获取，不需要传入
-                        searchHandler,
-                        runHandler, , , , ,
-                        "百度一下，你就知道",
-                        this.hIcon
-                    )
-                ), , , this.hIcon
-            )
-
-            ; 添加插件项到智能模式搜索界面
-            PluginHelper.addPluginToIntelligentMode(
-                this.outer.name,
-                this.title,
-                [[".+", "$0"], ["(bd|baidu|百度)\s+(?<query>.*)", "${query}"]],
-                (that, content) => (
-                    PluginMode.showPluginMode( ; 启动插件模式
-                        [], ;数据靠search获取，不需要传入
-                        searchHandler,
-                        runHandler, , , ,
-                        content, ; 搜索词替换为传入的内容
-                        "百度一下，你就知道",
-                        this.hIcon
-                    )
-                ), ,
-                this.hIcon
-            )
-        }
-
     }
 
     class 谷歌 {
@@ -202,14 +126,16 @@ class Plugin_网页搜索 {
             ;#region 定义插件模式下搜索功能
             searchHandler(that, searchText) {
                 if (searchText) {
-                    res := this.outer.request(this.lxUrl searchText)
+                    res := this.outer.request(this.lxUrl PluginHelper.Utils.UrlEncode(searchText))
                     that.pluginSearchResult := []
-                    if (res && res := PluginHelper.Utils.globalMatch(res, '\<suggestion data="(.*?)"\/\>')) { ; 有搜索结果
+                    if (res && res := PluginHelper.Utils.globalMatch(res, '\<suggestion data="(.*?)"\/\>')) { ; 有请求结果
                         that.pluginSearchResult.Capacity := res.length + 1
-                        res[1][1] != searchText ? that.pluginSearchResult.Push(searchText) : 0
                         for item in res
                             that.pluginSearchResult.Push(item[1])
-                    }
+                        (that.pluginSearchResult.Has(1) && that.pluginSearchResult[1] = searchText)
+                        ? 0 : that.pluginSearchResult.InsertAt(1, searchText)
+                    } else
+                        that.pluginSearchResult.Push(searchText)
                 } else ; 搜索内容为空时什么都不显示
                     that.pluginSearchResult := []
 
@@ -249,7 +175,7 @@ class Plugin_网页搜索 {
             PluginHelper.addPluginToIntelligentMode(
                 this.outer.name,
                 this.title,
-                [[".+", "$0"], ["(gg|google|谷歌)\s+(?<query>.*)", "${query}"]],
+                [["(gg|google|谷歌)\s+(?<query>.*)", "${query}"], [".+", "$0"]],
                 (that, content) => (
                     PluginMode.showPluginMode( ; 启动插件模式
                         [], ;数据靠search获取，不需要传入
@@ -257,6 +183,167 @@ class Plugin_网页搜索 {
                         runHandler, , , ,
                         content, ; 搜索词替换为传入的内容
                         "Search on Google",
+                        this.hIcon
+                    )
+                ), ,
+                this.hIcon
+            )
+        }
+
+    }
+
+    class 必应 {
+        static title := "必应搜索"
+        static outer := Plugin_网页搜索
+        static icon := "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAp9JREFUWEftlk1IFGEYx3/PikaIh4iiSxZEH8foFgWOW4gQ3UIlhJq1CEuKEA/RQZEIjCgKCg+7Y+UhyEvUbpJRO2skHTqUZV4693HIQ0iEH/PETG6suurs6xodfGFgmHme///Hf96PEXKG5WgaYUQ8BjTCgGvLr9z3K3Ev8wDAyj5TeCDQt7aMgf5G+fHPAeYYum5MqosNsWgCqwCrCfyXCXR0aMSt5DPQK5BMxySznJVhtAosRy8Cl2aMvymkVEh9Lyc5UicThQAZAexLaEWp8AUon2M2iZJCgivp2vJ1KRgjAF+02tHLChcWM1BlMCKkIpB8HpOP+WqNAawe3YQGKYQdHyBI5rVry8NskzGAL1Dl6A2Bs2EJgHco426T7C8KQPSObvM8PoUAeAvsnqmbdaYsK4FgLiS0U4XjwOa5ICoMo+wSKMt5V1yArLDlaD0+iFKLMoqwEVifJ52VAfCNogmt8YSbwM5FPkvxAaKO7vGUKwgHQsyH4gFE47rFi9AF1IcwzpYUDiAw5pXQmDkm/b5KzT0tn5ikC+FMAcaGAMrotEfDy5My7CtYCe1AaDcw9lvGEdpcW7rD7gPpNR5Hnp6QMcvRFqATWGdkrnRXTNH6+JT8zO1fcB8QuJ+OyVErrg1EAuPtJsYKQyXQ9iImQ6HPAoHrCk9QOhH2mhjnizsUgMIjAf/3+7ChMSjdGypo6auT6aU0/n4Cq0e3Au1osK0aDT9uUc65TfImrMCsORDMckev8ueEKw0rEsQN592YxAvoCUrnAfgPq+N6yBOuibBjSUHhlmuLv0KMRl6ArJKV0H6E2rzKwisPmgdteW/kPNO0KIBfU+Vos8DtHJNxFU5nbOldjnHejWghwYN3tXJqmqQKzzK2tBbDOKvxGxgIQTAtrSi/AAAAAElFTkSuQmCC"
+        static hIcon := 0
+        static lxUrl := "https://api.bing.com/qsonhs.aspx?q="
+        static searchUrl := "https://www.bing.com/search?q="
+
+        static addToSearchGui() {
+            ;#region 定义插件模式下搜索功能
+            searchHandler(that, searchText) {
+                if (searchText) {
+                    res := this.outer.request(this.lxUrl PluginHelper.Utils.UrlEncode(searchText))
+                    that.pluginSearchResult := []
+                    if (res) { ; 有搜索结果
+                        res := PluginHelper.Utils.Jxon_Load(&res)["AS"]
+                        if (res.Has("Results")) {
+                            for group in res["Results"] {
+                                for item in group["Suggests"]
+                                    that.pluginSearchResult.Push(item["Txt"])
+                            }
+                        }
+                        (that.pluginSearchResult.Has(1) && that.pluginSearchResult[1] = searchText) ?
+                        0 : that.pluginSearchResult.InsertAt(1, searchText)
+                    } else
+                        that.pluginSearchResult.Push(searchText)
+
+                } else ; 搜索内容为空时什么都不显示
+                    that.pluginSearchResult := []
+
+                ;重置列表
+                that.listView.Opt("-Redraw")    ;禁用重绘
+                that.listView.Delete()
+                ; 添加搜索结果到列表
+                for item in that.pluginSearchResult {
+                    that.listView.Add(, item)
+                }
+                that.resizeGui() ;根据搜索结果数量调整gui尺寸 并启用重绘
+            }
+
+            runHandler(that, rowNum) {
+                kw := rowNum ? that.pluginSearchResult[rowNum] : PluginHelper.SearchText
+                Run(this.searchUrl kw)
+                PluginHelper.hideSearchGui()
+            }
+
+            ; 添加插件项到启动模式搜索界面
+            PluginHelper.addPluginToStartupMode(
+                this.outer.name,
+                this.title,
+                ["BYSS", "bing"],
+                (that, searchText) => (
+                    PluginMode.showPluginMode( ; 启动插件模式
+                        [], ;数据靠search获取，不需要传入
+                        searchHandler,
+                        runHandler, , , , ,
+                        "Search on Bing",
+                        this.hIcon
+                    )
+                ), , , this.hIcon
+            )
+
+            ; 添加插件项到智能模式搜索界面
+            PluginHelper.addPluginToIntelligentMode(
+                this.outer.name,
+                this.title,
+                [["(by|bing|必应)\s+(?<query>.*)", "${query}"], [".+", "$0"]],
+                (that, content) => (
+                    PluginMode.showPluginMode( ; 启动插件模式
+                        [], ;数据靠search获取，不需要传入
+                        searchHandler,
+                        runHandler, , , ,
+                        content, ; 搜索词替换为传入的内容
+                        "Search on Bing",
+                        this.hIcon
+                    )
+                ), ,
+                this.hIcon
+            )
+        }
+
+    }
+
+    class 百度 {
+        static title := "百度搜索"
+        static outer := Plugin_网页搜索
+        static icon := "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABOFJREFUWEe9l3toW1Ucx7+/pFnbdbI5ujU3bV2Xe9KKinNMqfWB28CBgypuOoZDx7A4VDbdS+c/rkNEFArblIGOYREKe7Qi0yHqHw7BrhVFp/iguSfrbM1N17oNrOs60/uTc5sbb5KbRyd6IJCc+3t8zu91cgklrnAw2k5EG21xQreMi11eqnrIqE9eLUueG2swSzFNpQjpmvEUgLfdskx8MBaPPOvs6TXGQhD2g7Be7THz3lgi0l7MfqkAXwNYlmVsVJpiobMXDsoTRNyaAVkCRFEAURutY4uGvE4ylfRrg6OLE+GgXE3EJ3Nl6PKkf1b18HD9RL5IlALQwhb1ehkgi1uMkUifrhmHALR5yjCvMBKRU9cMEK6TEZriAU8DfkTksDB0zfgcwPL/BECIaDmPUwyEULYDaQo7ggUABqQpmgoVYkYKwiG5iZh32wqMT2VCbFFfUy24J8MQoVPGxaZpALkP4OeyHZXSCWkAz0IiOi7j+jrbSUgeA/OjqTlwkpmeiZn6r+q3qIneyT76DMAcF8QH0hQPl9yG4ZDsI+ZmD4XN0hTv2I6CURvASESOZ8ulDqAczmfmH5wZoIeM9WA8CMYQk/VVzGzscevaEWgI/tzgp8DZPLSnpClWFDuJ1/NwUO4h4oxhxEztsYS+15G3AUQwupyJVCXnLsZRmRD2dJvJqqsbqqyYujrK4KpsPYusVWfjjSplKA4AHJCmyCiwW2sSVX/6x+9ni28D4RIT/+gYdJzlH06ZYzpdhLpmqBQ05JySrU0y0dj5j2H7UlJA89yy2RWvB41dILzhGVTXiHZ1gW04s9WAQariGw0jMqkMebajywMxr3MKVGjRxxn0Xp607pQJ0ZFOQcbpfLQGjBsA9BEHthuJRT9NO5dPE/HBYnXAsNbGzMb3G2oGmv0+X59nBCxqjY3oH+UA5DO+qHpQKwsk48Wcp55fhoXWyUD5d+VTk7976HwjTXF7RhcUM6xrxjnAjgqaWyqxdcf16D99BQc6LuRR5bGp8rKIb9K6hYDXwBwGYQ6IPnEGW0kAojaqbsJ3AaTnuQLo6gnhQMfFAgB2cM9JU88t6izkvNexCEXbmEldsxmrdABbrVea4u5CEfYE0EPGC2C8rhSX3VGBxzbOxUNr3GMedgT6eyfsdKi14ZHpEtm6Yz6aWyrcKYpJU+j5IHIAwppcS+BupbBkaQV6TtbausNDSfw29Jf9vfmuyjSASocCcQMoqOwUOVd3NkgOgK4ZXwC4Vwl2vFVjn/zjD8exZfNI+oSOA+W4VABlTppiZ0EAddsx0TFHqKs7ZJ/2pe3ncfzIH/8WAMSBm5254tkF2ZPOAdiwNo7+09P/K1WOrzECIPK1GfHwYXcUMlKQHYGXX6nGE0/ORXTgKnZvG8WZb694Aqj6ePH58+n68KqBlNP0fwvPCKi3GjDOALBLe948Pw53aViytDyniFWRdR66hKMnahFpnOX5PGdQEe6RcfFl3gioB7pm7FeRdgupbrhv5WwPJxdsyJWrZqOuPuD53L3pp6kFA/GmsYIAi0OxJh9bKk8FB0i+vs63z+BtMTOyr2gbKoGm6l+uS5aVvQrgARBESukiAOczCtAgszXdmz4sIKabPN4NxgF8D8KbMi6OeMEVfTOa6UlTN2eIODCR3XL/C8BMgf8GNVpRPxjhCH0AAAAASUVORK5CYII="
+        static hIcon := 0
+        static lxUrl := "https://suggestion.baidu.com/su?wd="
+        static searchUrl := "https://www.baidu.com/s?word="
+
+        static addToSearchGui() {
+            ;#region 定义插件模式下搜索功能
+            searchHandler(that, searchText) {
+                if (searchText) {
+                    res := this.outer.request(this.lxUrl PluginHelper.Utils.UrlEncode(searchText))
+                    if (res && RegExMatch(res, "s:(\[.*\])", &res)) { ; 请求成功
+                        res := res[1]
+                        that.pluginSearchResult := PluginHelper.Utils.Jxon_Load(&res)
+                        (that.pluginSearchResult.Has(1) && that.pluginSearchResult[1] = searchText) ?
+                        0 : that.pluginSearchResult.InsertAt(1, searchText)
+                    } else
+                        that.pluginSearchResult.Push(searchText)
+
+
+                } else ; 搜索内容为空时什么都不显示
+                    that.pluginSearchResult := []
+
+                ;重置列表
+                that.listView.Opt("-Redraw")    ;禁用重绘
+                that.listView.Delete()
+                ; 添加搜索结果到列表
+                for item in that.pluginSearchResult {
+                    that.listView.Add(, item)
+                }
+                that.resizeGui() ;根据搜索结果数量调整gui尺寸 并启用重绘
+            }
+
+            runHandler(that, rowNum) {
+                kw := rowNum ? that.pluginSearchResult[rowNum] : PluginHelper.SearchText
+                Run(this.searchUrl kw)
+                PluginHelper.hideSearchGui()
+            }
+
+            ; 添加插件项到启动模式搜索界面
+            PluginHelper.addPluginToStartupMode(
+                this.outer.name,
+                this.title,
+                ["BDSS", "baidu"],
+                (that, searchText) => (
+                    PluginMode.showPluginMode( ; 启动插件模式
+                        [], ;数据靠search获取，不需要传入
+                        searchHandler,
+                        runHandler, , , , ,
+                        "百度一下，你就知道",
+                        this.hIcon
+                    )
+                ), , , this.hIcon
+            )
+
+            ; 添加插件项到智能模式搜索界面
+            PluginHelper.addPluginToIntelligentMode(
+                this.outer.name,
+                this.title,
+                [["(bd|baidu|百度)\s+(?<query>.*)", "${query}"], [".+", "$0"]],
+                (that, content) => (
+                    PluginMode.showPluginMode( ; 启动插件模式
+                        [], ;数据靠search获取，不需要传入
+                        searchHandler,
+                        runHandler, , , ,
+                        content, ; 搜索词替换为传入的内容
+                        "百度一下，你就知道",
                         this.hIcon
                     )
                 ), ,

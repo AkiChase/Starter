@@ -37,6 +37,7 @@ PluginGui.init() ;同时重启以加载插件
 #Include .\Utils\DataHelper.ah2
 #Include .\Utils\Start.ah2
 #Include .\Utils\WiseGuiHelper.ah2
+#Include .\Utils\UrlEncode.ah2
 #Include .\Utils\7Zip\SevenZip.ahk
 
 Tip := WiseGuiHelper("tooltip")
