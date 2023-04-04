@@ -12,13 +12,19 @@ class SearchGui {
     }
     ;#endregion
 
-    ;#region 设置搜索模式 0: 启动模式, 1: 智能模式 ,-1: 插件模式
+    ;#region 设置搜索模式 -1: 插件模式,0: 启动模式, 1: 智能模式
     static _mode := -2
     static mode {
         get => this._mode
         set {
-            if (this._mode == value)    ; 不需要切换时直接返回
+            if (this._mode == value) {  ; 不需要切换时,强制激活指定的autoHide
+                l := [PluginMode, StartupMode, IntelligentMode]
+                curModeC := l[Value + 2], l.RemoveAt(Value + 2)
+                curModeC.autoHideFlag := true
+                for c in l
+                    c.autoHideFlag := false
                 return
+            }
             this._mode := value
             if (this._mode == 1) {    ; IntelligentMode
                 this.thumb.Value := "hBitmap:*" this.thumbList[2]
