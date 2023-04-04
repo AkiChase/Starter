@@ -72,9 +72,5 @@ PluginHelper.init() ;同时执行所有插件的入口函数
 if (!IsSet(DEBUG) || !DEBUG)
     OnExit((*) => GlobalData.onExitHandler())    ;退出时保存数据
 
-;@Ahk2Exe-IgnoreBegin
-^!q:: {
-    Send("^s")
-    Reload()
-}
-;@Ahk2Exe-IgnoreEnd
+if (IsSet(DEBUG) && DEBUG)
+    Hotkey("^!q", (*) => (Send("^s"), Reload()))

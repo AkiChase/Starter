@@ -48,7 +48,11 @@ class IntelligentMode {
         ; 鼠标双击运行
         this.listView.OnEvent("DoubleClick", (_lv, rowNum) => this.intelligentRun(rowNum))
         ; 菜单栏
-        this.listView.OnEvent("ContextMenu", (_lv, rowNum, *) => rowNum ? this.menu.Show() : 0)
+        this.listView.OnEvent("ContextMenu", (_lv, rowNum, *) => !rowNum ?
+            0 : rowNum > this.pluginSearchResult.Length ?
+                this.menu.Show() : this.pluginSearchResult[rowNum].HasOwnProp("menu") ?
+                    this.pluginSearchResult[rowNum].menu.Show() : 0
+            )
 
         ; 启动模式热键处理函数
         this.hotkeyHandlerMap["~Esc"] := () => StrLen(SearchGui.edit.Value) ? SearchGui.searchText := SearchGui.edit.Value := "" : this.hideGui()
@@ -62,7 +66,7 @@ class IntelligentMode {
     static menuInit() {
         this.menu := Menu()
         this.menu.Add("执行选中项`t(&R)", (*) => this.intelligentRun(this.focusedRow))
-        this.menu.Add("编辑选中项`t(&E)", (*) => this.toIntelligentEditGui(this.focusedRow))
+        this.menu.Add("编辑选中项`t(&E)", (*) => this.toIntelligentEditGui(this.startupFocusedRow))
 
         this.menu.SetIcon("1&", GlobalData.imgDir "\run.ico")
         this.menu.SetIcon("2&", GlobalData.imgDir "\edit.ico")

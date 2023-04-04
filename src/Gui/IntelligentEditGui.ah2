@@ -271,7 +271,7 @@ class IntelligentEditGui {
         this.matchInfo["DDL"] := this.gui.AddDropDownList("xp+90 yp-5 w100 R5", this.curItem.match.modeKeys)
         this.matchInfo["DDL"].OnEvent("Change", (*) => this.curItem.match.mode := this.curItem.match.modeKeys[this.matchInfo["DDL"].Value])
 
-        this.gui.AddPicture("xp+110 yp AltSubmit", GlobalData.imgDir "\help.png").OnEvent("Click", (*) => this.showMatchHelp())
+        this.gui.AddPicture("xp+110 yp-2 w32 h32 AltSubmit", GlobalData.imgDir "\help.png").OnEvent("Click", (*) => this.showMatchHelp())
 
         this.matchInfo["box"] := this.gui.AddGroupBox("x280 y200 w442 h130")
         this.matchInfo["box"].SetFont("s12")
@@ -297,7 +297,7 @@ class IntelligentEditGui {
         this.gui.AddText("w80 x280 y350", "脚本模式")
         this.scriptInfo["DDL"] := this.gui.AddDropDownList("xp+90 yp-5 w100 R5", this.curItem.script.modeKeys)
         this.scriptInfo["DDL"].OnEvent("Change", (ddl, *) => this.curItem.script.mode := this.curItem.script.modeKeys[ddl.Value])
-        this.gui.AddPicture("xp+110 yp AltSubmit", GlobalData.imgDir "\help.png").OnEvent("Click", (*) => this.showScripHelp())
+        this.gui.AddPicture("xp+110 yp-2 w32 h32 AltSubmit", GlobalData.imgDir "\help.png").OnEvent("Click", (*) => this.showScripHelp())
 
         this.scriptInfo["programText"] := this.gui.AddText("w80 x280 y390", "程序路径")
         this.scriptInfo["programEdit"] := this.gui.AddEdit("w350 yp-5 xp+90")

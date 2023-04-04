@@ -77,8 +77,8 @@ class StartupMode {
         this.menu := Menu()
         this.menu.Add("启动选中项`t(&R)", (*) => this.startSelectedFile(this.focusedRow))
         this.menu.Add("文件夹中打开`t(&O)", (*) => this.openSelectedFileInFolder(this.focusedRow))
-        this.menu.Add("编辑选中项`t(&E)", (*) => this.toStartupEditGui(this.focusedRow))
-        this.menu.Add("删除选中项`t(&X)", (*) => this.deleteItem(this.focusedRow))
+        this.menu.Add("编辑选中项`t(&E)", (*) => this.toStartupEditGui(this.startupFocusedRow))
+        this.menu.Add("删除选中项`t(&X)", (*) => this.deleteItem(this.startupFocusedRow))
 
         this.menu.SetIcon("1&", GlobalData.imgDir "\run.ico")
         this.menu.SetIcon("2&", GlobalData.imgDir "\folder.ico")
