@@ -16,11 +16,13 @@ class StartupMode {
     {
         get => this.listView.GetNext()
         set {
-            if (value > GlobalData.startupSearchResult.Length + this.pluginSearchResult.Length)
-                value := 1
-            else if (value == 0)
-                value := GlobalData.startupSearchResult.Length + this.pluginSearchResult.Length
-            this.listView.Modify(value, "Select Focus Vis")
+            if (GlobalData.startupSearchResult.Length || this.pluginSearchResult.Length) { ; 有内容才可修改
+                if (value > GlobalData.startupSearchResult.Length + this.pluginSearchResult.Length)
+                    value := 1
+                else if (value == 0)
+                    value := GlobalData.startupSearchResult.Length + this.pluginSearchResult.Length
+                this.listView.Modify(value, "Select Focus Vis")
+            }
         }
     }
     ;#endregion
@@ -50,21 +52,36 @@ class StartupMode {
         ; 鼠标双击运行
         this.listView.OnEvent("DoubleClick", (_lv, rowNum) => rowNum ? this.startupRun(rowNum) : 0)
         ; 菜单栏
-        this.listView.OnEvent("ContextMenu", (_lv, rowNum, *) => !rowNum ?
-            0 : rowNum > this.pluginSearchResult.Length ?
-                this.menu.Show() : this.pluginSearchResult[rowNum].HasOwnProp("menu") ?
-                    this.pluginSearchResult[rowNum].menu.Show() : 0
-            )
+        showMenuHandler() {
+            if (rowNum := this.focusedRow) {
+                if (rowNum > this.pluginSearchResult.Length)
+                    this.menu.Show()
+                else
+                    this.pluginSearchResult[rowNum].HasOwnProp("menu") ? this.pluginSearchResult[rowNum].menu.Show() : 0
+            }
+        }
+        this.listView.OnEvent("ContextMenu", (*) => showMenuHandler())
 
         ; 启动模式热键处理函数
         this.hotkeyHandlerMap["~Esc"] := () => StrLen(SearchGui.searchText) ?
             SearchGui.searchText := SearchGui.edit.Value := "" : this.hideGui()
 
-        this.hotkeyHandlerMap["~Left Up"] := () => (A_ThisHotkey != A_PriorHotkey || A_TimeSincePriorHotkey > 250) ?
-            0 : this.focusedRow > this.pluginSearchResult.Length ?
-                this.openSelectedFileInFolder() : !this.pluginSearchResult[this.focusedRow].HasOwnProp("doubleLeftHandler") ?
-                    0 : this.pluginSearchResult[this.focusedRow].doubleLeftHandler(SearchGui.searchText)
-
+        rightUpHandler() {
+            static lastEndFlag := false
+            EditCtrlFunc.getSelection(&s, &e, SearchGui.edit)
+            if (s == e && e == StrLen(SearchGui.searchText)) { ; 选区是否位于最后
+                if ((A_ThisHotkey == A_PriorHotkey && A_TimeSincePriorHotkey < 250) && (rowNum := this.focusedRow) && lastEndFlag) {
+                    len := this.pluginSearchResult.Length
+                    if (rowNum > len)
+                        this.openSelectedFileInFolder(rowNum - len)
+                    else if (this.pluginSearchResult[rowNum - len].HasOwnProp("doubleLeftHandler"))
+                        this.pluginSearchResult[rowNum - len].doubleLeftHandler(SearchGui.searchText)
+                }
+                lastEndFlag := true
+            } else
+                lastEndFlag := false
+        }
+        this.hotkeyHandlerMap["~Right Up"] := rightUpHandler
         this.hotkeyHandlerMap["Down"] := () => this.focusedRow++
         this.hotkeyHandlerMap["Up"] := () => this.focusedRow--
 

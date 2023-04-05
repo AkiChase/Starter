@@ -8,7 +8,7 @@ class SearchGui {
 
     ;#region 设置搜索框占位符
     static placeholder {
-        set => DllCall("User32.dll\SendMessageW", "Ptr", SearchGui.edit.Hwnd, "Uint", (0x1500 + 1), "Ptr", True, "WStr", value)
+        set => EditCtrlFunc.setPlaceholder(SearchGui.edit, value)
     }
     ;#endregion
 
@@ -169,7 +169,7 @@ class SearchGui {
         ; 清空、隐藏
         Hotkey("~Esc", hotkeyHandler)
         ; 文件夹中显示
-        Hotkey("~Left Up", hotkeyHandler)
+        Hotkey("~Right Up", hotkeyHandler)
         ; 上下移动焦点行
         Hotkey("Down", hotkeyHandler)
         Hotkey("Up", hotkeyHandler)
