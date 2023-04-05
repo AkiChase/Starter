@@ -3,7 +3,7 @@
  * @Version: 0.0.3
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-04
+ * @LastEditTime: 2023-04-05
  * @Description: 插件API封装
  */
 
@@ -114,12 +114,14 @@ class PluginHelper {
      * @param runHandler 插件模式回车、双击任意项时的处理函数 (that, rowNum) => void
      * @param doubleLeftHandler (可选)插件模式双击Left时的处理函数 (that, rowNum) => void
      * @param loadImgsHandler (可选)加载插件模式图片的处理函数 (that) => void
+     * @param toBottomHandler (可选)列表最后一行可见(触底)处理函数 (that) => void
      * @param menuInitHandler (可选)右键显示菜单栏初始化处理函数 (that) => void
      * @param searchText (可选)启动时设置搜索框文本
      * @param placeholder (可选)设置搜索框占位符
      * @param thumb (可选)hICON 设置插件模式搜索框图标
      */
-    static showPluginMode(pluginSearchData, searchHandler, runHandler, doubleLeftHandler?, loadImgsHandler?, menuInitHandler?, searchText := "", placeholder := "", thumb?) {
+    static showPluginMode(pluginSearchData, searchHandler, runHandler, doubleLeftHandler?, loadImgsHandler?, toBottomHandler?,
+        menuInitHandler?, searchText := "", placeholder := "", thumb?) {
         PluginMode.showPluginMode( ; 启动插件模式
             pluginSearchData, searchHandler, runHandler, doubleLeftHandler?,
             loadImgsHandler?, menuInitHandler?, searchText, placeholder, thumb?

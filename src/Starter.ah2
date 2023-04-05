@@ -3,7 +3,7 @@
  * @Version: 0.3.0
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-04
+ * @LastEditTime: 2023-04-05
  * @Description: 介绍Starter 是一款AHK编写的快速启动工具，旨在方便快捷地启动文件、文件夹，提高电脑的使用效率。
  */
 #NoTrayIcon ; 先隐藏图标
@@ -38,6 +38,7 @@ PluginGui.init() ;同时重启以加载插件
 #Include .\Utils\Start.ah2
 #Include .\Utils\WiseGuiHelper.ah2
 #Include .\Utils\UrlEncode.ah2
+#Include .\Utils\EditCtrlFunc.ah2
 #Include .\Utils\7Zip\SevenZip.ahk
 
 Tip := WiseGuiHelper("tooltip")

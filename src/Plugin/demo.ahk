@@ -3,7 +3,7 @@
  * @Version: 0.0.4
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-04
+ * @LastEditTime: 2023-04-05
  * @Description: 插件示例
  */
 
@@ -123,8 +123,8 @@ class Plugin_Demo {
 
         hIcon := PluginHelper.getPluginHIcon("demo.ahk")
         data := []
-        loop 3 {
-            data.Push({ title: A_Index, iconPath: hIcon })
+        loop 15 {
+            data.Push({ title: Format("{:03}", A_Index), iconPath: hIcon })
         }
         ;#endregion
 
@@ -138,6 +138,7 @@ class Plugin_Demo {
                 (that, rowNum) => rowNum > 0 ?
                     PluginHelper.Utils.tip(this.name, "double Left" that.pluginSearchResult[rowNum].title, 1500) : 0,
                     loadImgs,
+                    (that) => PluginHelper.Utils.tip(this.name, "列表触底通知：可以通过这种方式异步加载数量过大的列表", 1000, true),
                     menuInit, ,
                     "输入搜索内容吧！"
                 )
