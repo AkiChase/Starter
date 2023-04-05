@@ -15,11 +15,13 @@ class IntelligentMode {
     {
         get => this.listView.GetNext()
         set {
-            if (value > GlobalData.intelligentSearchResult.Length + this.pluginSearchResult.Length)
-                value := 1
-            else if (value == 0)
-                value := GlobalData.startupSearchResult.Length + this.pluginSearchResult.Length
-            this.listView.Modify(value, "Select Focus Vis")
+            if (GlobalData.intelligentSearchResult.Length || this.pluginSearchResult.Length) { ; 有内容才可修改
+                if (value > GlobalData.intelligentSearchResult.Length + this.pluginSearchResult.Length)
+                    value := 1
+                else if (value == 0)
+                    value := GlobalData.startupSearchResult.Length + this.pluginSearchResult.Length
+                this.listView.Modify(value, "Select Focus Vis")
+            }
         }
     }
     ;#endregion

@@ -3,7 +3,7 @@
  * @Version: 0.0.1
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-04
+ * @LastEditTime: 2023-04-05
  * @Description: 插件模式
  */
 
@@ -21,6 +21,7 @@ class PluginMode {
     static runHandler := (*) => 0
     static doubleLeftHandler := (*) => 0
     static loadImgsHandler := (*) => 0
+    static toBottomHandler := (*) => 0
 
     static pluginSearchData := []
     static pluginSearchResult := []
@@ -39,11 +40,14 @@ class PluginMode {
     {
         get => this.listView.GetNext()
         set {
-            if (value > this.pluginSearchResult.Length)
-                value := 1
-            else if (value == 0)
-                value := this.pluginSearchResult.Length
-            this.listView.Modify(value, "Select Focus Vis")
+            if (this.pluginSearchResult.Length) {  ; 有内容才可修改
+                if (value > this.pluginSearchResult.Length)
+                    value := 1
+                else if (value == 0)
+                    value := this.pluginSearchResult.Length
+                this.listView.Modify(value, "Select Focus Vis")
+                this.toBottomNotify() ; 触发检测
+            }
         }
     }
     ;#endregion
@@ -68,20 +72,45 @@ class PluginMode {
         this.listView.SetFont("s14 w700 c444444")
 
         ; 鼠标双击运行
-        this.listView.OnEvent("DoubleClick", (_lv, rowNum) => rowNum ? this.pluginRun(rowNum) : 0)
+        this.listView.OnEvent("DoubleClick", (_, rowNum) => rowNum ? this.pluginRun(rowNum) : 0)
         ; 菜单栏
-        this.listView.OnEvent("ContextMenu", (_lv, rowNum, *) => rowNum ? this.showMenu() : 0)
+        this.listView.OnEvent("ContextMenu", (_, rowNum, *) => rowNum ? this.showMenu() : 0)
+
+        LVN_ENDSCROLL := -181
+        this.listView.OnNotify(LVN_ENDSCROLL, this.toBottomNotify) ;滚动结束时检测是否触底
 
         ; 插件模式热键处理函数
         this.hotkeyHandlerMap["~Esc"] := () => StrLen(SearchGui.searchText) ?
             SearchGui.searchText := SearchGui.edit.Value := "" : SearchGui.mode := this.oldMode ;切回原来的模式
 
-        this.hotkeyHandlerMap["~Left Up"] := () => (A_ThisHotkey == A_PriorHotkey && A_TimeSincePriorHotkey < 250) ? this.pluginRun(, true) : 0
+        rightUpHandler() {
+            static lastEndFlag := false
+            EditCtrlFunc.getSelection(&s, &e, SearchGui.edit)
+            if (s == e && e == StrLen(SearchGui.searchText)) { ; 选区是否位于最后
+                if ((A_ThisHotkey == A_PriorHotkey && A_TimeSincePriorHotkey < 250) && (rowNum := this.focusedRow) && lastEndFlag) {
+                    this.pluginRun(, true)
+                }
+                lastEndFlag := true
+            } else
+                lastEndFlag := false
+        }
+        this.hotkeyHandlerMap["~Right Up"] := rightUpHandler
 
         this.hotkeyHandlerMap["Down"] := () => this.focusedRow++
         this.hotkeyHandlerMap["Up"] := () => this.focusedRow--
 
         this._default_thumb := LoadPicture(GlobalData.imgDir "\plugin.png", "w64")
+    }
+
+    ; 检测是否触底并发出通知
+    static toBottomNotify(*) {
+        static LVM_ISITEMVISIBLE := 0x10B6
+        index := PluginMode.pluginSearchResult.Length
+        if (index) {
+            res := SendMessage(LVM_ISITEMVISIBLE, index - 1, 0, PluginMode.listView)
+            if (res)
+                PluginMode.toBottomHandler() ;调用触底处理函数
+        }
     }
 
     ; 重新加载搜索列表图标资源
@@ -110,7 +139,7 @@ class PluginMode {
     }
 
 
-    static showPluginMode(pluginSearchData, searchHandler, runHandler, doubleLeftHandler?, loadImgsHandler?, menuInitHandler?, searchText := "", placeholder := "", thumb?) {
+    static showPluginMode(pluginSearchData, searchHandler, runHandler, doubleLeftHandler?, loadImgsHandler?, toBottomHandler?, menuInitHandler?, searchText := "", placeholder := "", thumb?) {
         this.oldMode := SearchGui.mode
 
         this.pluginSearchData := pluginSearchData
@@ -118,6 +147,7 @@ class PluginMode {
         this.runHandler := runHandler
         this.doubleLeftHandler := IsSet(doubleLeftHandler) ? doubleLeftHandler : (*) => 0
         this.loadImgsHandler := IsSet(loadImgsHandler) ? loadImgsHandler : (*) => 0
+        this.toBottomHandler := IsSet(toBottomHandler) ? toBottomHandler : (*) => 0
 
         this.rowHeight := 0
         this.menu := 0
