@@ -87,7 +87,7 @@ class SearchGui {
         this.gui.SetFont(, "雅痞-简")    ;优先使用更好看的字体
         this.gui.MarginY := 0
 
-        this.edit := this.gui.AddEdit("x10 y10 h30 w445 -E0x200")
+        this.edit := this.gui.AddEdit("x10 y10 h30 w495 -E0x200")
         this.placeholder := "Hi, Starter"
         this.edit.Focus()
 
@@ -101,14 +101,14 @@ class SearchGui {
 
 
         this.thumbList := [LoadPicture(GlobalData.imgDir "\Starter.png", "w64"), LoadPicture(GlobalData.imgDir "\AI.png", "w64")]
-        this.thumb := this.gui.AddPicture("x460 y10 w30 h30", "hBitmap:*" this.thumbList[1])
+        this.thumb := this.gui.AddPicture("x510 y10 w30 h30", "hBitmap:*" this.thumbList[1])
 
         ; 回车触发
         this.gui.AddButton("Default Hidden").OnEvent("Click", (*) => this.mode == 0 ?
             StartupMode.startupRun() : this.mode == 1 ?
                 IntelligentMode.intelligentRun() : PluginMode.pluginRun())
 
-        this.gui.Show("Hide y" Round(A_ScreenHeight / 5))
+        this.gui.Show("w550 Hide y" Ceil(A_ScreenHeight / 5))
         StartupMode.init()
         IntelligentMode.init()
         PluginMode.init()

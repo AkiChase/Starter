@@ -68,7 +68,7 @@ class PluginMode {
 
     ; 初始化
     static init() {
-        this.listView := SearchGui.gui.Add("ListView", "x10 y50 w510 r8 -Multi -hdr -E0x200", [""])
+        this.listView := SearchGui.gui.Add("ListView", "x10 y52 w560 r10 -Multi -hdr -E0x200", [""])
         this.listView.SetFont("s14 w700 c444444")
 
         ; 鼠标双击运行
@@ -179,12 +179,12 @@ class PluginMode {
                 this.rowHeight := rowH
         }
 
-        LVHeight := len > 0 ? Round((len >= 8 ? 8 : len) * this.rowHeight) : 0
+        LVHeight := len > 0 ? Ceil((len >= 8 ? 8 : len) * this.rowHeight) : 0
         ControlMove(, , , LVHeight, this.listView) ; 使用ControlMove避免DPI 缩放
-        this.listView.ModifyCol(1, "480")
+        this.listView.ModifyCol(1, "530")
         this.focusedRow := 1    ;聚焦第一行
         this.listView.Opt("Redraw")
-        WinMove(, , 500 * (A_ScreenDPI / 96), LVHeight + Round(55 * (A_ScreenDPI / 96)), SearchGui.gui)
+        WinMove(, , 550 * (A_ScreenDPI / 96), LVHeight + Ceil(55 * (A_ScreenDPI / 96)), SearchGui.gui)
     }
 
     static pluginRun(rowNum?, doubleLeft := false) {

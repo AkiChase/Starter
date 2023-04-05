@@ -2,6 +2,7 @@ class IntelligentMode {
     ; static listView := unset
     ; static menu := unset
     static imgListID := 0
+    static rowHeight := 0
     static imgPathToImgListIndex := Map()
     static hotkeyHandlerMap := Map()
 
@@ -42,7 +43,7 @@ class IntelligentMode {
 
     static init() {
         ; 本列表默认隐藏
-        this.listView := SearchGui.gui.Add("ListView", "x10 y50 w510 r8 -Multi -hdr -E0x200 Hidden Count" 3, [""])
+        this.listView := SearchGui.gui.Add("ListView", "x10 y52 w560 r10 -Multi -hdr -E0x200 Hidden Count" 3, [""])
         this.listView.SetFont("s14 w700 c444444")
 
         this.loadImgs()
@@ -248,14 +249,25 @@ class IntelligentMode {
                 this.listView.Add("Icon" this.imgPathToImgListIndex[GlobalData.imgDir "\noImg.png"], "  " item["title"])
         }
 
-        ;重置listView和gui高度
+        this.resizeGui()
+    }
+
+    ;重置listView和gui高度
+    static resizeGui() {
         len := GlobalData.intelligentSearchResult.Length + this.pluginSearchResult.Length
-        LVHeight := Round((len >= 8 ? 8 : len) * 26.4)    ; 此处不需要DPI缩放计算
-        this.listView.Move(, , , LVHeight)
-        this.listView.ModifyCol(1, "480")
-        this.listView.Modify(1, "Select Focus Vis")    ;聚焦第一行
+        if (len && this.rowHeight == 0) {
+            LV_XYstruct := Buffer(16, 0)
+            SendMessage(0x1038, 1, LV_XYstruct.Ptr, , this.listView)
+            if (rowH := NumGet(LV_XYstruct, 12, "UInt") - NumGet(LV_XYstruct, 4, "UInt"))
+                this.rowHeight := rowH
+        }
+
+        LVHeight := len > 0 ? Ceil((len >= 8 ? 8 : len) * this.rowHeight) : 0
+        ControlMove(, , , LVHeight, this.listView) ; 使用ControlMove避免DPI 缩放
+        this.listView.ModifyCol(1, "530")
+        this.focusedRow := 1    ;聚焦第一行
         this.listView.Opt("Redraw")
-        WinMove(, , 500 * (A_ScreenDPI / 96), Round((LVHeight + 55) * (A_ScreenDPI / 96)), SearchGui.gui)
+        WinMove(, , 550 * (A_ScreenDPI / 96), LVHeight + Ceil(55 * (A_ScreenDPI / 96)), SearchGui.gui)
     }
 
     ; 载入插件图片
