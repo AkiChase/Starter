@@ -3,7 +3,7 @@
  * @Version: 0.0.1
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-02
+ * @LastEditTime: 2023-04-06
  * @Description: 定时提醒 可设置定时时间和提示语
  */
 
@@ -17,7 +17,7 @@
 }
 <==Starter Plugin Info===
 */
-
+#Include ..\Utils\PluginHelper.ah2
 PluginHelper.addEntryFunc((*) => Plugin_定时提醒.main()) ; 添加入口函数等待执行
 
 class Plugin_定时提醒 {

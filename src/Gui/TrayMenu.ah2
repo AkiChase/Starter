@@ -3,7 +3,7 @@
  * @Version: 0.0.2
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-02
+ * @LastEditTime: 2023-04-06
  * @Description: 菜单栏
  */
 
@@ -144,6 +144,7 @@ class TrayMenu {
             if (FileExist(dir := tmpDir "\Plugin"))
                 DirCopy(dir, GlobalData.pluginDir, true), res .= "插件导入成功`n"
         }
+        DirDelete(tmpDir, true)
         if (StrLen(res)) {
             GlobalData.onExitHandler := (*) => 0
             Tip.show("提示", res "1s后软件重启")
