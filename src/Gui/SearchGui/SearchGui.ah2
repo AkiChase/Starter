@@ -3,6 +3,7 @@ class SearchGui {
     ; static edit := unset
     ; static thumbList := unset
     ; static thumb := unset
+    ; static contentThumb := unset
 
     static hideTime := 0
 
@@ -25,6 +26,12 @@ class SearchGui {
                     c.autoHideFlag := false
                 return
             }
+            ;非智能模式下且存在非文本pastedContent时，切换前要清除pastedContent
+            if (value != 1 && this._pastedContentType != "text") {
+                this._pastedContentType := "text"
+                this.pastedContent := ""
+            }
+
             this._mode := value
             if (this._mode == 1) {    ; IntelligentMode
                 this.thumb.Value := "hBitmap:*" this.thumbList[2]
@@ -79,6 +86,43 @@ class SearchGui {
     }
     ;#endregion
 
+    ;#region 预览内容
+    static _pastedContentType := "text"
+    static _pastedContent := ""
+    static pastedContent {
+        get => this._pastedContent
+        set {
+            flag := false
+            if (this._pastedContentType = "bitmap"
+                && DllCall("OpenClipboard", "ptr", 0) && DllCall("IsClipboardFormatAvailable", "uint", 2)) {
+                ; 位图
+                hBitmap := DllCall("GetClipboardData", "uint", 2, "ptr") ; 指向剪切板内数据
+                hBitmap := LoadPicture("HBITMAP:*" hBitmap) ;复制一份
+                DllCall("CloseClipboard")
+
+                this.edit.Move(50, , 455)
+                this.contentThumb.Value := "HBITMAP:*" hBitmap, this.contentThumb.Visible := true
+                this.placeholder := "图片", this._pastedContent := hBitmap
+                flag := true
+            } else if (this._pastedContentType = "file"
+                && FileExist(value) && hIcon := PluginHelper.Utils.associatedHIcon(value)) {
+                ; 文件
+                this.edit.Move(50, , 455)
+                this.contentThumb.Value := "HICON:" hIcon, this.contentThumb.Visible := true
+                this.placeholder := "文件", this._pastedContent := value
+                flag := true
+            } else {
+                ; 文本
+                this.edit.Move(10, , 495)
+                this.contentThumb.Visible := false, this._pastedContent := value
+                flag := true
+            }
+            if (!flag)
+                this._pastedContentType := "text", this._pastedContent := ""
+        }
+    }
+    ;#endregion
+
     ; 初始化
     static init() {
         this.gui := Gui("Owner AlwaysOnTop -Resize -Caption", "Starter")
@@ -102,6 +146,8 @@ class SearchGui {
 
         this.thumbList := [LoadPicture(GlobalData.imgDir "\Starter.png", "w64"), LoadPicture(GlobalData.imgDir "\AI.png", "w64")]
         this.thumb := this.gui.AddPicture("x510 y10 w30 h30", "hBitmap:*" this.thumbList[1])
+
+        this.contentThumb := this.gui.AddPicture("x7 y7 w36 h36 +Border +Hidden")
 
         ; 回车触发
         this.gui.AddButton("Default Hidden").OnEvent("Click", (*) => this.mode == 0 ?
@@ -141,8 +187,13 @@ class SearchGui {
                     StartupMode.showGui()
                 }
             } else {
-                IntelligentMode.showGui(GetSelectedText())
-                KeyWait("CapsLock")    ;等待松开
+                content := GetSelectedText(, &outType)
+                if (outType != 'timeout') {
+                    this._pastedContentType := outType
+                    this.pastedContent := content
+                }
+                IntelligentMode.showGui(content, true) ; 填入内容, 强制使用智能模式
+                KeyWait("CapsLock")    ;等待松开, 避免重复调用
             }
         }
 

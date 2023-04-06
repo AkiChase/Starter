@@ -57,8 +57,16 @@ class IntelligentMode {
                     this.pluginSearchResult[rowNum].menu.Show() : 0
             )
 
+        escHandler() {
+            if (SearchGui.edit.Value)
+                SearchGui.searchText := SearchGui.edit.Value := ""    
+            else if (SearchGui.contentThumb.Visible)
+            this.hideGui()
+        }
+
+
         ; 启动模式热键处理函数
-        this.hotkeyHandlerMap["~Esc"] := () => StrLen(SearchGui.edit.Value) ? SearchGui.searchText := SearchGui.edit.Value := "" : this.hideGui()
+        this.hotkeyHandlerMap["~Esc"] := () => 
         this.hotkeyHandlerMap["Down"] := () => this.focusedRow++
         this.hotkeyHandlerMap["Up"] := () => this.focusedRow--
 
@@ -176,8 +184,8 @@ class IntelligentMode {
     }
 
     ; 以智能模式显示gui
-    static showGui(searchText := "") {
-        if (SearchGui.hideTimeDiff()) {
+    static showGui(searchText := "", force := false) {
+        if (!force && SearchGui.hideTimeDiff()) {
             SearchGui.recoverGui()
             return
         }
