@@ -161,7 +161,7 @@ class Plugin_网页搜索 {
                 this.title,
                 ["GGSS", "google"],
                 (that, searchText) => (
-                    PluginMode.showPluginMode( ; 启动插件模式
+                    PluginHelper.showPluginMode( ; 启动插件模式
                         [], ;数据靠search获取，不需要传入
                         searchHandler,
                         runHandler, , , , , ,
@@ -177,7 +177,7 @@ class Plugin_网页搜索 {
                 this.title,
                 [["(gg|google|谷歌)\s+(?<query>.*)", "${query}"], [".+", "$0"]],
                 (that, content) => (
-                    PluginMode.showPluginMode( ; 启动插件模式
+                    PluginHelper.showPluginMode( ; 启动插件模式
                         [], ;数据靠search获取，不需要传入
                         searchHandler,
                         runHandler, , , , ,
@@ -244,7 +244,7 @@ class Plugin_网页搜索 {
                 this.title,
                 ["BYSS", "bing"],
                 (that, searchText) => (
-                    PluginMode.showPluginMode( ; 启动插件模式
+                    PluginHelper.showPluginMode( ; 启动插件模式
                         [], ;数据靠search获取，不需要传入
                         searchHandler,
                         runHandler, , , , , ,
@@ -260,7 +260,7 @@ class Plugin_网页搜索 {
                 this.title,
                 [["(by|bing|必应)\s+(?<query>.*)", "${query}"], [".+", "$0"]],
                 (that, content) => (
-                    PluginMode.showPluginMode( ; 启动插件模式
+                    PluginHelper.showPluginMode( ; 启动插件模式
                         [], ;数据靠search获取，不需要传入
                         searchHandler,
                         runHandler, , , , ,
@@ -322,7 +322,7 @@ class Plugin_网页搜索 {
                 this.title,
                 ["BDSS", "baidu"],
                 (that, searchText) => (
-                    PluginMode.showPluginMode( ; 启动插件模式
+                    PluginHelper.showPluginMode( ; 启动插件模式
                         [], ;数据靠search获取，不需要传入
                         searchHandler,
                         runHandler, , , , , ,
@@ -338,7 +338,7 @@ class Plugin_网页搜索 {
                 this.title,
                 [["(bd|baidu|百度)\s+(?<query>.*)", "${query}"], [".+", "$0"]],
                 (that, content) => (
-                    PluginMode.showPluginMode( ; 启动插件模式
+                    PluginHelper.showPluginMode( ; 启动插件模式
                         [], ;数据靠search获取，不需要传入
                         searchHandler,
                         runHandler, , , , ,
