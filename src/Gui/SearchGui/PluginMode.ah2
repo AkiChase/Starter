@@ -3,7 +3,7 @@
  * @Version: 0.0.1
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-05
+ * @LastEditTime: 2023-04-06
  * @Description: 插件模式
  */
 
@@ -25,6 +25,7 @@ class PluginMode {
 
     static pluginSearchData := []
     static pluginSearchResult := []
+    static pluginOtherData := 0 ; 可自定义此数据
 
     static _default_thumb := 0
     static _thumb := 0
@@ -113,9 +114,8 @@ class PluginMode {
         }
     }
 
-    ; 重新加载搜索列表图标资源
-    static reloadIL(ILFlag) {
-        SearchGui.placeholder := "正在加载插件模式搜索列表..."
+    ; 重置列表和图标资源
+    static reloadLVIL(ILFlag) {
         this.listView.Opt("-Redraw")
         this.listView.Delete()    ;清空搜索列表
 
@@ -139,7 +139,7 @@ class PluginMode {
     }
 
 
-    static showPluginMode(pluginSearchData, searchHandler, runHandler, doubleLeftHandler?, loadImgsHandler?, toBottomHandler?, menuInitHandler?, searchText := "", placeholder := "", thumb?) {
+    static showPluginMode(pluginSearchData, searchHandler, runHandler, doubleLeftHandler?, loadImgsHandler?, toBottomHandler?, initHandler?, searchText := "", placeholder := "", thumb?) {
         this.oldMode := SearchGui.mode
 
         this.pluginSearchData := pluginSearchData
@@ -149,18 +149,22 @@ class PluginMode {
         this.loadImgsHandler := IsSet(loadImgsHandler) ? loadImgsHandler : (*) => 0
         this.toBottomHandler := IsSet(toBottomHandler) ? toBottomHandler : (*) => 0
 
+        this.pluginOtherData := 0
         this.rowHeight := 0
         this.menu := 0
-        if (IsSet(menuInitHandler))
-            menuInitHandler(this)
-
-        this.reloadIL(IsSet(loadImgsHandler))
+        if (IsSet(initHandler))
+            initHandler(this)
 
         this.thumb := IsSet(thumb) ? thumb : 0
         SearchGui.mode := -1
         SearchGui.placeholder := placeholder
+        ; 隐藏多余部分
+        WinMove(, , 550 * (A_ScreenDPI / 96), Ceil(55 * (A_ScreenDPI / 96)), SearchGui.gui)
+        this.reloadLVIL(IsSet(loadImgsHandler))
 
         SearchGui.edit.Value := SearchGui.searchText := searchText ;同时触发搜索
+        EditCtrlFunc.editSelect(SearchGui.edit, StrLen(searchText), -1) ; 指示器移动到最后
+
 
         if (!WinActive(SearchGui.gui)) { ; 窗口未激活
             SearchGui.gui.Show()

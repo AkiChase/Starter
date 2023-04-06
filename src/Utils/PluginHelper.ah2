@@ -3,7 +3,7 @@
  * @Version: 0.0.3
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-05
+ * @LastEditTime: 2023-04-06
  * @Description: 插件API封装
  */
 
@@ -36,7 +36,7 @@ class PluginHelper {
      * @param title 插件项显示标题
      * @param reg 插件项正则替换列表[[exp1,replace1],...]
      * @param runHandler 鼠标双击、回车该插件项时执行的函数
-     * (that, content)=>any that指向添加的插件项对象, content为正则替换后的内容
+     * (obj, content)=>any obj指向添加的插件项对象, content为正则替换后的内容
      * @param menu 选填, 右键该插件项显示的菜单
      * @param hIcon 选填, 插件项显示的图标HICON, 默认使用插件的图标
      */
@@ -55,8 +55,8 @@ class PluginHelper {
      * @param name 插件id, 即文件名
      * @param title 插件项显示标题
      * @param keywords 插件项关键字
-     * @param startHandler 鼠标双击、回车该插件项时执行的函数 (that, searchText)=>any that指向添加的插件项对象
-     * @param doubleLeftHandler 选填, 双击Left该插件项时执行的函数 (that, searchText)=>any that指向添加的插件项对象
+     * @param startHandler 鼠标双击、回车该插件项时执行的函数 (obj, searchText)=>any obj指向添加的插件项对象
+     * @param doubleLeftHandler 选填, 双击Left该插件项时执行的函数 (obj, searchText)=>any obj指向添加的插件项对象
      * @param menu 选填, 右键该插件项显示的菜单
      * @param hIcon 选填, 插件项显示的图标HICON, 默认使用插件的图标
      */
@@ -97,15 +97,29 @@ class PluginHelper {
 
     /**
      * @description: 隐藏搜索框
+     * @param recordHideTime 默认false true则记录关闭时间，15s内可恢复窗口
      */
-    static hideSearchGui() {
-        SearchGui.hideGui()
+    static hideSearchGui(recordHideTime := false) {
+        SearchGui.hideGui(recordHideTime)
     }
 
     /**
      * @description: 搜索框内容
      */
-    static SearchText => SearchGui.searchText
+    static SearchText {
+        get => SearchGui.searchText
+        set => SearchGui.searchText := value
+    }
+
+    /**
+     * @description: 图片资源目录
+     */
+    static imgDir => GlobalData.imgDir
+
+    /**
+     * @description: 特定情况下需要提前获取到PluginMode，即所谓的that
+     */
+    static getPluginMode := (*) => PluginMode
 
     /**
      * @description: 启动插件模式
@@ -113,22 +127,37 @@ class PluginHelper {
      * @param searchHandler 插件模式搜索处理函数 (that, searchText) => void
      * @param runHandler 插件模式回车、双击任意项时的处理函数 (that, rowNum) => void
      * @param doubleLeftHandler (可选)插件模式双击Left时的处理函数 (that, rowNum) => void
-     * @param loadImgsHandler (可选)加载插件模式图片的处理函数 (that) => void
+     * @param loadImgsHandler (可选)加载插件模式图片的处理函数, 若需要显示图标一定要带有此参数 (that) => void
      * @param toBottomHandler (可选)列表最后一行可见(触底)处理函数 (that) => void
-     * @param menuInitHandler (可选)右键显示菜单栏初始化处理函数 (that) => void
+     * @param initHandler (可选)初始化处理函数 (that) => void
      * @param searchText (可选)启动时设置搜索框文本
      * @param placeholder (可选)设置搜索框占位符
      * @param thumb (可选)hICON 设置插件模式搜索框图标
      */
-    static showPluginMode(pluginSearchData, searchHandler, runHandler, doubleLeftHandler?, loadImgsHandler?, toBottomHandler?,
-        menuInitHandler?, searchText := "", placeholder := "", thumb?) {
+    static showPluginMode(pluginSearchData, searchHandler, runHandler, doubleLeftHandler?, loadImgsHandler?,
+        toBottomHandler?, initHandler?, searchText := "", placeholder := "", thumb?) {
         PluginMode.showPluginMode( ; 启动插件模式
-            pluginSearchData, searchHandler, runHandler, doubleLeftHandler?,
-            loadImgsHandler?, menuInitHandler?, searchText, placeholder, thumb?
+            pluginSearchData, searchHandler, runHandler, doubleLeftHandler?, loadImgsHandler?,
+            toBottomHandler?, initHandler?, searchText, placeholder, thumb?
         )
     }
 
     class Utils {
+        /**
+         * @description: 复制路径指向文件到剪切板
+         */
+        static copyToClipboard := (this, filePath, cut := false) => CopyToClipboard(filePath, cut)
+
+        /**
+         * @description: 运行文件
+         */
+        static startFile := (this, path, workingDir := "", options := "", beforeRun?) => Start.startFile(path, workingDir, options, beforeRun?)
+
+        /**
+         * @description: 在文件夹中打开
+         */
+        static openFileInFolder := (this, path) => Start.openFileInFolder(path)
+
         /**
          * @description: UrlEncode编码
          */
@@ -163,7 +192,7 @@ class PluginHelper {
         /**
          * @description: 载入文件路径对应的图标为HICON 可以直接关联到图标源头
          */
-        static filePathToHICON(filePath) {
+        static associatedHIcon(filePath) {
             return DllCall("Shell32\ExtractAssociatedIcon", "Ptr", 0, "Str", filePath, "ShortP", 1, "Ptr")
         }
 

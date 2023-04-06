@@ -195,7 +195,7 @@ class SearchGui {
     }
 
     ; 根据模式隐藏主界面
-    static hideGui() {
+    static hideGui(recordHideTime := false) {
         if (this.mode == 0) {
             StartupMode.hideGui()
         } else if (this.mode == 1) {
@@ -203,5 +203,7 @@ class SearchGui {
         } else {
             PluginMode.hideGui()
         }
+        if (recordHideTime) ;记录关闭时间，15s内可恢复
+            SearchGui.hideTime := A_Now
     }
 }
