@@ -1,9 +1,9 @@
 /**
  * @Name: demo.ahk
- * @Version: 0.0.4
+ * @Version: 0.0.5
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-05
+ * @LastEditTime: 2023-04-06
  * @Description: 插件示例
  */
 
@@ -19,7 +19,7 @@ icon: 插件列表中的图标，请填入无头部的base64图片
 ===Starter Plugin Info==>
 {
     "author": "ruchuby",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "introduction": "An example of Starter Plugin",
     "icon": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAgNJREFUWEft1UuozVEUx/HPHRmaMFBMTDwmYiJSQimUMqAoAwNRQoSSR3kVxfWIIjISojwGiiLKgBkTYSADZGAkE2VAS3vXdvr/z/2fc27nls6a/fde+7e+e62113/IGNvQGMc3APivMnALE1NPLWraW6OVgZl4k4Jew/p+A+zBiRR0LW72G+A5FuArpuFHPwHm4mUKeAUbmwYPvyY9sAlTsL9G+Eixtwr3kt9RfMKldkAjAZzFNhxrA/Aas/Axpf9XAbAP57C9DqIOIOp4AUvSwbjlwQqRqHvUP+w8thY+h3EgfT/BFrxv1agCiDRG8EnJ+TM240EFQM5QbC3Dw8JnBS5iclqLBg2Iu6VOK0DUOW6b7XZqqu81KfyAqXiLmAWtNh6XsbrYiKxEf/y1EuA64g1n24nTNYFjeSGepf2T2N3GdweGi/0bWNcrwFVsSKIxejNMFUcjgDjYSQm+YQJeYU7N7TsqQdZo0oTxOh6nA1HP3O0lR1dNmAVan+Fx7C3U48+XG2teMQlLgEPF0+3oGZYi+ZmdQdQx20+MwwvMr0l/ngNdDaJSM0bx9AJgKR4lh+iZmJJVFgBfeh3FVcJ3EH0SNhsxiru2kf4FVcK/0+JTLO46cjrYKcDyYiTvwql+A9zHyhR0Bt71GyDSHhZDaE2vweN8pyUYjZj/aAwABhn4A2ymYyH5RzvQAAAAAElFTkSuQmCC"
 }
@@ -69,12 +69,14 @@ class Plugin_Demo {
         ; 插件相关菜单最好加入pluginMenu菜单项，更加规范
         PluginHelper.pluginMenu.Add("demo.ahk", this.menu)
 
-        ; 添加插件项到启动模式搜索界面
-        ; 定义一个新的菜单，用于右键插件项时显示（菜单是可选的属性）
-        m := Menu()
-        m.Add("demo menu item", (*) => PluginHelper.Utils.tip(this.name, "demo menu item", 1000))
 
-        ;#region 定义插件模式
+        ; 定义菜单，用于插件模式右键显示
+        pModeMenu := Menu()
+        that := PluginHelper.getPluginMode() ; 为了定义下两行的匿名函数，需要提前访问到that即pluginMode(担心混淆可以改成别的名字)，
+        pModeMenu.Add("显示当前行号", (*) => PluginHelper.Utils.tip("demo.ahk", that.focusedRow, 1500))
+        pModeMenu.Add("显示当前标题", (*) => PluginHelper.Utils.tip("demo.ahk", that.pluginSearchResult[that.focusedRow].title, 1500))
+
+        ; 搜索处理函数，用于插件模式搜索
         search(that, searchText) {
             that.pluginSearchResult := []
             if (searchText) {
@@ -99,7 +101,7 @@ class Plugin_Demo {
             that.resizeGui() ;根据搜索结果数量调整gui尺寸 并启用重绘
         }
 
-        ; 加载图标的函数，用于搜索结果中 that.listView.Add("Icon" n,...)
+        ; 加载图标的函数，用于插件模式搜索结果中 that.listView.Add("Icon" n,...)
         loadImgs(that) {
             defaultHIcon := LoadPicture(A_AhkPath, "Icon1", &_)
             that.imgPathToImgListIndex["default"] := IL_Add(that.imgListID, "HICON:" defaultHIcon)
@@ -113,24 +115,23 @@ class Plugin_Demo {
             }
         }
 
-        ; 右键菜单栏初始化处理函数
-        menuInit(that) {
-            m := Menu()
-            m.Add("显示当前行号", (*) => PluginHelper.Utils.tip("demo.ahk", that.focusedRow, 1500))
-            m.Add("显示当前标题", (*) => PluginHelper.Utils.tip("demo.ahk", that.pluginSearchResult[that.focusedRow].title, 1500))
-            that.menu := m
+        ; 进入插件模式的初始化处理函数(此处应当尽量少执行内容，因为每次打开插件模式前都需要执行)
+        initHandler(that) {
+            that.menu := pModeMenu
         }
 
+        ; 创建一些固定的示例数据
         hIcon := PluginHelper.getPluginHIcon("demo.ahk")
         data := []
         loop 15 {
             data.Push({ title: Format("{:03}", A_Index), iconPath: hIcon })
         }
-        ;#endregion
 
-        ; 定义插件项被双击或者回车时执行的处理函数, 函数有两个参数 that: 指向插件项, searchText: 搜索框搜索的内容
-        fn(that, searchText) {
-            PluginMode.showPluginMode( ; 启动插件模式
+        ; 定义插件项被双击或者回车时执行的处理函数:  启动插件模式
+        ; 注意函数接受两个参数 obj: 指向的是插件项对象{name, title, keywords, startHandler, doubleLeftHandler?, menu?, hIcon}
+        ; searchText: 搜索框搜索的内容
+        fn(obj, searchText) {
+            PluginHelper.showPluginMode(
                 data,
                 search,
                 (that, rowNum) => rowNum > 0 ?
@@ -139,7 +140,7 @@ class Plugin_Demo {
                     PluginHelper.Utils.tip(this.name, "double Left" that.pluginSearchResult[rowNum].title, 1500) : 0,
                     loadImgs,
                     (that) => PluginHelper.Utils.tip(this.name, "列表触底通知：可以通过这种方式异步加载数量过大的列表", 1000, true),
-                    menuInit, ,
+                    initHandler, ,
                     "输入搜索内容吧！"
                 )
         }
@@ -156,8 +157,8 @@ class Plugin_Demo {
             this.name,
             "插件示例-项目2",
             ["plugin demo", "CJSL"],
-            (that, searchText) => (PluginHelper.Utils.tip(that.title, "搜索框内容:" searchText, 1000), PluginHelper.hideSearchGui()),
-            (that, searchText) => PluginHelper.Utils.tip(that.title, "搜索框内容:" searchText, 1000), ,  ; 使用匿名函数作为双击left的处理函数
+            (obj, searchText) => (PluginHelper.Utils.tip(obj.title, "搜索框内容:" searchText, 1000), PluginHelper.hideSearchGui()),
+            (obj, searchText) => PluginHelper.Utils.tip(obj.title, "搜索框内容:" searchText, 1000), ,  ; 使用匿名函数作为双击left的处理函数
             ; 定义该插件项显示的图标HICON，此处用base64ToHICON方法将base64图片载入得到HICON
             PluginHelper.Utils.base64ToHICON("iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAnBJREFUWEfVlj9oFEEUxt+bLa6wF0whQcRCENOo2EUQYy/xZmb3sDKCoK0RhURQSFoFwdhcuNuZPY+AXKU22gmKiI2FAREbwUrwrI6dJxN2wv3Z21vZDWe2291vv/fbNx9vBmHKF065Pvy/AEKI60R0EhGPFekSEX1BxE9a68dpPqkdEEI0AcAvUjjl21BrHQw/HwGoVqsXGGMvE+E3ItosAoKIVwBg1noYYxZardarfr8RACHEDQB4aEWe5800m80fRQCCIDgax/F24nFTa/0oE4BzvoqIK1aktS4lpEIIsn5EdC+KotX9CyClXDLGzGQtCWNs2/O8541G44/TldIBKeUcEX3MkwfG2OkwDN+XCsA5n0XECADOTID4UKlUztfr9V+lAuT583GaUpZg6gC1Wu1Ar9dbdENlHJANYbfb7XQ6nd+lLoHv+6eMMe/ydIKIzkVR9KZUgCAIDsVxfBsATmRB2M0niqJr/Zr9mwHbymRP+BmG4ec87Xca3/ePx3F80N4j4uuJo1hKeYSI1gDABm3kQsR1pdRyHggp5RoR3RqjbSPislLq6w6cE3HOnyDi0oQCT7XWmRohxAYAXJ2Qkw2Xk12A/qAAwG6Ckxbav7mYmA68Syk0nzx7QUTrQ+/nh3faVIDhLdOaCCHuA8CdPEsAAA+01neHtWlbfW4AayalXDDGnM2CYIy9VUq5E9WAtDBAzr8fK+OcryDizoHEHXb+qQMlAIyctnKFsGjhvu8zQ/hs3AwoEcBZtbXWlwfmgJRykYiqAHBpDwr2W24hYksp1R4AcAo7EY0xh/cCgjH23U1A51/KsbsI7NQB/gIoe4UwRdVGRAAAAABJRU5ErkJggg==")
         )
@@ -167,7 +168,7 @@ class Plugin_Demo {
             this.name,
             "插件示例-智能模式项目",
             [[".+", "$0"], ["(demo|sl|示例)\s+(?<query>.*)", "${query}"]], ;一种是任意字符匹配，一种是前缀匹配，都用正则实现
-            (that, content) => PluginHelper.Utils.tip(that.title, "传递内容:" content, 1000)
+            (obj, content) => PluginHelper.Utils.tip(obj.title, "传递内容:" content, 1000)
         )
 
         ; PluginHelper.Utils.tip("插件已加载", "demo.ahk")
