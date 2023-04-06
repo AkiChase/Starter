@@ -3,7 +3,7 @@
  * @Version: 0.0.1
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-04
+ * @LastEditTime: 2023-04-06
  * @Description: 插件模式
  */
 
@@ -21,9 +21,11 @@ class PluginMode {
     static runHandler := (*) => 0
     static doubleLeftHandler := (*) => 0
     static loadImgsHandler := (*) => 0
+    static toBottomHandler := (*) => 0
 
     static pluginSearchData := []
     static pluginSearchResult := []
+    static pluginOtherData := 0 ; 可自定义此数据
 
     static _default_thumb := 0
     static _thumb := 0
@@ -39,11 +41,14 @@ class PluginMode {
     {
         get => this.listView.GetNext()
         set {
-            if (value > this.pluginSearchResult.Length)
-                value := 1
-            else if (value == 0)
-                value := this.pluginSearchResult.Length
-            this.listView.Modify(value, "Select Focus Vis")
+            if (this.pluginSearchResult.Length) {  ; 有内容才可修改
+                if (value > this.pluginSearchResult.Length)
+                    value := 1
+                else if (value == 0)
+                    value := this.pluginSearchResult.Length
+                this.listView.Modify(value, "Select Focus Vis")
+                this.toBottomNotify() ; 触发检测
+            }
         }
     }
     ;#endregion
@@ -64,19 +69,33 @@ class PluginMode {
 
     ; 初始化
     static init() {
-        this.listView := SearchGui.gui.Add("ListView", "x10 y50 w510 r8 -Multi -hdr -E0x200", [""])
+        this.listView := SearchGui.gui.Add("ListView", "x10 y52 w560 r10 -Multi -hdr -E0x200", [""])
         this.listView.SetFont("s14 w700 c444444")
 
         ; 鼠标双击运行
-        this.listView.OnEvent("DoubleClick", (_lv, rowNum) => rowNum ? this.pluginRun(rowNum) : 0)
+        this.listView.OnEvent("DoubleClick", (_, rowNum) => rowNum ? this.pluginRun(rowNum) : 0)
         ; 菜单栏
-        this.listView.OnEvent("ContextMenu", (_lv, rowNum, *) => rowNum ? this.showMenu() : 0)
+        this.listView.OnEvent("ContextMenu", (_, rowNum, *) => rowNum ? this.showMenu() : 0)
+
+        LVN_ENDSCROLL := -181
+        this.listView.OnNotify(LVN_ENDSCROLL, this.toBottomNotify) ;滚动结束时检测是否触底
 
         ; 插件模式热键处理函数
         this.hotkeyHandlerMap["~Esc"] := () => StrLen(SearchGui.searchText) ?
             SearchGui.searchText := SearchGui.edit.Value := "" : SearchGui.mode := this.oldMode ;切回原来的模式
 
-        this.hotkeyHandlerMap["~Left Up"] := () => (A_ThisHotkey == A_PriorHotkey && A_TimeSincePriorHotkey < 250) ? this.pluginRun(, true) : 0
+        rightUpHandler() {
+            static lastEndFlag := false
+            EditCtrlFunc.getSelection(&s, &e, SearchGui.edit)
+            if (s == e && e == StrLen(SearchGui.searchText)) { ; 选区是否位于最后
+                if ((A_ThisHotkey == A_PriorHotkey && A_TimeSincePriorHotkey < 250) && (rowNum := this.focusedRow) && lastEndFlag) {
+                    this.pluginRun(, true)
+                }
+                lastEndFlag := true
+            } else
+                lastEndFlag := false
+        }
+        this.hotkeyHandlerMap["~Right Up"] := rightUpHandler
 
         this.hotkeyHandlerMap["Down"] := () => this.focusedRow++
         this.hotkeyHandlerMap["Up"] := () => this.focusedRow--
@@ -84,9 +103,19 @@ class PluginMode {
         this._default_thumb := LoadPicture(GlobalData.imgDir "\plugin.png", "w64")
     }
 
-    ; 重新加载搜索列表图标资源
-    static reloadIL(ILFlag) {
-        SearchGui.placeholder := "正在加载插件模式搜索列表..."
+    ; 检测是否触底并发出通知
+    static toBottomNotify(*) {
+        static LVM_ISITEMVISIBLE := 0x10B6
+        index := PluginMode.pluginSearchResult.Length
+        if (index) {
+            res := SendMessage(LVM_ISITEMVISIBLE, index - 1, 0, PluginMode.listView)
+            if (res)
+                PluginMode.toBottomHandler() ;调用触底处理函数
+        }
+    }
+
+    ; 重置列表和图标资源
+    static reloadLVIL(ILFlag) {
         this.listView.Opt("-Redraw")
         this.listView.Delete()    ;清空搜索列表
 
@@ -110,7 +139,7 @@ class PluginMode {
     }
 
 
-    static showPluginMode(pluginSearchData, searchHandler, runHandler, doubleLeftHandler?, loadImgsHandler?, menuInitHandler?, searchText := "", placeholder := "", thumb?) {
+    static showPluginMode(pluginSearchData, searchHandler, runHandler, doubleLeftHandler?, loadImgsHandler?, toBottomHandler?, initHandler?, searchText := "", placeholder := "", thumb?) {
         this.oldMode := SearchGui.mode
 
         this.pluginSearchData := pluginSearchData
@@ -118,19 +147,24 @@ class PluginMode {
         this.runHandler := runHandler
         this.doubleLeftHandler := IsSet(doubleLeftHandler) ? doubleLeftHandler : (*) => 0
         this.loadImgsHandler := IsSet(loadImgsHandler) ? loadImgsHandler : (*) => 0
+        this.toBottomHandler := IsSet(toBottomHandler) ? toBottomHandler : (*) => 0
 
+        this.pluginOtherData := 0
         this.rowHeight := 0
         this.menu := 0
-        if (IsSet(menuInitHandler))
-            menuInitHandler(this)
-
-        this.reloadIL(IsSet(loadImgsHandler))
+        if (IsSet(initHandler))
+            initHandler(this)
 
         this.thumb := IsSet(thumb) ? thumb : 0
         SearchGui.mode := -1
         SearchGui.placeholder := placeholder
+        ; 隐藏多余部分
+        WinMove(, , 550 * (A_ScreenDPI / 96), Ceil(55 * (A_ScreenDPI / 96)), SearchGui.gui)
+        this.reloadLVIL(IsSet(loadImgsHandler))
 
         SearchGui.edit.Value := SearchGui.searchText := searchText ;同时触发搜索
+        EditCtrlFunc.editSelect(SearchGui.edit, StrLen(searchText), -1) ; 指示器移动到最后
+
 
         if (!WinActive(SearchGui.gui)) { ; 窗口未激活
             SearchGui.gui.Show()
@@ -149,12 +183,12 @@ class PluginMode {
                 this.rowHeight := rowH
         }
 
-        LVHeight := len > 0 ? Round((len >= 8 ? 8 : len) * this.rowHeight) : 0
+        LVHeight := len > 0 ? Ceil((len >= 8 ? 8 : len) * this.rowHeight) : 0
         ControlMove(, , , LVHeight, this.listView) ; 使用ControlMove避免DPI 缩放
-        this.listView.ModifyCol(1, "480")
+        this.listView.ModifyCol(1, "530")
         this.focusedRow := 1    ;聚焦第一行
         this.listView.Opt("Redraw")
-        WinMove(, , 500 * (A_ScreenDPI / 96), LVHeight + Round(55 * (A_ScreenDPI / 96)), SearchGui.gui)
+        WinMove(, , 550 * (A_ScreenDPI / 96), LVHeight + Ceil(55 * (A_ScreenDPI / 96)), SearchGui.gui)
     }
 
     static pluginRun(rowNum?, doubleLeft := false) {

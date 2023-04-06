@@ -1,5 +1,8 @@
 class Start {
-    static startFile(path, workingDir := "", options := "", beforeRun := "") {
+    /**
+     * @description: 运行文件
+     */
+    static startFile(path, workingDir := "", options := "", beforeRun?) {
         if !(FileExist(path)) {    ;文件不存在
             res := MsgBox("文件不存在:" path "`n是否尝试打开原文件夹?", "文件不存在", 0x40041)
             if (res = "OK") {
@@ -10,7 +13,7 @@ class Start {
             if !(workingDir)    ;默认使用文件所在文件夹作为工作目录
                 SplitPath(path, , &workingDir)
 
-            if (Type(beforeRun) == 'BoundFunc' or Type(beforeRun) == 'Func')
+            if (IsSet(beforeRun))
                 beforeRun()
             try {
                 Run(path, workingDir, options, &outPID)
@@ -18,7 +21,10 @@ class Start {
             }
         }
     }
-
+    
+    /**
+     * @description: 在文件夹中打开
+     */
     static openFileInFolder(path) {
         if (FileExist(path)) {
             try Run('explorer.exe /select,"' path '"')

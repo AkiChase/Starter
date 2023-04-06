@@ -3,7 +3,7 @@
  * @Version: 0.0.1
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-04
+ * @LastEditTime: 2023-04-05
  * @Description: WiseGui辅助类，便于对象化调用WiseGui
  */
 
@@ -47,7 +47,7 @@ class WiseGuiHelper {
         if (IsSet(theme))
             opts.Push("theme: " theme)
 
-        id := unique ? A_TickCount : this.id
+        id := unique ? "H" A_TickCount : this.id
         WiseGuiHelper.WiseGui(id, opts*)
         return id
     }

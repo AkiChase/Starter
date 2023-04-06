@@ -8,7 +8,7 @@ class SearchGui {
 
     ;#region 设置搜索框占位符
     static placeholder {
-        set => DllCall("User32.dll\SendMessageW", "Ptr", SearchGui.edit.Hwnd, "Uint", (0x1500 + 1), "Ptr", True, "WStr", value)
+        set => EditCtrlFunc.setPlaceholder(SearchGui.edit, value)
     }
     ;#endregion
 
@@ -87,7 +87,7 @@ class SearchGui {
         this.gui.SetFont(, "雅痞-简")    ;优先使用更好看的字体
         this.gui.MarginY := 0
 
-        this.edit := this.gui.AddEdit("x10 y10 h30 w445 -E0x200")
+        this.edit := this.gui.AddEdit("x10 y10 h30 w495 -E0x200")
         this.placeholder := "Hi, Starter"
         this.edit.Focus()
 
@@ -101,14 +101,14 @@ class SearchGui {
 
 
         this.thumbList := [LoadPicture(GlobalData.imgDir "\Starter.png", "w64"), LoadPicture(GlobalData.imgDir "\AI.png", "w64")]
-        this.thumb := this.gui.AddPicture("x460 y10 w30 h30", "hBitmap:*" this.thumbList[1])
+        this.thumb := this.gui.AddPicture("x510 y10 w30 h30", "hBitmap:*" this.thumbList[1])
 
         ; 回车触发
         this.gui.AddButton("Default Hidden").OnEvent("Click", (*) => this.mode == 0 ?
             StartupMode.startupRun() : this.mode == 1 ?
                 IntelligentMode.intelligentRun() : PluginMode.pluginRun())
 
-        this.gui.Show("Hide y" Round(A_ScreenHeight / 5))
+        this.gui.Show("w550 Hide y" Ceil(A_ScreenHeight / 5))
         StartupMode.init()
         IntelligentMode.init()
         PluginMode.init()
@@ -169,7 +169,7 @@ class SearchGui {
         ; 清空、隐藏
         Hotkey("~Esc", hotkeyHandler)
         ; 文件夹中显示
-        Hotkey("~Left Up", hotkeyHandler)
+        Hotkey("~Right Up", hotkeyHandler)
         ; 上下移动焦点行
         Hotkey("Down", hotkeyHandler)
         Hotkey("Up", hotkeyHandler)
@@ -195,7 +195,7 @@ class SearchGui {
     }
 
     ; 根据模式隐藏主界面
-    static hideGui() {
+    static hideGui(recordHideTime := false) {
         if (this.mode == 0) {
             StartupMode.hideGui()
         } else if (this.mode == 1) {
@@ -203,5 +203,7 @@ class SearchGui {
         } else {
             PluginMode.hideGui()
         }
+        if (recordHideTime) ;记录关闭时间，15s内可恢复
+            SearchGui.hideTime := A_Now
     }
 }

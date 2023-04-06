@@ -3,7 +3,7 @@
  * @Version: 0.0.1
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-04
+ * @LastEditTime: 2023-04-05
  * @Description: 网页搜索(带联想词)
  */
 
@@ -161,10 +161,10 @@ class Plugin_网页搜索 {
                 this.title,
                 ["GGSS", "google"],
                 (that, searchText) => (
-                    PluginMode.showPluginMode( ; 启动插件模式
+                    PluginHelper.showPluginMode( ; 启动插件模式
                         [], ;数据靠search获取，不需要传入
                         searchHandler,
-                        runHandler, , , , ,
+                        runHandler, , , , , ,
                         "Search on Google",
                         this.hIcon
                     )
@@ -177,10 +177,10 @@ class Plugin_网页搜索 {
                 this.title,
                 [["(gg|google|谷歌)\s+(?<query>.*)", "${query}"], [".+", "$0"]],
                 (that, content) => (
-                    PluginMode.showPluginMode( ; 启动插件模式
+                    PluginHelper.showPluginMode( ; 启动插件模式
                         [], ;数据靠search获取，不需要传入
                         searchHandler,
-                        runHandler, , , ,
+                        runHandler, , , , ,
                         content, ; 搜索词替换为传入的内容
                         "Search on Google",
                         this.hIcon
@@ -244,10 +244,10 @@ class Plugin_网页搜索 {
                 this.title,
                 ["BYSS", "bing"],
                 (that, searchText) => (
-                    PluginMode.showPluginMode( ; 启动插件模式
+                    PluginHelper.showPluginMode( ; 启动插件模式
                         [], ;数据靠search获取，不需要传入
                         searchHandler,
-                        runHandler, , , , ,
+                        runHandler, , , , , ,
                         "Search on Bing",
                         this.hIcon
                     )
@@ -260,10 +260,10 @@ class Plugin_网页搜索 {
                 this.title,
                 [["(by|bing|必应)\s+(?<query>.*)", "${query}"], [".+", "$0"]],
                 (that, content) => (
-                    PluginMode.showPluginMode( ; 启动插件模式
+                    PluginHelper.showPluginMode( ; 启动插件模式
                         [], ;数据靠search获取，不需要传入
                         searchHandler,
-                        runHandler, , , ,
+                        runHandler, , , , ,
                         content, ; 搜索词替换为传入的内容
                         "Search on Bing",
                         this.hIcon
@@ -322,10 +322,10 @@ class Plugin_网页搜索 {
                 this.title,
                 ["BDSS", "baidu"],
                 (that, searchText) => (
-                    PluginMode.showPluginMode( ; 启动插件模式
+                    PluginHelper.showPluginMode( ; 启动插件模式
                         [], ;数据靠search获取，不需要传入
                         searchHandler,
-                        runHandler, , , , ,
+                        runHandler, , , , , ,
                         "百度一下，你就知道",
                         this.hIcon
                     )
@@ -338,10 +338,10 @@ class Plugin_网页搜索 {
                 this.title,
                 [["(bd|baidu|百度)\s+(?<query>.*)", "${query}"], [".+", "$0"]],
                 (that, content) => (
-                    PluginMode.showPluginMode( ; 启动插件模式
+                    PluginHelper.showPluginMode( ; 启动插件模式
                         [], ;数据靠search获取，不需要传入
                         searchHandler,
-                        runHandler, , , ,
+                        runHandler, , , , ,
                         content, ; 搜索词替换为传入的内容
                         "百度一下，你就知道",
                         this.hIcon
