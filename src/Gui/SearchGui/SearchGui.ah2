@@ -218,7 +218,7 @@ class SearchGui {
             } else { ; 长按0.4秒
                 content := GetSelectedText(0.1, &outType) ; 等待最多0.1s剪切板
                 this.noRecover := true ; 保证能显示智能模式
-                IntelligentMode.showGui(content)
+                IntelligentMode.showGui()
                 if (!content && (outType = 'text' || outType = "timeout")) { ;
                     ; 获取窗口信息
                     WinExist("A")
