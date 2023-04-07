@@ -304,12 +304,12 @@ class Plugin_文件搜索 {
         pasteContentHandler(that, typeName, content?) {
             if (typeName != "file") ;非文件类型都不允许
                 return 0
-
-            if (IsSet(content)) { ;粘贴完成后的触发
+            if (!IsSet(content)) ; 仅允许粘贴文件夹
+                return InStr(FileExist(A_Clipboard), "D")
+            else { ;粘贴完成后的触发
                 PluginHelper.SearchText := Format('"{}" ', content)
                 PluginHelper.setSearchTextSel(StrLen(PluginHelper.SearchText))
             }
-            return 1 ; 允许粘贴文件
         }
 
         ; 添加插件项到启动模式搜索界面
