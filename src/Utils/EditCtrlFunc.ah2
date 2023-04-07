@@ -1,7 +1,15 @@
+/**
+ * @Name: 名称
+ * @Version: 0.0.1
+ * @Author: ruchuby
+ * @LastEditors: ruchuby
+ * @LastEditTime: 2023-04-07
+ * @Description: 介绍
+ */
 class EditCtrlFunc {
     ; Set placeholder
-    static setPlaceholder(ctrl, placeHolder) {
-        DllCall("User32.dll\SendMessageW", "Ptr", ctrl.Hwnd, "Uint", (0x1500 + 1), "Ptr", True, "WStr", placeHolder)
+    static setPlaceholder(ctrl, placeholder) {
+        DllCall("User32.dll\SendMessageW", "Ptr", ctrl.Hwnd, "Uint", (0x1500 + 1), "Ptr", True, "WStr", placeholder)
     }
 
     ; Gets the start and end offset of the current selection.

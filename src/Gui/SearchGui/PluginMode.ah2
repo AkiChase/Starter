@@ -3,7 +3,7 @@
  * @Version: 0.0.1
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-06
+ * @LastEditTime: 2023-04-07
  * @Description: 插件模式
  */
 
@@ -14,14 +14,17 @@ class PluginMode {
 
     static menu := 0
     static imgListID := 0
+    static defaultPlaceholder := ""
     static imgPathToImgListIndex := Map()
     static hotkeyHandlerMap := Map()
+    static enabledPasteContent := false
 
     static searchHandler := (*) => 0
     static runHandler := (*) => 0
     static doubleLeftHandler := (*) => 0
     static loadImgsHandler := (*) => 0
     static toBottomHandler := (*) => 0
+    static pasteContentHandler := (*) => 0
 
     static pluginSearchData := []
     static pluginSearchResult := []
@@ -80,9 +83,50 @@ class PluginMode {
         LVN_ENDSCROLL := -181
         this.listView.OnNotify(LVN_ENDSCROLL, this.toBottomNotify) ;滚动结束时检测是否触底
 
-        ; 插件模式热键处理函数
-        this.hotkeyHandlerMap["~Esc"] := () => StrLen(SearchGui.searchText) ?
-            SearchGui.searchText := SearchGui.edit.Value := "" : SearchGui.mode := this.oldMode ;切回原来的模式
+
+        pasteHandler() {
+            if (this.enabledPasteContent && DllCall("OpenClipboard", "ptr", 0)) {
+                if (DllCall("IsClipboardFormatAvailable", "uint", 2)) { ; 位图
+                    DllCall("CloseClipboard")
+                    if (this.pasteContentHandler("bitmap")) {
+                        SearchGui._pastedContentType := "bitmap"
+                        SearchGui.pastedContent := ""
+                        this.pasteContentHandler("bitmap", SearchGui.pastedContent)
+                    }
+                } else if (DllCall("IsClipboardFormatAvailable", "uint", 15)) { ; 文件
+                    DllCall("CloseClipboard")
+                    if (this.pasteContentHandler("file")) {
+                        tmp := A_Clipboard
+                        SearchGui._pastedContentType := "file"
+                        SearchGui.pastedContent := tmp
+                        this.pasteContentHandler("file", SearchGui.pastedContent)
+                    }
+                } else {
+                    DllCall("CloseClipboard")
+                    Send("{Ctrl down}v{Ctrl up}") ; 正常的粘贴
+                }
+            } else ; 禁用粘贴内容或剪切板占用直接正常的粘贴
+                Send("{Ctrl down}v{Ctrl up}")
+        }
+        this.hotkeyHandlerMap["$^V"] := pasteHandler
+
+        escHandler() {
+            ; 有输入法窗口(同pid但不同class时不执行)
+            pid := ProcessExist()
+            idList := WinGetList("ahk_pid " pid)
+            for id in idList {
+                if (WinGetClass("ahk_id " id) != "AutoHotkeyGUI")
+                    return
+            }
+
+            if (SearchGui.searchText)
+                SearchGui.searchText := SearchGui.edit.Value := ""
+            else if (this.enabledPasteContent && SearchGui._pastedContentType != "text")
+                SearchGui.clearPastedContent()
+            else
+                SearchGui.mode := this.oldMode ;切回原来的模式
+        }
+        this.hotkeyHandlerMap["~Esc"] := escHandler
 
         rightUpHandler() {
             static lastEndFlag := false
@@ -138,30 +182,38 @@ class PluginMode {
         this.listView.Opt("Redraw")
     }
 
-
-    static showPluginMode(pluginSearchData, searchHandler, runHandler, doubleLeftHandler?, loadImgsHandler?, toBottomHandler?, initHandler?, searchText := "", placeholder := "", thumb?) {
+    static showPluginMode(pluginSearchData, searchHandler, runHandler, options := {}) {
         this.oldMode := SearchGui.mode
 
         this.pluginSearchData := pluginSearchData
         this.searchHandler := searchHandler
         this.runHandler := runHandler
-        this.doubleLeftHandler := IsSet(doubleLeftHandler) ? doubleLeftHandler : (*) => 0
-        this.loadImgsHandler := IsSet(loadImgsHandler) ? loadImgsHandler : (*) => 0
-        this.toBottomHandler := IsSet(toBottomHandler) ? toBottomHandler : (*) => 0
+        this.doubleLeftHandler := options.HasOwnProp("doubleLeftHandler") ? options.doubleLeftHandler : (*) => 0
+        this.loadImgsHandler := options.HasOwnProp("loadImgsHandler") ? options.loadImgsHandler : (*) => 0
+        this.toBottomHandler := options.HasOwnProp("toBottomHandler") ? options.toBottomHandler : (*) => 0
+
+        this.enabledPasteContent := options.HasOwnProp("pasteContentHandler")
+        this.pasteContentHandler := options.HasOwnProp("pasteContentHandler") ? options.pasteContentHandler : (*) => 0
 
         this.pluginOtherData := 0
         this.rowHeight := 0
         this.menu := 0
-        if (IsSet(initHandler))
-            initHandler(this)
 
-        this.thumb := IsSet(thumb) ? thumb : 0
+        if (options.HasOwnProp("initHandler"))
+            options.initHandler.Call(this)
+
+        this.thumb := options.HasOwnProp("thumb") ? options.thumb : 0
+
         SearchGui.mode := -1
+
+        placeholder := options.HasOwnProp("placeholder") ? options.placeholder : ""
+        this.defaultPlaceholder := placeholder
         SearchGui.placeholder := placeholder
         ; 隐藏多余部分
         WinMove(, , 550 * (A_ScreenDPI / 96), Ceil(55 * (A_ScreenDPI / 96)), SearchGui.gui)
-        this.reloadLVIL(IsSet(loadImgsHandler))
+        this.reloadLVIL(options.HasOwnProp("loadImgsHandler"))
 
+        searchText := options.HasOwnProp("searchText") ? options.searchText : ""
         SearchGui.edit.Value := SearchGui.searchText := searchText ;同时触发搜索
         EditCtrlFunc.editSelect(SearchGui.edit, StrLen(searchText), -1) ; 指示器移动到最后
 

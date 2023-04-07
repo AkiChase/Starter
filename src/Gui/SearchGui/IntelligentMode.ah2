@@ -3,6 +3,7 @@ class IntelligentMode {
     ; static menu := unset
     static imgListID := 0
     static rowHeight := 0
+    static defaultPlaceholder := "Hi, type something 😃"
     static imgPathToImgListIndex := Map()
     static hotkeyHandlerMap := Map()
 
@@ -51,22 +52,58 @@ class IntelligentMode {
         ; 鼠标双击运行
         this.listView.OnEvent("DoubleClick", (_lv, rowNum) => this.intelligentRun(rowNum))
         ; 菜单栏
-        this.listView.OnEvent("ContextMenu", (_lv, rowNum, *) => !rowNum ?
-            0 : rowNum > this.pluginSearchResult.Length ?
-                this.menu.Show() : this.pluginSearchResult[rowNum].HasOwnProp("menu") ?
-                    this.pluginSearchResult[rowNum].menu.Show() : 0
-            )
+        showMenuHandler() {
+            if (rowNum := this.focusedRow) {
+                if (rowNum > this.pluginSearchResult.Length)
+                    this.menu.Show()
+                else
+                    this.pluginSearchResult[rowNum].HasOwnProp("contextHandler") ?
+                    this.pluginSearchResult[rowNum].contextHandler() : 0
+            }
+        }
+        this.listView.OnEvent("ContextMenu", (*) => showMenuHandler())
+
+        pasteHandler() {
+            if (DllCall("OpenClipboard", "ptr", 0)) {
+                if (DllCall("IsClipboardFormatAvailable", "uint", 2)) { ; 位图
+                    DllCall("CloseClipboard")
+                    SearchGui._pastedContentType := "bitmap"
+                    SearchGui.pastedContent := ""
+                    SearchGui.edit.Value := SearchGui.searchText := ""
+                } else if (DllCall("IsClipboardFormatAvailable", "uint", 15)) { ; 文件
+                    DllCall("CloseClipboard")
+                    tmp := A_Clipboard
+                    SearchGui._pastedContentType := "file"
+                    SearchGui.pastedContent := tmp
+                    SearchGui.edit.Value := SearchGui.searchText := tmp
+                    EditCtrlFunc.editSelect(SearchGui.edit, StrLen(tmp), -1)
+                } else {
+                    DllCall("CloseClipboard")
+                    ; 正常的粘贴
+                    Send("{Ctrl down}v{Ctrl up}")
+                }
+            } else ; 剪切板占用直接正常的粘贴
+                Send("{Ctrl down}v{Ctrl up}")
+        }
+        this.hotkeyHandlerMap["$^V"] := pasteHandler
 
         escHandler() {
-            if (SearchGui.edit.Value)
-                SearchGui.searchText := SearchGui.edit.Value := ""    
-            else if (SearchGui.contentThumb.Visible)
-            this.hideGui()
+            ; 有输入法窗口(同pid但不同class时不执行)
+            pid := ProcessExist()
+            idList := WinGetList("ahk_pid " pid)
+            for id in idList {
+                if (WinGetClass("ahk_id " id) != "AutoHotkeyGUI")
+                    return
+            }
+
+            if (SearchGui.searchText)
+                SearchGui.searchText := SearchGui.edit.Value := ""
+            else if (SearchGui._pastedContentType != "text")
+                SearchGui.clearPastedContent()
+            else
+                SearchGui.noRecover := true, this.hideGui()
         }
-
-
-        ; 启动模式热键处理函数
-        this.hotkeyHandlerMap["~Esc"] := () => 
+        this.hotkeyHandlerMap["~Esc"] := escHandler
         this.hotkeyHandlerMap["Down"] := () => this.focusedRow++
         this.hotkeyHandlerMap["Up"] := () => this.focusedRow--
 
@@ -147,7 +184,6 @@ class IntelligentMode {
 
     ; 重新加载搜索列表图标资源
     static loadImgs(reloadIL := true) {
-        SearchGui.placeholder := "正在加载智能模式搜索列表..."
         SearchGui.edit.Value := ""    ;清空搜索框
         this.listView.Delete()    ;清空智能列表
         if (reloadIL) {    ; reloadIL为false时是为了仅添加新资源
@@ -179,17 +215,16 @@ class IntelligentMode {
 
         if (reloadIL and oldImgListID)    ; 有需要销毁的图片列表
             DllCall("ImageList_Destroy", "Uint", oldImgListID)
-
-        SearchGui.placeholder := "Hi, type something 😃"
     }
 
     ; 以智能模式显示gui
-    static showGui(searchText := "", force := false) {
-        if (!force && SearchGui.hideTimeDiff()) {
+    static showGui(searchText := "") {
+        if (!SearchGui.noRecover && SearchGui.hideTimeDiff()) {
             SearchGui.recoverGui()
             return
         }
 
+        SearchGui.noRecover := false
         SearchGui.mode := 1
         SearchGui.edit.Value := SearchGui.searchText := searchText
         SearchGui.gui.Show()

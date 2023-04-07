@@ -5,11 +5,19 @@ class SearchGui {
     ; static thumb := unset
     ; static contentThumb := unset
 
-    static hideTime := 0
+    static noRecover := true
+    static hideTime := A_Now
 
     ;#region 设置搜索框占位符
+    static _placeholder := ""
     static placeholder {
-        set => EditCtrlFunc.setPlaceholder(SearchGui.edit, value)
+        get => this._placeholder
+        set {
+            if (this._placeholder != Value) {
+                this._placeholder := value
+                EditCtrlFunc.setPlaceholder(SearchGui.edit, value)
+            }
+        }
     }
     ;#endregion
 
@@ -27,15 +35,13 @@ class SearchGui {
                 return
             }
             ;非智能模式下且存在非文本pastedContent时，切换前要清除pastedContent
-            if (value != 1 && this._pastedContentType != "text") {
-                this._pastedContentType := "text"
-                this.pastedContent := ""
-            }
+            if (value != 1 && this._pastedContentType != "text")
+                this.clearPastedContent()
 
             this._mode := value
             if (this._mode == 1) {    ; IntelligentMode
                 this.thumb.Value := "hBitmap:*" this.thumbList[2]
-                this.placeholder := "Hi, type something 😃"
+                this.placeholder := IntelligentMode.defaultPlaceholder
                 for c in [StartupMode, PluginMode]
                     c.autoHideFlag := c.listView.Visible := false
                 IntelligentMode.listView.Visible := true
@@ -45,7 +51,7 @@ class SearchGui {
 
             } else if (this._mode == 0) {    ; StartupMode
                 this.thumb.Value := "hBitmap:*" this.thumbList[1]
-                this.placeholder := "Hi, Starter"
+                this.placeholder := StartupMode.defaultPlaceholder
                 for c in [IntelligentMode, PluginMode]
                     c.autoHideFlag := c.listView.Visible := false
                 StartupMode.listView.Visible := true
@@ -86,13 +92,13 @@ class SearchGui {
     }
     ;#endregion
 
-    ;#region 预览内容
+    ;#region 粘贴内容
+    static clearPastedContent := (this) => (this._pastedContentType := "text", this.pastedContent := "")
     static _pastedContentType := "text"
     static _pastedContent := ""
     static pastedContent {
         get => this._pastedContent
         set {
-            flag := false
             if (this._pastedContentType = "bitmap"
                 && DllCall("OpenClipboard", "ptr", 0) && DllCall("IsClipboardFormatAvailable", "uint", 2)) {
                 ; 位图
@@ -100,25 +106,23 @@ class SearchGui {
                 hBitmap := LoadPicture("HBITMAP:*" hBitmap) ;复制一份
                 DllCall("CloseClipboard")
 
-                this.edit.Move(50, , 455)
+                this.placeholder := "", this.edit.Move(50, , 455)
                 this.contentThumb.Value := "HBITMAP:*" hBitmap, this.contentThumb.Visible := true
                 this.placeholder := "图片", this._pastedContent := hBitmap
-                flag := true
-            } else if (this._pastedContentType = "file"
-                && FileExist(value) && hIcon := PluginHelper.Utils.associatedHIcon(value)) {
+            } else if (this._pastedContentType = "file" && FileExist(value)) {
                 ; 文件
-                this.edit.Move(50, , 455)
+                hIcon := SubStr(Value, InStr(Value, ".", , , -1) + 1) = "exe" ?
+                    LoadPicture(Value, "icon1", &_) : PluginHelper.Utils.associatedHIcon(value)
+                this.placeholder := "", this.edit.Move(50, , 455)
                 this.contentThumb.Value := "HICON:" hIcon, this.contentThumb.Visible := true
                 this.placeholder := "文件", this._pastedContent := value
-                flag := true
             } else {
-                ; 文本
-                this.edit.Move(10, , 495)
+                ; 视作文本
+                this._pastedContentType := "text"
+                this.placeholder := "", this.edit.Move(10, , 495)
                 this.contentThumb.Visible := false, this._pastedContent := value
-                flag := true
+                this.placeholder := [PluginMode, StartupMode, IntelligentMode][this.mode + 2].defaultPlaceholder
             }
-            if (!flag)
-                this._pastedContentType := "text", this._pastedContent := ""
         }
     }
     ;#endregion
@@ -132,8 +136,7 @@ class SearchGui {
         this.gui.MarginY := 0
 
         this.edit := this.gui.AddEdit("x10 y10 h30 w495 -E0x200")
-        this.placeholder := "Hi, Starter"
-        this.edit.Focus()
+        this.edit.OnEvent("ContextMenu", (*) => 0)
 
         search(edit, info) {    ;防抖
             static f := (*) => this.searchText := this.edit.Value
@@ -160,8 +163,6 @@ class SearchGui {
         PluginMode.init()
 
         this.hotkeyInit()
-
-        this.hideTime := DateAdd(A_Now, -10, "m") ; 保证初始hideTime足够早
     }
 
     ; 拖拽添加
@@ -188,11 +189,12 @@ class SearchGui {
                 }
             } else {
                 content := GetSelectedText(, &outType)
+                this.noRecover := true ; 保证能显示智能模式
+                IntelligentMode.showGui(content) ; 填入内容
                 if (outType != 'timeout') {
                     this._pastedContentType := outType
                     this.pastedContent := content
                 }
-                IntelligentMode.showGui(content, true) ; 填入内容, 强制使用智能模式
                 KeyWait("CapsLock")    ;等待松开, 避免重复调用
             }
         }
@@ -224,6 +226,7 @@ class SearchGui {
         ; 上下移动焦点行
         Hotkey("Down", hotkeyHandler)
         Hotkey("Up", hotkeyHandler)
+        Hotkey("$^V", hotkeyHandler)
         HotIf()
     }
 
