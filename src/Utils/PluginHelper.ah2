@@ -3,7 +3,7 @@
  * @Version: 0.0.3
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-06
+ * @LastEditTime: 2023-04-07
  * @Description: 插件API封装
  */
 
@@ -37,12 +37,12 @@ class PluginHelper {
      * @param reg 插件项正则替换列表[[exp1,replace1],...]
      * @param runHandler 鼠标双击、回车该插件项时执行的函数
      * (obj, content)=>any obj指向添加的插件项对象, content为正则替换后的内容
-     * @param menu 选填, 右键该插件项显示的菜单
+     * @param contextHandler 选填, 右键该插件项显示的菜单
      * @param hIcon 选填, 插件项显示的图标HICON, 默认使用插件的图标
      */
-    static addPluginToIntelligentMode(name, title, reg, runHandler, menu?, hIcon?) {
+    static addPluginToIntelligentMode(name, title, reg, runHandler, contextHandler?, hIcon?) {
         plugin := { name: name, title: title, reg: reg, runHandler: runHandler }
-        for n in ["menu", "hIcon"] {
+        for n in ["contextHandler", "hIcon"] {
             if (IsSet(%n%))
                 plugin.%n% := %n%
         }
@@ -57,12 +57,12 @@ class PluginHelper {
      * @param keywords 插件项关键字
      * @param startHandler 鼠标双击、回车该插件项时执行的函数 (obj, searchText)=>any obj指向添加的插件项对象
      * @param doubleLeftHandler 选填, 双击Left该插件项时执行的函数 (obj, searchText)=>any obj指向添加的插件项对象
-     * @param menu 选填, 右键该插件项显示的菜单
+     * @param contextHandler 选填, 右键该插件项时的处理函数 (obj)=>any obj指向添加的插件项对象
      * @param hIcon 选填, 插件项显示的图标HICON, 默认使用插件的图标
      */
-    static addPluginToStartupMode(name, title, keywords, startHandler, doubleLeftHandler?, menu?, hIcon?) {
+    static addPluginToStartupMode(name, title, keywords, startHandler, doubleLeftHandler?, contextHandler?, hIcon?) {
         plugin := { name: name, title: title, keywords: keywords, startHandler: startHandler }
-        for n in ["doubleLeftHandler", "menu", "hIcon"] {
+        for n in ["doubleLeftHandler", "contextHandler", "hIcon"] {
             if (IsSet(%n%))
                 plugin.%n% := %n%
         }
@@ -108,7 +108,18 @@ class PluginHelper {
      */
     static SearchText {
         get => SearchGui.searchText
-        set => SearchGui.searchText := value
+        set => SearchGui.edit.Value := SearchGui.searchText := value
+    }
+
+    /**
+     * @description: 设置搜索框选中文本
+     * 
+     * start=end=StrLen(searchText)可将游标移动到最后
+     * @param start 0代表第一个文本之前
+     * @param end -1代表最后一个文本
+     */
+    static setSearchTextSel(start := 0, end := -1) {
+        EditCtrlFunc.editSelect(SearchGui.edit, start, end)
     }
 
     /**
@@ -126,20 +137,32 @@ class PluginHelper {
      * @param pluginSearchData 用于插件模式搜索的数据
      * @param searchHandler 插件模式搜索处理函数 (that, searchText) => void
      * @param runHandler 插件模式回车、双击任意项时的处理函数 (that, rowNum) => void
-     * @param doubleLeftHandler (可选)插件模式双击Left时的处理函数 (that, rowNum) => void
-     * @param loadImgsHandler (可选)加载插件模式图片的处理函数, 若需要显示图标一定要带有此参数 (that) => void
-     * @param toBottomHandler (可选)列表最后一行可见(触底)处理函数 (that) => void
-     * @param initHandler (可选)初始化处理函数 (that) => void
-     * @param searchText (可选)启动时设置搜索框文本
-     * @param placeholder (可选)设置搜索框占位符
-     * @param thumb (可选)hICON 设置插件模式搜索框图标
+     * @param options 可选参数对象 {...} 
+     * 
+     * options.doubleLeftHandler (可选)插件模式双击Left时的处理函数 (that, rowNum) => void
+     * 
+     * options.loadImgsHandler (可选)加载插件模式图片的处理函数, 若需要显示图标一定要带有此参数 (that) => void
+     * 
+     * options.toBottomHandler (可选)列表最后一行可见(触底)处理函数 (that) => void
+     * 
+     * options.pasteContentHandler (可选)Ctrl+V粘贴内容时的处理函数(that, typeName, content?) => bool
+     * 
+     * 在粘贴**bitmap/file**内容前会触发一次 (that, typeName) => bool 返回true则允许粘贴
+     * 
+     * 在粘贴**bitmap/file**内容后还会触发一次 (that, typeName, content) => any
+     * 
+     * file: content为文件路径; bitmap: content为位图句柄;
+     * 
+     * options.initHandler (可选)初始化处理函数 (that) => void
+     * 
+     * options.searchText (可选)启动时设置搜索框文本
+     * 
+     * options.placeholder (可选)设置搜索框占位符
+     * 
+     * options.thumb (可选)hICON 设置插件模式搜索框图标
      */
-    static showPluginMode(pluginSearchData, searchHandler, runHandler, doubleLeftHandler?, loadImgsHandler?,
-        toBottomHandler?, initHandler?, searchText := "", placeholder := "", thumb?) {
-        PluginMode.showPluginMode( ; 启动插件模式
-            pluginSearchData, searchHandler, runHandler, doubleLeftHandler?, loadImgsHandler?,
-            toBottomHandler?, initHandler?, searchText, placeholder, thumb?
-        )
+    static showPluginMode(pluginSearchData, searchHandler, runHandler, options := {}) {
+        PluginMode.showPluginMode(pluginSearchData, searchHandler, runHandler, options)
     }
 
     class Utils {
