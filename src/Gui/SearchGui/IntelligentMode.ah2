@@ -68,19 +68,16 @@ class IntelligentMode {
                 if (DllCall("IsClipboardFormatAvailable", "uint", 2)) { ; 位图
                     DllCall("CloseClipboard")
                     SearchGui._pastedContentType := "bitmap"
-                    SearchGui.pastedContent := ""
-                    SearchGui.edit.Value := SearchGui.searchText := ""
+                    SearchGui.pastedContent := "" ; 仅仅是为了触发其加载bitmap
+                    SearchGui.searchText := SearchGui.searchText ; 不修改内容，直接触发搜索
                 } else if (DllCall("IsClipboardFormatAvailable", "uint", 15)) { ; 文件
                     DllCall("CloseClipboard")
-                    tmp := A_Clipboard
                     SearchGui._pastedContentType := "file"
-                    SearchGui.pastedContent := tmp
-                    SearchGui.edit.Value := SearchGui.searchText := tmp
-                    EditCtrlFunc.editSelect(SearchGui.edit, StrLen(tmp), -1)
+                    SearchGui.pastedContent := A_Clipboard
+                    SearchGui.searchText := SearchGui.searchText ; 不修改内容，直接触发搜索
                 } else {
                     DllCall("CloseClipboard")
-                    ; 正常的粘贴
-                    Send("{Ctrl down}v{Ctrl up}")
+                    Send("{Ctrl down}v{Ctrl up}") ; 正常的粘贴
                 }
             } else ; 剪切板占用直接正常的粘贴
                 Send("{Ctrl down}v{Ctrl up}")

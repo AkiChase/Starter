@@ -105,16 +105,14 @@ class StartupMode {
                     DllCall("CloseClipboard")
                     SearchGui.mode := 1
                     SearchGui._pastedContentType := "bitmap"
-                    SearchGui.pastedContent := ""
-                    SearchGui.edit.Value := SearchGui.searchText := ""
+                    SearchGui.pastedContent := "" ; 仅仅是为了触发其加载bitmap
+                    SearchGui.searchText := SearchGui.searchText ; 不修改内容，直接触发搜索
                 } else if (DllCall("IsClipboardFormatAvailable", "uint", 15)) { ; 文件
                     DllCall("CloseClipboard")
-                    tmp := A_Clipboard
                     SearchGui.mode := 1
                     SearchGui._pastedContentType := "file"
-                    SearchGui.pastedContent := tmp
-                    SearchGui.edit.Value := SearchGui._searchText := tmp ;转模式后会搜索_searchText
-                    EditCtrlFunc.editSelect(SearchGui.edit, StrLen(tmp), -1)
+                    SearchGui.pastedContent := A_Clipboard
+                    SearchGui.searchText := SearchGui.searchText ; 不修改内容，直接触发搜索
                 } else {
                     DllCall("CloseClipboard")
                     ; 正常的粘贴

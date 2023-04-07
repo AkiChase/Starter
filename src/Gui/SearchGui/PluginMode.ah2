@@ -90,15 +90,14 @@ class PluginMode {
                     DllCall("CloseClipboard")
                     if (this.pasteContentHandler("bitmap")) {
                         SearchGui._pastedContentType := "bitmap"
-                        SearchGui.pastedContent := ""
+                        SearchGui.pastedContent := "" ; 仅仅是为了触发其加载bitmap
                         this.pasteContentHandler("bitmap", SearchGui.pastedContent)
                     }
                 } else if (DllCall("IsClipboardFormatAvailable", "uint", 15)) { ; 文件
                     DllCall("CloseClipboard")
                     if (this.pasteContentHandler("file")) {
-                        tmp := A_Clipboard
                         SearchGui._pastedContentType := "file"
-                        SearchGui.pastedContent := tmp
+                        SearchGui.pastedContent := A_Clipboard
                         this.pasteContentHandler("file", SearchGui.pastedContent)
                     }
                 } else {
