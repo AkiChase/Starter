@@ -113,10 +113,12 @@ class SearchGui {
                 this.placeholder := "", this.edit.Move(50, , 455)
                 this.contentThumb.Value := "HBITMAP:*" hBitmap, this.contentThumb.Visible := true
                 this.placeholder := "图片", this._pastedContent := hBitmap
-            } else if (this._pastedContentType = "file" && FileExist(value)) {
+            } else if (this._pastedContentType = "file") {
                 ; 文件
-                hIcon := SubStr(Value, InStr(Value, ".", , , -1) + 1) = "exe" ?
-                    LoadPicture(Value, "icon1", &_) : PluginHelper.Utils.associatedHIcon(value)
+                firstFile := (i := InStr(value, "`r`n")) ? SubStr(value, 1, i - 1) : value
+
+                hIcon := SubStr(firstFile, InStr(firstFile, ".", , , -1) + 1) = "exe" ?
+                    LoadPicture(firstFile, "icon1", &_) : PluginHelper.Utils.associatedHIcon(firstFile)
                 this.placeholder := "", this.edit.Move(50, , 455)
                 this.contentThumb.Value := "HICON:" hIcon, this.contentThumb.Visible := true
                 this.placeholder := "文件", this._pastedContent := value
@@ -175,7 +177,20 @@ class SearchGui {
         this.thumb.OnEvent("Click", (*) => this.winInfoMatchFlag ? this.showWinInfo() : 0)
 
         this.contentThumb := this.gui.AddPicture("x7 y7 w36 h36 +Border +Hidden")
-        this.contentThumb.OnEvent("Click", (*) => this._pastedContentType = "file" ? Tip.show("文件路径", this.pastedContent, 1500) : 0)
+        showFileListInfo(s) {
+            fileList := StrSplit(s, "`r`n")
+            msg := "共" fileList.Length "个文件"
+            loop 3 {
+                if (fileList.Has(A_Index))
+                    msg .= "`n`n" fileList[A_Index]
+                else
+                    break
+            }
+            if (fileList.Has(4))
+                msg .= "`n......"
+            Tip.show("文件信息: ", msg, 4000)
+        }
+        this.contentThumb.OnEvent("Click", (*) => this._pastedContentType = "file" ? showFileListInfo(this.pastedContent) : 0)
 
         ; 回车触发
         this.gui.AddButton("Default Hidden").OnEvent("Click", (*) => this.mode == 0 ?
@@ -212,10 +227,11 @@ class SearchGui {
     static hotkeyInit() {
         capsLockHandler(key) {
             if (KeyWait("CapsLock", "T0.4")) { ; 非长按
-                if (A_ThisHotkey = A_PriorHotkey and A_TimeSincePriorHotkey < 300) {
+                if (A_ThisHotkey = A_PriorHotkey && A_TimeSincePriorHotkey < 300) {
                     StartupMode.showGui()
                 }
             } else { ; 长按0.4秒
+                clipSaved := ClipboardAll()
                 content := GetSelectedText(0.1, &outType) ; 等待最多0.1s剪切板
                 this.noRecover := true ; 保证能显示智能模式
                 IntelligentMode.showGui()
@@ -233,6 +249,7 @@ class SearchGui {
                     this._pastedContentType := outType
                     this.pastedContent := content
                 }
+                A_Clipboard := clipSaved
                 KeyWait("CapsLock")    ;等待松开, 避免重复调用
             }
         }
