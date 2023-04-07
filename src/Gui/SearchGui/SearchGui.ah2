@@ -175,6 +175,7 @@ class SearchGui {
         this.thumb.OnEvent("Click", (*) => this.winInfoMatchFlag ? this.showWinInfo() : 0)
 
         this.contentThumb := this.gui.AddPicture("x7 y7 w36 h36 +Border +Hidden")
+        this.contentThumb.OnEvent("Click", (*) => this._pastedContentType = "file" ? Tip.show("文件路径", this.pastedContent, 1500) : 0)
 
         ; 回车触发
         this.gui.AddButton("Default Hidden").OnEvent("Click", (*) => this.mode == 0 ?
