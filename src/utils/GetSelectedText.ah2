@@ -3,7 +3,7 @@
  * @Version: 0.0.1
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-06
+ * @LastEditTime: 2023-04-07
  * @Description: 获取选中内容的文本和内容类型
  */
 
@@ -12,7 +12,7 @@
  * @param clipWaitSec 剪切板等待选中内容的时间
  * @param &outType 返回选中内容的类型, bitmap:位图, file:文件, text:文本, unknow:未知类型, timeout:剪切板等待超时
  */
-GetSelectedText(clipWaitSec := 1, &outType := unset) {
+GetSelectedText(clipWaitSec := 0.5, &outType := unset) {
     seleted := ""
     ClipSaved := ClipboardAll()
 

@@ -34,9 +34,13 @@ class SearchGui {
                     c.autoHideFlag := false
                 return
             }
-            ;非智能模式下且存在非文本pastedContent时，切换前要清除pastedContent
-            if (value != 1 && this._pastedContentType != "text")
+            ;将切换启动模式且存在非文本pastedContent时，切换前要清除pastedContent
+            if (value = 0 && this._pastedContentType != "text")
                 this.clearPastedContent()
+
+            ;将切换启动模式且窗口匹配模式开启时，切换前要关闭窗口匹配模式
+            if (value = 0 && this.winInfoMatchFlag)
+                this.winInfoMatchFlag := false
 
             this._mode := value
             if (this._mode == 1) {    ; IntelligentMode
@@ -127,6 +131,25 @@ class SearchGui {
     }
     ;#endregion
 
+    ; 长按获取的当前窗口信息
+    static workWinInfo := {
+        title: "",
+        class: "",
+        process: ""
+    }
+
+    ;#region 是否处于窗口匹配
+    static _winInfoMatchFlag := false
+    static winInfoMatchFlag {
+        get => this._winInfoMatchFlag
+        set {
+            if (value)
+                this.placeholder := "Hi, Window Match Mode 💻"
+            this._winInfoMatchFlag := Value
+        }
+    }
+    ;#endregion
+
     ; 初始化
     static init() {
         this.gui := Gui("Owner AlwaysOnTop -Resize -Caption", "Starter")
@@ -149,6 +172,7 @@ class SearchGui {
 
         this.thumbList := [LoadPicture(GlobalData.imgDir "\Starter.png", "w64"), LoadPicture(GlobalData.imgDir "\AI.png", "w64")]
         this.thumb := this.gui.AddPicture("x510 y10 w30 h30", "hBitmap:*" this.thumbList[1])
+        this.thumb.OnEvent("Click", (*) => this.winInfoMatchFlag ? this.showWinInfo() : 0)
 
         this.contentThumb := this.gui.AddPicture("x7 y7 w36 h36 +Border +Hidden")
 
@@ -167,6 +191,11 @@ class SearchGui {
 
     ; 拖拽添加
     static dropAddItem(fileList) {
+        if (SearchGui.mode !== 0) {
+            Tip.show("拖拽添加启动项", "仅支持启动模式拖拽添加", 2000)
+            return
+        }
+
         for filePath in fileList {
             SplitPath(filePath, , , , &fileNameNoExt)
             GlobalData.startupData.Push([filePath, filePath, 0, fileNameNoExt, ChineseFirstChar(fileNameNoExt)])
@@ -174,23 +203,31 @@ class SearchGui {
 
         StartupMode.loadImgs(false)    ;载入新图片，不重新加载其他图片
 
-        if (SearchGui.mode !== 0)    ; 非启动模式下，转为启动模式
-            SearchGui.mode := 0    ; 转换启动模式时会搜索一次
-        else
-            StartupMode.search()
+        StartupMode.search()
+        Tip.show("拖拽添加启动项", "添加成功, 新增 " fileList.Length " 个启动项", 2000)
     }
 
     ; 热键初始化
     static hotkeyInit() {
         capsLockHandler(key) {
-            if (KeyWait("CapsLock", "T0.5")) {
+            if (KeyWait("CapsLock", "T0.4")) { ; 非长按
                 if (A_ThisHotkey = A_PriorHotkey and A_TimeSincePriorHotkey < 300) {
                     StartupMode.showGui()
                 }
-            } else {
-                content := GetSelectedText(, &outType)
+            } else { ; 长按0.4秒
+                content := GetSelectedText(0.1, &outType) ; 等待最多0.1s剪切板
                 this.noRecover := true ; 保证能显示智能模式
-                IntelligentMode.showGui(content) ; 填入内容
+                IntelligentMode.showGui(content)
+                if (!content && (outType = 'text' || outType = "timeout")) { ;
+                    ; 获取窗口信息
+                    WinExist("A")
+                    this.workWinInfo.class := WinGetClass()
+                    this.workWinInfo.process := WinGetProcessPath()
+                    this.workWinInfo.title := WinGetTitle()
+                    this.winInfoMatchFlag := true ; 开启窗口匹配模式
+                } else
+                    this.winInfoMatchFlag := false ; 关闭窗口匹配模式
+
                 if (outType != 'timeout') {
                     this._pastedContentType := outType
                     this.pastedContent := content
@@ -230,11 +267,26 @@ class SearchGui {
         HotIf()
     }
 
+    ; 显示窗口匹配信息
+    static showWinInfo() {
+        WiseGuiHelper.WiseGui("workWinInfo", "Main: 0", "Theme: ,,,0", "FontSub: s14 ,雅痞-简",
+            "Shadow: 1", "TextWidth: 530", "Transparency: 192", "Timer: 1500",
+            "SubText: " Format("@工作窗口标题`n{}`n@工作窗口类`n{}`n@工作窗口程序`n{}"
+                , this.workWinInfo.title, this.workWinInfo.class, this.workWinInfo.process)
+        )
+        if (WinExist("WiseGui\workWinInfo ahk_class AutoHotkeyGUI")) {
+            WinGetPos(&x, &y, , , this.gui)
+            WinGetPos(, , , &h)
+            WinMove(x, y - h - 10)
+        }
+    }
+
     ; 隐藏时间是否在时限
     static hideTimeDiff() {
         return DateDiff(A_Now, SearchGui.hideTime, "s") < 15
     }
 
+    ; 恢复窗口
     static recoverGui() {
         if (this.mode == 0) {
             StartupMode.autoHideFlag := 1
