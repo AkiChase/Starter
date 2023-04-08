@@ -250,8 +250,10 @@ class IntelligentMode {
 
 
         keyword := SearchGui.searchText
-        if (StrLen(keyword)) {
-            GlobalData.intelligentSearchResult := []
+        GlobalData.intelligentSearchResult := []
+
+        ; 无粘贴内容且有搜索文本时，对原生搜索项进行匹配
+        if (SearchGui._pastedContentType == 'text' && keyword) {
             ; 匹配所有符合项
             for name in GlobalData.intelligentGroups {
                 if (GlobalData.intelligentData.Has(name)) {
@@ -273,14 +275,16 @@ class IntelligentMode {
             }
             ; 按拟定的优先级降序排列
             QuickSort(GlobalData.intelligentSearchResult, customSort)
-        } else    ; 搜索词为空什么都不显示
-            GlobalData.intelligentSearchResult := []
+        }
 
-        ;显示新列表
+
+        ;重置列表
         this.listView.Opt("-Redraw")    ;禁用重绘
         this.listView.Delete()
+
         ;插件搜索并添加插件项到列表
         this.pluginSearchAndAdd()
+
         ; 添加执行项到列表
         for item in GlobalData.intelligentSearchResult {
             if (this.imgPathToImgListIndex.Has(item["thumb"]))
@@ -325,7 +329,8 @@ class IntelligentMode {
     ; 插件搜索并添加插件项到列表
     static pluginSearchAndAdd() {
         keyword := SearchGui.searchText
-        if (StrLen(keyword)) {
+        this.pluginSearchResult := []
+        if (keyword) {
             this.pluginSearchResult := []
             ; 匹配所有符合项
             for item in this.pluginData {
@@ -337,8 +342,7 @@ class IntelligentMode {
                         break
                     }
             }
-        } else    ; 搜索词为空什么都不显示
-            this.pluginSearchResult := []
+        }
 
         ; 按regIndex从小到大
         QuickSort(this.pluginSearchResult, (itemA, itemB) => itemA.regIndex - itemB.regIndex)
