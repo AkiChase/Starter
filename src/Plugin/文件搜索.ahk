@@ -250,6 +250,12 @@ class Plugin_文件搜索 {
             that.menu := this.menu
         }
 
+        ; 带有文件时的初始化
+        initWithFile(that) {
+            init(that)
+            PluginHelper.placeholder := "在文件夹内搜索"
+        }
+
         ;定义插件模式下搜索功能
         searchHandler(that, searchText) {
             that.pluginSearchResult := []
@@ -359,10 +365,17 @@ class Plugin_文件搜索 {
         )
 
         ; 添加插件项到智能模式搜索界面
+        ; 1. 匹配文本搜索
         PluginHelper.addPluginToIntelligentMode(
             this.name,
             "使用Everything进行搜索",
-            [["(ev|wjss|everything)\s+(?<query>.*)", "${query}"], [".+", "$0"]],
+            ; 匹配条件为 text类型 且 是everything开头部分或wjss开头部分
+            (obj, searchText, pastedContentType, pastedContent) => (
+                pastedContentType == 'text' && (
+                    PluginHelper.Utils.strStartWith("Everything", searchText) ||
+                    PluginHelper.Utils.strStartWith("WJSS", searchText)
+                )
+            ),
             (obj, content) => (
                 PluginHelper.showPluginMode( ; 启动插件模式
                     [], ;数据靠search获取，不需要传入
@@ -372,6 +385,44 @@ class Plugin_文件搜索 {
                         loadImgsHandler: loadImg, ; 需要带有图标
                         toBottomHandler: asyncLoading, ; 异步加载
                         initHandler: init, ; 初始化
+                        pasteContentHandler: pasteContentHandler, ; 允许粘贴文件
+                        placeholder: "Search on Everything",
+                        searchText: content,
+                        thumb: PluginHelper.getPluginHIcon(this.name)
+                    }
+                )
+            ), , PluginHelper.getPluginHIcon(this.name)
+        )
+        test(obj, searchText, pastedContentType, pastedContent) {
+            static s:=""
+            if (pastedContentType != 'file')
+                return false
+            if (pastedContent.Length) > 1
+                return false
+            return InStr(FileExist(pastedContent[1]), "D")
+        }
+
+        ; 2. 匹配粘贴带有文件
+        PluginHelper.addPluginToIntelligentMode(
+            this.name,
+            "使用Everything进行目录内搜索",
+            ;匹配条件为仅允许单文件夹
+            test,
+            ; (obj, searchText, pastedContentType, pastedContent) => (
+            ;     pastedContentType == 'file' && (
+            ;         pastedContent.Length > 1 ?
+            ;         false : InStr(FileExist(pastedContent[1]), "D")
+            ;     )
+            ; ),
+            (obj, content) => (
+                PluginHelper.showPluginMode( ; 启动插件模式
+                    [], ;数据靠search获取，不需要传入
+                    searchHandler,
+                    runHandler, {
+                        doubleLeftHandler: doubleRightHandler,
+                        loadImgsHandler: loadImg, ; 需要带有图标
+                        toBottomHandler: asyncLoading, ; 异步加载
+                        initHandler: initWithFile, ; 初始化
                         pasteContentHandler: pasteContentHandler, ; 允许粘贴文件
                         placeholder: "Search on Everything",
                         searchText: content,
