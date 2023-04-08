@@ -18,11 +18,11 @@ class IntelligentMode {
         get => this.listView.GetNext()
         set {
             if (GlobalData.intelligentSearchResult.Length || this.pluginSearchResult.Length) { ; 有内容才可修改
-                if (value > GlobalData.intelligentSearchResult.Length + this.pluginSearchResult.Length)
-                    value := 1
-                else if (value == 0)
-                    value := GlobalData.startupSearchResult.Length + this.pluginSearchResult.Length
-                this.listView.Modify(value, "Select Focus Vis")
+                if (Value > GlobalData.intelligentSearchResult.Length + this.pluginSearchResult.Length)
+                    Value := 1
+                else if (Value == 0)
+                    Value := GlobalData.startupSearchResult.Length + this.pluginSearchResult.Length
+                this.listView.Modify(Value, "Select Focus Vis")
             }
         }
     }
@@ -37,7 +37,7 @@ class IntelligentMode {
                 if (!WinActive(SearchGui.gui))
                     IntelligentMode.hideGui(), SearchGui.hideTime := A_Now
             }
-            SetTimer(_autoHideFunc, value ? 1000 : 0)
+            SetTimer(_autoHideFunc, Value ? 1000 : 0)
         }
     }
     ;#endregion
@@ -73,7 +73,7 @@ class IntelligentMode {
                 } else if (DllCall("IsClipboardFormatAvailable", "uint", 15)) { ; 文件
                     DllCall("CloseClipboard")
                     SearchGui._pastedContentType := "file"
-                    SearchGui.pastedContent := A_Clipboard
+                    SearchGui.pastedContent := A_Clipboard ; 会转化为数组
                     SearchGui.searchText := SearchGui.searchText ; 不修改内容，直接触发搜索
                 } else {
                     DllCall("CloseClipboard")

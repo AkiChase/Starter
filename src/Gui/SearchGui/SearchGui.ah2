@@ -14,8 +14,8 @@ class SearchGui {
         get => this._placeholder
         set {
             if (this._placeholder != Value) {
-                this._placeholder := value
-                EditCtrlFunc.setPlaceholder(SearchGui.edit, value)
+                this._placeholder := Value
+                EditCtrlFunc.setPlaceholder(SearchGui.edit, Value)
             }
         }
     }
@@ -26,7 +26,7 @@ class SearchGui {
     static mode {
         get => this._mode
         set {
-            if (this._mode == value) {  ; 不需要切换时,强制激活指定的autoHide
+            if (this._mode == Value) {  ; 不需要切换时,强制激活指定的autoHide
                 l := [PluginMode, StartupMode, IntelligentMode]
                 curModeC := l[Value + 2], l.RemoveAt(Value + 2)
                 curModeC.autoHideFlag := true
@@ -35,14 +35,14 @@ class SearchGui {
                 return
             }
             ;将切换启动模式且存在非文本pastedContent时，切换前要清除pastedContent
-            if (value = 0 && this._pastedContentType != "text")
+            if (Value = 0 && this._pastedContentType != "text")
                 this.clearPastedContent()
 
             ;将切换启动模式且窗口匹配模式开启时，切换前要关闭窗口匹配模式
-            if (value = 0 && this.winInfoMatchFlag)
+            if (Value = 0 && this.winInfoMatchFlag)
                 this.winInfoMatchFlag := false
 
-            this._mode := value
+            this._mode := Value
             if (this._mode == 1) {    ; IntelligentMode
                 this.thumb.Value := "hBitmap:*" this.thumbList[2]
                 this.placeholder := IntelligentMode.defaultPlaceholder
@@ -115,7 +115,7 @@ class SearchGui {
                 this.placeholder := "图片", this._pastedContent := hBitmap
             } else if (this._pastedContentType = "file") {
                 ; 文件
-                fileList := Type(Value) == "Array" ? Value : StrSplit(value, "`r`n") ; 自动处理数组或字符串类型
+                fileList := Type(Value) == "Array" ? Value : StrSplit(Value, "`r`n") ; 自动处理数组或字符串类型
 
                 hIcon := SubStr(fileList[1], InStr(fileList[1], ".", , , -1) + 1) = "exe" ?
                     LoadPicture(fileList[1], "icon1", &_) : PluginHelper.Utils.associatedHIcon(fileList[1])
@@ -128,7 +128,7 @@ class SearchGui {
                 ; 视作文本
                 this._pastedContentType := "text"
                 this.placeholder := "", this.edit.Move(10, , 495)
-                this.contentThumb.Visible := false, this._pastedContent := value
+                this.contentThumb.Visible := false, this._pastedContent := Value
                 this.placeholder := [PluginMode, StartupMode, IntelligentMode][this.mode + 2].defaultPlaceholder
             }
         }
@@ -147,7 +147,7 @@ class SearchGui {
     static winInfoMatchFlag {
         get => this._winInfoMatchFlag
         set {
-            if (value)
+            if (Value)
                 this.placeholder := "Hi, Window Match Mode 💻"
             this._winInfoMatchFlag := Value
         }

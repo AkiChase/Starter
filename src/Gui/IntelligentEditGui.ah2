@@ -22,7 +22,7 @@ class IntelligentEditGui {
 
         static __Item[key] {
             get => this.%key%
-            set => this.%key% := value
+            set => this.%key% := Value
         }
 
         static group => this.outer._curItem["group"]
@@ -30,33 +30,33 @@ class IntelligentEditGui {
         static title {
             get => this.outer._curItem["title"]
             set {
-                this.outer._curItem["title"] := value
+                this.outer._curItem["title"] := Value
                 this.outer.changeFlag := true
-                if (this.outer.baseInfo["titleEdit"].Value == value)
+                if (this.outer.baseInfo["titleEdit"].Value == Value)
                     return
-                this.outer.baseInfo["titleEdit"].Value := value
+                this.outer.baseInfo["titleEdit"].Value := Value
             }
         }
 
         static notes {
             get => this.outer._curItem["notes"]
             set {
-                this.outer._curItem["notes"] := value
+                this.outer._curItem["notes"] := Value
                 this.outer.changeFlag := true
-                if (this.outer.baseInfo["notesEdit"].Value == value)
+                if (this.outer.baseInfo["notesEdit"].Value == Value)
                     return
-                this.outer.baseInfo["notesEdit"].Value := value
+                this.outer.baseInfo["notesEdit"].Value := Value
             }
         }
 
         static thumb {
             get => this.outer._curItem["thumb"]
             set {
-                this.outer._curItem["thumb"] := value
+                this.outer._curItem["thumb"] := Value
                 this.outer.changeFlag := true
-                if (this.outer.baseInfo["thumbEdit"].Value == value)
+                if (this.outer.baseInfo["thumbEdit"].Value == Value)
                     return
-                this.outer.baseInfo["thumbEdit"].Value := value
+                this.outer.baseInfo["thumbEdit"].Value := Value
             }
         }
 
@@ -79,7 +79,7 @@ class IntelligentEditGui {
             static mode {
                 get => this.outer._curItem["match"]["mode"]
                 set {
-                    this.outer._curItem["match"]["mode"] := value
+                    this.outer._curItem["match"]["mode"] := Value
                     ; 选择DDL选项
                     for i, mode in this.modeKeys {
                         if (this.outer._curItem["match"]["mode"] == mode) {
@@ -88,9 +88,9 @@ class IntelligentEditGui {
                         }
                     }
                     ; 设置box标题
-                    this.outer.matchInfo["box"].Text := this.mode2BoxTitle[value]
+                    this.outer.matchInfo["box"].Text := this.mode2BoxTitle[Value]
                     ; 视模式调整其他控件
-                    if (value == "reg") {
+                    if (Value == "reg") {
                         ; 保证每个都至少1条，数量匹配在保存时验证
                         if (this.outer._curItem["match"].Has("exp"))
                             this.reloadLV(this.outer.matchInfo["expLV"], this.outer._curItem["match"]["exp"])
@@ -118,7 +118,7 @@ class IntelligentEditGui {
                 static __Item[index] {
                     get => this.outer._curItem["match"]["exp"][index]
                     set {
-                        this.outer._curItem["match"]["exp"][index] := value
+                        this.outer._curItem["match"]["exp"][index] := Value
                         this.outer.changeFlag := true
                     }
                 }
@@ -142,7 +142,7 @@ class IntelligentEditGui {
                 static __Item[index] {
                     get => this.outer._curItem["match"]["replace"][index]
                     set {
-                        this.outer._curItem["match"]["replace"][index] := value
+                        this.outer._curItem["match"]["replace"][index] := Value
                         this.outer.changeFlag := true
                     }
                 }
@@ -172,7 +172,7 @@ class IntelligentEditGui {
             static mode {
                 get => this.outer._curItem["script"]["mode"]
                 set {
-                    this.outer._curItem["script"]["mode"] := value
+                    this.outer._curItem["script"]["mode"] := Value
                     for index, mode in this.modeKeys {
                         if (this.mode == mode) {
                             this.outer.scriptInfo["DDL"].Value := index
@@ -180,7 +180,7 @@ class IntelligentEditGui {
                         }
                     }
 
-                    if (value !== "none") {
+                    if (Value !== "none") {
                         this.outer.scriptInfo["programEdit"].Enabled := true
                         if (!this.outer._curItem["script"].Has("program"))
                             this.program := ""
@@ -191,7 +191,7 @@ class IntelligentEditGui {
                         this.outer.scriptInfo["programEdit"].Value := ""    ;防止清除program值
                     }
 
-                    this.outer.scriptInfo["programEdit"].Enabled := value !== "none"
+                    this.outer.scriptInfo["programEdit"].Enabled := Value !== "none"
                     this.outer.changeFlag := true
                 }
             }
@@ -199,10 +199,10 @@ class IntelligentEditGui {
             static program {
                 get => this.outer._curItem["script"]["program"]
                 set {
-                    if (this.outer.scriptInfo["programEdit"].Value == value)
+                    if (this.outer.scriptInfo["programEdit"].Value == Value)
                         return
-                    this.outer.scriptInfo["programEdit"].Value := value
-                    this.outer._curItem["script"]["program"] := value
+                    this.outer.scriptInfo["programEdit"].Value := Value
+                    this.outer._curItem["script"]["program"] := Value
                     this.outer.changeFlag := true
                 }
             }
@@ -211,19 +211,19 @@ class IntelligentEditGui {
         static url {
             get => this.outer._curItem.Has("url") ? this.outer._curItem["url"] : false
             set {
-                this.outer._curItem["url"] := value
+                this.outer._curItem["url"] := Value
                 this.outer.changeFlag := true
-                if (this.outer.scriptInfo["programEdit"].Value == value)
+                if (this.outer.scriptInfo["programEdit"].Value == Value)
                     return
-                this.outer.scriptInfo["programEdit"].Value := value
+                this.outer.scriptInfo["programEdit"].Value := Value
             }
         }
 
         static enabled {
             get => this.outer._curItem["enabled"]
             set {
-                this.outer._curItem["enabled"] := value
-                this.outer.enableBtn.Text := value ? "禁用" : "启用"
+                this.outer._curItem["enabled"] := Value
+                this.outer.enableBtn.Text := Value ? "禁用" : "启用"
                 this.outer.changeFlag := true
             }
         }
@@ -236,7 +236,7 @@ class IntelligentEditGui {
     static _changeFlag := false
     static changeFlag {
         get => this._changeFlag
-        set => this._changeFlag := this.saveBtn.Enabled := value
+        set => this._changeFlag := this.saveBtn.Enabled := Value
     }
     ;#endregion
 

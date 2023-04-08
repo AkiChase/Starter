@@ -36,7 +36,7 @@ class PluginMode {
     static thumb {
         get => this._thumb ? this._thumb : this._default_thumb
         set {
-            this._thumb := value ? value : this._default_thumb
+            this._thumb := Value ? Value : this._default_thumb
         }
     }
 
@@ -46,11 +46,11 @@ class PluginMode {
         get => this.listView.GetNext()
         set {
             if (this.pluginSearchResult.Length) {  ; 有内容才可修改
-                if (value > this.pluginSearchResult.Length)
-                    value := 1
-                else if (value == 0)
-                    value := this.pluginSearchResult.Length
-                this.listView.Modify(value, "Select Focus Vis")
+                if (Value > this.pluginSearchResult.Length)
+                    Value := 1
+                else if (Value == 0)
+                    Value := this.pluginSearchResult.Length
+                this.listView.Modify(Value, "Select Focus Vis")
                 this.toBottomNotify() ; 触发检测
             }
         }
@@ -66,7 +66,7 @@ class PluginMode {
                 if (!WinActive(SearchGui.gui))
                     PluginMode.hideGui(), SearchGui.hideTime := A_Now
             }
-            SetTimer(_autoHideFunc, value ? 1000 : 0)
+            SetTimer(_autoHideFunc, Value ? 1000 : 0)
         }
     }
     ;#endregion

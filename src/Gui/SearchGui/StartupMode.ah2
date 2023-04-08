@@ -19,11 +19,11 @@ class StartupMode {
         get => this.listView.GetNext()
         set {
             if (GlobalData.startupSearchResult.Length || this.pluginSearchResult.Length) { ; 有内容才可修改
-                if (value > GlobalData.startupSearchResult.Length + this.pluginSearchResult.Length)
-                    value := 1
-                else if (value == 0)
-                    value := GlobalData.startupSearchResult.Length + this.pluginSearchResult.Length
-                this.listView.Modify(value, "Select Focus Vis")
+                if (Value > GlobalData.startupSearchResult.Length + this.pluginSearchResult.Length)
+                    Value := 1
+                else if (Value == 0)
+                    Value := GlobalData.startupSearchResult.Length + this.pluginSearchResult.Length
+                this.listView.Modify(Value, "Select Focus Vis")
             }
         }
     }
@@ -38,7 +38,7 @@ class StartupMode {
                 if (!WinActive(SearchGui.gui))
                     StartupMode.hideGui(), SearchGui.hideTime := A_Now
             }
-            SetTimer(_autoHideFunc, value ? 1000 : 0)
+            SetTimer(_autoHideFunc, Value ? 1000 : 0)
         }
     }
     ;#endregion

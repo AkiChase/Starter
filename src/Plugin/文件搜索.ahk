@@ -45,8 +45,8 @@ class Plugin_文件搜索 {
         set {
             i := this._arrayFind(this._sortModeList, this._sortMode)
             this.sortM.Uncheck(i "&")
-            this._sortMode := this._sortModeList[value]
-            this.sortM.Check(value "&")
+            this._sortMode := this._sortModeList[Value]
+            this.sortM.Check(Value "&")
             Everything.setSort(this._sortMode)
         }
     }
@@ -58,8 +58,8 @@ class Plugin_文件搜索 {
         set {
             i := this._arrayFind(this._cotModeList, this._cotMode)
             this.cotM.Uncheck(i "&")
-            this._cotMode := this._cotModeList[value]
-            this.cotM.Check(value "&")
+            this._cotMode := this._cotModeList[Value]
+            this.cotM.Check(Value "&")
         }
     }
 
