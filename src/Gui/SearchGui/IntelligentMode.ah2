@@ -96,7 +96,7 @@ class IntelligentMode {
             if (SearchGui.searchText)
                 SearchGui.searchText := SearchGui.edit.Value := ""
             else if (SearchGui._pastedContentType != "text")
-                SearchGui.clearPastedContent()
+                SearchGui.clearPastedContent(), SearchGui.searchText := "" ; 同时也要触发搜索
             else
                 SearchGui.noRecover := true, this.hideGui()
         }

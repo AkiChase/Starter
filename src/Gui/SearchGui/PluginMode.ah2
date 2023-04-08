@@ -122,7 +122,7 @@ class PluginMode {
             if (SearchGui.searchText)
                 SearchGui.searchText := SearchGui.edit.Value := ""
             else if (this.enabledPasteContent && SearchGui._pastedContentType != "text")
-                SearchGui.clearPastedContent()
+                SearchGui.clearPastedContent(), SearchGui.searchText:="" ; 同时也要触发搜索
             else
                 SearchGui.mode := this.oldMode ;切回原来的模式
         }

@@ -291,16 +291,15 @@ class SearchGui {
 
     ; 显示文件列表信息
     static showFileListInfo(fileList) {
-        msg := "共" fileList.Length "个文件"
         loop 3 {
             if (fileList.Has(A_Index))
-                msg .= "`n`n" fileList[A_Index]
+                msg .= fileList[A_Index] "`n`n"
             else
                 break
         }
         if (fileList.Has(4))
-            msg .= "`n......"
-        Tip.show("文件信息: ", msg, 4000)
+            msg .= "......"
+        Tip.show("共" fileList.Length "个文件", msg, 4000)
     }
 
     ; 隐藏时间是否在时限
