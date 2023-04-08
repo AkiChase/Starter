@@ -3,7 +3,7 @@
  * @Version: 0.0.5
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-06
+ * @LastEditTime: 2023-04-08
  * @Description: 插件示例
  */
 
@@ -134,23 +134,33 @@ class Plugin_Demo {
             PluginHelper.showPluginMode(
                 data,
                 search,
-                (that, rowNum) => rowNum > 0 ?
-                    PluginHelper.Utils.tip(this.name, that.pluginSearchResult[rowNum].title, 1500) : 0,
-                (that, rowNum) => rowNum > 0 ?
-                    PluginHelper.Utils.tip(this.name, "double Left" that.pluginSearchResult[rowNum].title, 1500) : 0,
-                    loadImgs,
-                    (that) => PluginHelper.Utils.tip(this.name, "列表触底通知：可以通过这种方式异步加载数量过大的列表", 1000, true),
-                    initHandler, ,
-                    "输入搜索内容吧！"
-                )
+                (that, rowNum) => rowNum > 0 ? PluginHelper.Utils.tip(this.name, that.pluginSearchResult[rowNum].title, 1500) : 0
+                , {
+                    doubleLeftHandler: (that, rowNum) => rowNum > 0 ?
+                        PluginHelper.Utils.tip(this.name, "double Left" that.pluginSearchResult[rowNum].title, 1500) : 0,
+                    loadImgsHandler: loadImgs,
+                    toBottomHandler: (that) => PluginHelper.Utils.tip(this.name, "列表触底通知：可以通过这种方式异步加载数量过大的列表", 1000, true),
+                    initHandler: initHandler,
+                    placeholder: "输入搜索内容吧！"
+                }
+            )
         }
+
+        m := Menu()
+        curObj := {}
+        m.Add("显示标题", (*) => PluginHelper.Utils.tip(curObj.name, "标题:" curObj.title, 1000))
+        contextHandler(obj) {
+            curObj := obj
+            m.Show()
+        }
+
         ; 添加这个插件项到启动模式搜索界面，更详细的用法见PluginHelper.ahk
         PluginHelper.addPluginToStartupMode(
             this.name,
             "插件示例-启动插件模式",
             ["plugin demo", "CJSL"],
             fn, ,  ; 使用显式定义的函数
-            m
+            contextHandler
         )
         ; 可以添加多个插件项，但每个插件的插件项应当具有相同的name，不同的title
         PluginHelper.addPluginToStartupMode(
@@ -158,17 +168,26 @@ class Plugin_Demo {
             "插件示例-项目2",
             ["plugin demo", "CJSL"],
             (obj, searchText) => (PluginHelper.Utils.tip(obj.title, "搜索框内容:" searchText, 1000), PluginHelper.hideSearchGui()),
-            (obj, searchText) => PluginHelper.Utils.tip(obj.title, "搜索框内容:" searchText, 1000), ,  ; 使用匿名函数作为双击left的处理函数
+            (obj, searchText) => PluginHelper.Utils.tip(obj.title, "搜索框内容:" searchText, 1000),  ; 使用匿名函数作为双击left的处理函数
+            contextHandler,
             ; 定义该插件项显示的图标HICON，此处用base64ToHICON方法将base64图片载入得到HICON
             PluginHelper.Utils.base64ToHICON("iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAnBJREFUWEfVlj9oFEEUxt+bLa6wF0whQcRCENOo2EUQYy/xZmb3sDKCoK0RhURQSFoFwdhcuNuZPY+AXKU22gmKiI2FAREbwUrwrI6dJxN2wv3Z21vZDWe2291vv/fbNx9vBmHKF065Pvy/AEKI60R0EhGPFekSEX1BxE9a68dpPqkdEEI0AcAvUjjl21BrHQw/HwGoVqsXGGMvE+E3ItosAoKIVwBg1noYYxZardarfr8RACHEDQB4aEWe5800m80fRQCCIDgax/F24nFTa/0oE4BzvoqIK1aktS4lpEIIsn5EdC+KotX9CyClXDLGzGQtCWNs2/O8541G44/TldIBKeUcEX3MkwfG2OkwDN+XCsA5n0XECADOTID4UKlUztfr9V+lAuT583GaUpZg6gC1Wu1Ar9dbdENlHJANYbfb7XQ6nd+lLoHv+6eMMe/ydIKIzkVR9KZUgCAIDsVxfBsATmRB2M0niqJr/Zr9mwHbymRP+BmG4ec87Xca3/ePx3F80N4j4uuJo1hKeYSI1gDABm3kQsR1pdRyHggp5RoR3RqjbSPislLq6w6cE3HOnyDi0oQCT7XWmRohxAYAXJ2Qkw2Xk12A/qAAwG6Ckxbav7mYmA68Syk0nzx7QUTrQ+/nh3faVIDhLdOaCCHuA8CdPEsAAA+01neHtWlbfW4AayalXDDGnM2CYIy9VUq5E9WAtDBAzr8fK+OcryDizoHEHXb+qQMlAIyctnKFsGjhvu8zQ/hs3AwoEcBZtbXWlwfmgJRykYiqAHBpDwr2W24hYksp1R4AcAo7EY0xh/cCgjH23U1A51/KsbsI7NQB/gIoe4UwRdVGRAAAAABJRU5ErkJggg==")
         )
+
+        ; 自定义智能模式匹配函数，可以根据多种条件判断是否匹配当前插件
+        matchHandler(obj, searchText, pastedContentType, pastedContent) {
+            ; 比如根据粘贴内容是否为文件等等，可以参考"文件搜索插件"
+            ; 此处简单的使用搜索词是否在"CJSL"文本的开头
+            return PluginHelper.Utils.strStartWith("CJSL", searchText)
+        }
 
         ; 添加这个插件项到智能模式搜索界面，更详细的用法见PluginHelper.ahk
         PluginHelper.addPluginToIntelligentMode(
             this.name,
             "插件示例-智能模式项目",
-            [[".+", "$0"], ["(demo|sl|示例)\s+(?<query>.*)", "${query}"]], ;一种是任意字符匹配，一种是前缀匹配，都用正则实现
-            (obj, content) => PluginHelper.Utils.tip(obj.title, "传递内容:" content, 1000)
+            matchHandler, ; 自定义匹配函数
+            (obj, searchText) => PluginHelper.Utils.tip(obj.title, "传递内容:" searchText, 1000),
+            contextHandler
         )
 
         ; PluginHelper.Utils.tip("插件已加载", "demo.ahk")

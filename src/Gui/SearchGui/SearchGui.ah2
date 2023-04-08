@@ -3,12 +3,21 @@ class SearchGui {
     ; static edit := unset
     ; static thumbList := unset
     ; static thumb := unset
+    ; static contentThumb := unset
 
-    static hideTime := 0
+    static noRecover := true
+    static hideTime := A_Now
 
     ;#region 设置搜索框占位符
+    static _placeholder := ""
     static placeholder {
-        set => EditCtrlFunc.setPlaceholder(SearchGui.edit, value)
+        get => this._placeholder
+        set {
+            if (this._placeholder != Value) {
+                this._placeholder := Value
+                EditCtrlFunc.setPlaceholder(SearchGui.edit, Value)
+            }
+        }
     }
     ;#endregion
 
@@ -17,7 +26,7 @@ class SearchGui {
     static mode {
         get => this._mode
         set {
-            if (this._mode == value) {  ; 不需要切换时,强制激活指定的autoHide
+            if (this._mode == Value) {  ; 不需要切换时,强制激活指定的autoHide
                 l := [PluginMode, StartupMode, IntelligentMode]
                 curModeC := l[Value + 2], l.RemoveAt(Value + 2)
                 curModeC.autoHideFlag := true
@@ -25,10 +34,18 @@ class SearchGui {
                     c.autoHideFlag := false
                 return
             }
-            this._mode := value
+            ;将切换启动模式且存在非文本pastedContent时，切换前要清除pastedContent
+            if (Value = 0 && this._pastedContentType != "text")
+                this.clearPastedContent()
+
+            ;将切换启动模式且窗口匹配模式开启时，切换前要关闭窗口匹配模式
+            if (Value = 0 && this.winInfoMatchFlag)
+                this.winInfoMatchFlag := false
+
+            this._mode := Value
             if (this._mode == 1) {    ; IntelligentMode
                 this.thumb.Value := "hBitmap:*" this.thumbList[2]
-                this.placeholder := "Hi, type something 😃"
+                this.placeholder := IntelligentMode.defaultPlaceholder
                 for c in [StartupMode, PluginMode]
                     c.autoHideFlag := c.listView.Visible := false
                 IntelligentMode.listView.Visible := true
@@ -38,7 +55,7 @@ class SearchGui {
 
             } else if (this._mode == 0) {    ; StartupMode
                 this.thumb.Value := "hBitmap:*" this.thumbList[1]
-                this.placeholder := "Hi, Starter"
+                this.placeholder := StartupMode.defaultPlaceholder
                 for c in [IntelligentMode, PluginMode]
                     c.autoHideFlag := c.listView.Visible := false
                 StartupMode.listView.Visible := true
@@ -79,6 +96,64 @@ class SearchGui {
     }
     ;#endregion
 
+    ;#region 粘贴内容
+    static clearPastedContent := (this) => (this._pastedContentType := "text", this.pastedContent := "")
+    static _pastedContentType := "text"
+    static _pastedContent := ""
+    static pastedContent {
+        get => this._pastedContent
+        set {
+            if (this._pastedContentType = "bitmap"
+                && DllCall("OpenClipboard", "ptr", 0) && DllCall("IsClipboardFormatAvailable", "uint", 2)) {
+                ; 位图
+                hBitmap := DllCall("GetClipboardData", "uint", 2, "ptr") ; 指向剪切板内数据
+                hBitmap := LoadPicture("HBITMAP:*" hBitmap) ;复制一份
+                DllCall("CloseClipboard")
+
+                this.placeholder := "", this.edit.Move(50, , 455)
+                this.contentThumb.Value := "HBITMAP:*" hBitmap, this.contentThumb.Visible := true
+                this.placeholder := "图片", this._pastedContent := hBitmap
+            } else if (this._pastedContentType = "file") {
+                ; 文件
+                fileList := Type(Value) == "Array" ? Value : StrSplit(Value, "`r`n") ; 自动处理数组或字符串类型
+
+                hIcon := SubStr(fileList[1], InStr(fileList[1], ".", , , -1) + 1) = "exe" ?
+                    LoadPicture(fileList[1], "icon1", &_) : PluginHelper.Utils.associatedHIcon(fileList[1])
+                this.placeholder := "", this.edit.Move(50, , 455)
+                this.contentThumb.Value := "HICON:" hIcon, this.contentThumb.Visible := true
+                this.placeholder := "文件", this._pastedContent := fileList
+                if (fileList.Length > 1)
+                    this.showFileListInfo(fileList)
+            } else {
+                ; 视作文本
+                this._pastedContentType := "text"
+                this.placeholder := "", this.edit.Move(10, , 495)
+                this.contentThumb.Visible := false, this._pastedContent := Value
+                this.placeholder := [PluginMode, StartupMode, IntelligentMode][this.mode + 2].defaultPlaceholder
+            }
+        }
+    }
+    ;#endregion
+
+    ; 长按获取的当前窗口信息
+    static workWinInfo := {
+        title: "",
+        class: "",
+        process: ""
+    }
+
+    ;#region 是否处于窗口匹配
+    static _winInfoMatchFlag := false
+    static winInfoMatchFlag {
+        get => this._winInfoMatchFlag
+        set {
+            if (Value)
+                this.placeholder := "Hi, Window Match Mode 💻"
+            this._winInfoMatchFlag := Value
+        }
+    }
+    ;#endregion
+
     ; 初始化
     static init() {
         this.gui := Gui("Owner AlwaysOnTop -Resize -Caption", "Starter")
@@ -88,8 +163,7 @@ class SearchGui {
         this.gui.MarginY := 0
 
         this.edit := this.gui.AddEdit("x10 y10 h30 w495 -E0x200")
-        this.placeholder := "Hi, Starter"
-        this.edit.Focus()
+        this.edit.OnEvent("ContextMenu", (*) => 0)
 
         search(edit, info) {    ;防抖
             static f := (*) => this.searchText := this.edit.Value
@@ -102,6 +176,11 @@ class SearchGui {
 
         this.thumbList := [LoadPicture(GlobalData.imgDir "\Starter.png", "w64"), LoadPicture(GlobalData.imgDir "\AI.png", "w64")]
         this.thumb := this.gui.AddPicture("x510 y10 w30 h30", "hBitmap:*" this.thumbList[1])
+        this.thumb.OnEvent("Click", (*) => this.winInfoMatchFlag ? this.showWinInfo() : 0)
+
+        this.contentThumb := this.gui.AddPicture("x7 y7 w36 h36 +Border +Hidden")
+
+        this.contentThumb.OnEvent("Click", (*) => this._pastedContentType = "file" ? this.showFileListInfo(this.pastedContent) : 0)
 
         ; 回车触发
         this.gui.AddButton("Default Hidden").OnEvent("Click", (*) => this.mode == 0 ?
@@ -114,35 +193,55 @@ class SearchGui {
         PluginMode.init()
 
         this.hotkeyInit()
-
-        this.hideTime := DateAdd(A_Now, -10, "m") ; 保证初始hideTime足够早
     }
 
-    ; 拖拽添加
+    ; 拖入添加
     static dropAddItem(fileList) {
-        for filePath in fileList {
-            SplitPath(filePath, , , , &fileNameNoExt)
-            GlobalData.startupData.Push([filePath, filePath, 0, fileNameNoExt, ChineseFirstChar(fileNameNoExt)])
-        }
-
-        StartupMode.loadImgs(false)    ;载入新图片，不重新加载其他图片
-
-        if (SearchGui.mode !== 0)    ; 非启动模式下，转为启动模式
-            SearchGui.mode := 0    ; 转换启动模式时会搜索一次
-        else
+        if (SearchGui.mode == 0) {
+            for filePath in fileList {
+                SplitPath(filePath, , , , &fileNameNoExt)
+                GlobalData.startupData.Push([filePath, filePath, 0, fileNameNoExt, ChineseFirstChar(fileNameNoExt)])
+            }
+            StartupMode.loadImgs(false)    ;载入新图片，不重新加载其他图片
             StartupMode.search()
+            Tip.show("拖入添加启动项", "添加成功, 新增 " fileList.Length " 个启动项", 2000)
+        } else if (SearchGui.mode == 1) {
+            SearchGui._pastedContentType := "file"
+            SearchGui.pastedContent := fileList
+            SearchGui.searchText := SearchGui.searchText ; 不修改内容，直接触发搜索
+        } else if (SearchGui.mode == -1)
+            PluginMode.onDropFiles(fileList)
     }
 
     ; 热键初始化
     static hotkeyInit() {
         capsLockHandler(key) {
-            if (KeyWait("CapsLock", "T0.5")) {
-                if (A_ThisHotkey = A_PriorHotkey and A_TimeSincePriorHotkey < 300) {
-                    StartupMode.showGui()
+            if (KeyWait("CapsLock", "T0.4")) { ; 非长按
+                if (A_ThisHotkey = A_PriorHotkey && A_TimeSincePriorHotkey < 300) {
+                    StartupMode.showGui() ; 显示并清空搜索框
                 }
-            } else {
-                IntelligentMode.showGui(GetSelectedText())
-                KeyWait("CapsLock")    ;等待松开
+            } else { ; 长按0.4秒
+                clipSaved := ClipboardAll()
+                content := GetSelectedText(0.1, &outType) ; 等待最多0.1s剪切板
+                this.noRecover := true ; 保证能显示智能模式
+                IntelligentMode.showGui()  ; 显示并清空搜索框
+                if (!content && (outType = 'text' || outType = "timeout")) { ;
+                    ; 获取窗口信息
+                    WinExist("A")
+                    this.workWinInfo.class := WinGetClass()
+                    this.workWinInfo.process := WinGetProcessPath()
+                    this.workWinInfo.title := WinGetTitle()
+                    this.winInfoMatchFlag := true ; 开启窗口匹配模式
+                } else
+                    this.winInfoMatchFlag := false ; 关闭窗口匹配模式
+
+                if (outType != 'timeout') {
+                    this._pastedContentType := outType
+                    this.pastedContent := content
+                }
+                this.searchText := "" ; 触发搜索
+                A_Clipboard := clipSaved
+                KeyWait("CapsLock")    ;等待松开, 避免重复调用
             }
         }
 
@@ -173,7 +272,47 @@ class SearchGui {
         ; 上下移动焦点行
         Hotkey("Down", hotkeyHandler)
         Hotkey("Up", hotkeyHandler)
+        Hotkey("$^V", hotkeyHandler)
+
+        ; Alt+数字快捷选中
+        altHandler(key) {
+            i := Integer(SubStr(key, 2))
+            ; LVM_GETTOPINDEX := 0x1027
+            LV := [PluginMode, StartupMode, IntelligentMode][this.mode + 2].listView
+            topIndex := SendMessage(0x1027, 0, 0, , LV)
+            if (topIndex + i <= LV.GetCount())
+                LV.Modify(topIndex + i, "Select Focus Vis")
+        }
+        loop 10
+            Hotkey("!" A_Index - 1, altHandler)
         HotIf()
+    }
+
+    ; 显示窗口匹配信息
+    static showWinInfo() {
+        WiseGuiHelper.WiseGui("workWinInfo", "Main: 0", "Theme: ,,,0", "FontSub: s14 ,雅痞-简",
+            "Shadow: 1", "TextWidth: 530", "Transparency: 192", "Timer: 1500",
+            "SubText: " Format("@工作窗口标题`n{}`n@工作窗口类`n{}`n@工作窗口程序`n{}"
+                , this.workWinInfo.title, this.workWinInfo.class, this.workWinInfo.process)
+        )
+        if (WinExist("WiseGui\workWinInfo ahk_class AutoHotkeyGUI")) {
+            WinGetPos(&x, &y, , , this.gui)
+            WinGetPos(, , , &h)
+            WinMove(x, y - h - 10)
+        }
+    }
+
+    ; 显示文件列表信息
+    static showFileListInfo(fileList) {
+        loop 3 {
+            if (fileList.Has(A_Index))
+                msg .= fileList[A_Index] "`n`n"
+            else
+                break
+        }
+        if (fileList.Has(4))
+            msg .= "......"
+        Tip.show("共" fileList.Length "个文件", msg, 4000)
     }
 
     ; 隐藏时间是否在时限
@@ -181,6 +320,7 @@ class SearchGui {
         return DateDiff(A_Now, SearchGui.hideTime, "s") < 15
     }
 
+    ; 恢复窗口
     static recoverGui() {
         if (this.mode == 0) {
             StartupMode.autoHideFlag := 1

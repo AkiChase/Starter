@@ -4,6 +4,7 @@ class StartupMode {
 
     static imgListID := 0
     static rowHeight := 0
+    static defaultPlaceholder := "Hi, Starter"
     static imgPathToImgListIndex := Map()
     static hotkeyHandlerMap := Map()
 
@@ -18,11 +19,11 @@ class StartupMode {
         get => this.listView.GetNext()
         set {
             if (GlobalData.startupSearchResult.Length || this.pluginSearchResult.Length) { ; 有内容才可修改
-                if (value > GlobalData.startupSearchResult.Length + this.pluginSearchResult.Length)
-                    value := 1
-                else if (value == 0)
-                    value := GlobalData.startupSearchResult.Length + this.pluginSearchResult.Length
-                this.listView.Modify(value, "Select Focus Vis")
+                if (Value > GlobalData.startupSearchResult.Length + this.pluginSearchResult.Length)
+                    Value := 1
+                else if (Value == 0)
+                    Value := GlobalData.startupSearchResult.Length + this.pluginSearchResult.Length
+                this.listView.Modify(Value, "Select Focus Vis")
             }
         }
     }
@@ -37,7 +38,7 @@ class StartupMode {
                 if (!WinActive(SearchGui.gui))
                     StartupMode.hideGui(), SearchGui.hideTime := A_Now
             }
-            SetTimer(_autoHideFunc, value ? 1000 : 0)
+            SetTimer(_autoHideFunc, Value ? 1000 : 0)
         }
     }
     ;#endregion
@@ -58,14 +59,26 @@ class StartupMode {
                 if (rowNum > this.pluginSearchResult.Length)
                     this.menu.Show()
                 else
-                    this.pluginSearchResult[rowNum].HasOwnProp("menu") ? this.pluginSearchResult[rowNum].menu.Show() : 0
+                    this.pluginSearchResult[rowNum].HasOwnProp("contextHandler") ?
+                    this.pluginSearchResult[rowNum].contextHandler() : 0
             }
         }
         this.listView.OnEvent("ContextMenu", (*) => showMenuHandler())
 
-        ; 启动模式热键处理函数
-        this.hotkeyHandlerMap["~Esc"] := () => StrLen(SearchGui.searchText) ?
-            SearchGui.searchText := SearchGui.edit.Value := "" : this.hideGui()
+        escHandler() {
+            ; 有输入法窗口(同pid但不同class时不执行)
+            pid := ProcessExist()
+            idList := WinGetList("ahk_pid " pid)
+            for id in idList {
+                if (WinGetClass("ahk_id " id) != "AutoHotkeyGUI")
+                    return
+            }
+            if (SearchGui.searchText)
+                SearchGui.searchText := SearchGui.edit.Value := ""
+            else
+                SearchGui.noRecover := true, this.hideGui()
+        }
+        this.hotkeyHandlerMap["~Esc"] := escHandler
 
         rightUpHandler() {
             static lastEndFlag := false
@@ -85,6 +98,30 @@ class StartupMode {
         this.hotkeyHandlerMap["~Right Up"] := rightUpHandler
         this.hotkeyHandlerMap["Down"] := () => this.focusedRow++
         this.hotkeyHandlerMap["Up"] := () => this.focusedRow--
+
+        pasteHandler() {
+            if (DllCall("OpenClipboard", "ptr", 0)) {
+                if (DllCall("IsClipboardFormatAvailable", "uint", 2)) { ; 位图
+                    DllCall("CloseClipboard")
+                    SearchGui.mode := 1
+                    SearchGui._pastedContentType := "bitmap"
+                    SearchGui.pastedContent := "" ; 仅仅是为了触发其加载bitmap
+                    SearchGui.searchText := SearchGui.searchText ; 不修改内容，直接触发搜索
+                } else if (DllCall("IsClipboardFormatAvailable", "uint", 15)) { ; 文件
+                    DllCall("CloseClipboard")
+                    SearchGui.mode := 1
+                    SearchGui._pastedContentType := "file"
+                    SearchGui.pastedContent := A_Clipboard
+                    SearchGui.searchText := SearchGui.searchText ; 不修改内容，直接触发搜索
+                } else {
+                    DllCall("CloseClipboard")
+                    ; 正常的粘贴
+                    Send("{Ctrl down}v{Ctrl up}")
+                }
+            } else ; 剪切板占用直接正常的粘贴
+                Send("{Ctrl down}v{Ctrl up}")
+        }
+        this.hotkeyHandlerMap["$^V"] := pasteHandler
 
         ; 启动模式菜单初始化
         this.menuInit()
@@ -122,10 +159,11 @@ class StartupMode {
 
     ; 以启动模式显示搜索界面
     static showGui(searchText := "") {
-        if (SearchGui.hideTimeDiff()) {
+        if (!SearchGui.noRecover && SearchGui.hideTimeDiff()) {
             SearchGui.recoverGui()
             return
         }
+        SearchGui.noRecover := false
         SearchGui.mode := 0
         SearchGui.edit.Value := SearchGui.searchText := searchText
         SearchGui.gui.Show()
@@ -195,7 +233,6 @@ class StartupMode {
 
     ; 重新加载搜索列表图标资源
     static loadImgs(reloadIL := true) {
-        SearchGui.placeholder := "正在加载启动模式搜索列表..."
         this.listView.Delete()    ;清空搜索列表
 
         if (reloadIL) {    ;完全重新加载，否则仅加载未载入的
@@ -249,8 +286,6 @@ class StartupMode {
 
         if (reloadIL and oldImgListID)
             DllCall("ImageList_Destroy", "Uint", oldImgListID)
-
-        SearchGui.placeholder := "Hi, Starter"
     }
 
     ; 搜索即重置列表显示匹配的内容
@@ -300,7 +335,10 @@ class StartupMode {
                 this.rowHeight := rowH
         }
 
-        LVHeight := len > 0 ? Ceil((len >= 8 ? 8 : len) * this.rowHeight) : 0
+        if (!this.rowHeight)
+            LVHeight := len * Ceil(26.4 * (A_ScreenDPI / 96))
+        else
+            LVHeight := len > 0 ? Ceil((len >= 10 ? 10 : len) * this.rowHeight) : 0
         ControlMove(, , , LVHeight, this.listView) ; 使用ControlMove避免DPI 缩放
         this.listView.ModifyCol(1, "530")
         this.focusedRow := 1    ;聚焦第一行

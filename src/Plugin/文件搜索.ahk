@@ -1,9 +1,9 @@
 /**
  * @Name: 文件搜索
- * @Version: 0.0.2
+ * @Version: 0.1.0
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-06
+ * @LastEditTime: 2023-04-08
  * @Description: 调用Everything进行文件搜索
  */
 
@@ -11,7 +11,7 @@
 ===Starter Plugin Info==>
 {
     "author": "ruchuby",
-    "version": "0.0.2",
+    "version": "0.1.0",
     "introduction": "调用Everything进行文件搜索",
     "icon": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsSAAALEgHS3X78AAAE60lEQVRYhb2W628UVRjGf+fszG67oReE1lBJW26FBkovKxIDIgZvNJCoCX41IZEYEqipIcaELySKklRLxBRDSPwDNFE0BmnUFLBNrSyuy8UCUkqBVMvSQlnc3bmc8cN06W7L7rYIPF8m875n5nnmPc953xH8D2wD34IAK6SkWjjMBnAchh2b3v4QPa0Qy/UOcT/ErQFWah6aNa9vo2Ml8u+5SOoJ2zQPK5O9TSGOPhABu5cwq7iQ/Ug2eTVYOAcqSmBWAfh97ppYAm5EYeA6/DUIcRNsm+9vKd7cGWTwvgW01lKne/lO15lbNw/q54GuZX/GsiF8GYIXwTAZsg1ebQrRNW0BH9dR6/NytCCfosYAzC6cqmwXI1E4fBJGovxrG7yQKiKngN1LmFVYQKjAz9zXnoYZedMjTyJmwNfdMBIlcnOEup0XuAaQo4hQXMh+6WHu+obJ5HHDLfGlf+DmHTdW5IeKUqitHPcFQL4XGgPwZRezi4v5AngRwJONvDXASk2jtWEBVJWl5/qH4FAPDERQd+J02jZf2Q6dsQSJv2+K8rNXkIX5rkGTyPOCJuHqMAueL6X7yCAXs1ZA89Ds1VzDTST/4SRYit/icTbvCHM6Nb+nzlnkOBz8Mcwah3Txyyog1A+2TTNwRGYi3wY+ARsXzkl3e9yAn8JgK0709fDsRHKAd0NcOGXzvLLp6DgN0fh4ziNhcRkIKda11TAzo4CxDpdfUZIeD1+GuIlK2GzO1ukOBDFjCTZbaEaoLz1XXgJSOB5DZ1VGAVJSDel7CK7hHEXXO0FOZXo2iR1hLjmW1X5pKD2efKeUVGcUkOztqU4G1+2OQ08u8iSUQ080DqY9HvPp7lYA/owCnGw9QqCmKkAwttaZFAcgowAcboDb21NR5AcBgSkLEAT8vnQjGxZYCjRBPHMFbHrBHSypqCwFIcWaluVU5SJ/fxFPSN27vrI0PT58272ait6MAvpD9CD1xMD19PjySvBqjifPx8EtAfQs/LKomANSGXkT+8hABJSDGobOjAJaIWab5uELg+5US8Lvg7VLQXp4pkZy5MNaKic+u2cxZftW8K3HQ+Pqaij0j+eUgnPXAMWxXUEiWTuhUnyaMHklfBka5o/HF5W5nuo4zXOFunbus6esduXQI0AJQUDq3vVSGXmrq2Fpefo7/7zqNiZbsRdyDCMhqQGIjE7OVZVB2WPwe5/l7R9iQzTOhmSFKksM6uenfznAaAy6z4Nt80tTkEOQ5ajtC/AWHtrmP454qf7uuc0I0waczD8pCRO++RUio9ySMRq2nqIPMlRguuQAepa5ejvm/pBERjEsm01vj5HDPSqQjdxxoOsczPC5Uy2XMKXcPe8+D3GDW7bN601B2lPXpAnIRX78LJy54t77fe5UKx/7KfWNHUjDcs/5QMR1ezTu7rknzhtbU758koCpkls2LSg6hGS7kGKdFI4H3PUCt8OBe85RHLMVe5OGuxcEQNtKtiiHz+flILctPtp2gveSubYaZho6q6SkWgh3eHlg2FT0DkPnriCRTMR3BbQspyrfL89UlihtOuQPClL30ihQ2tplj54cQErhTkSRYsdHRQ4g4wnalYM6ftZ1sGnD0TOPhhzGTLhvBc0IWnSPe68csCw+2H6CnQ+T/K4AgE/qeVLTeBkQlsHPzX/Q+bDJAf4DkxsIASilfOoAAAAASUVORK5CYII="
 }
@@ -45,8 +45,8 @@ class Plugin_文件搜索 {
         set {
             i := this._arrayFind(this._sortModeList, this._sortMode)
             this.sortM.Uncheck(i "&")
-            this._sortMode := this._sortModeList[value]
-            this.sortM.Check(value "&")
+            this._sortMode := this._sortModeList[Value]
+            this.sortM.Check(Value "&")
             Everything.setSort(this._sortMode)
         }
     }
@@ -58,8 +58,8 @@ class Plugin_文件搜索 {
         set {
             i := this._arrayFind(this._cotModeList, this._cotMode)
             this.cotM.Uncheck(i "&")
-            this._cotMode := this._cotModeList[value]
-            this.cotM.Check(value "&")
+            this._cotMode := this._cotModeList[Value]
+            this.cotM.Check(Value "&")
         }
     }
 
@@ -116,8 +116,8 @@ class Plugin_文件搜索 {
 
         ; 显示内容
         cotM := this.cotM
-        for name in ["路径", "名称", "大小", "修改时间"]
-            cotM.Add(name, (_, pos, *) => (this.cotMode := pos, this.refrushLV(that)))
+        for name in ["路径", "名称", "大小 - 名称", "大小 - 修改时间"]
+            cotM.Add(Format("{}`t(&{})", name, A_Index), (_, pos, *) => (this.cotMode := pos, this.refrushLV(that)))
         sm.Add("显示内容`t(&2)", cotM)
 
         this.cotMode := 1 ; 选择显示路径
@@ -143,8 +143,8 @@ class Plugin_文件搜索 {
             if (sizeIndex = 4)
                 break
         }
-        return (sizeIndex = 0) ? size " byte" . (size != 1 ? "s" : "")
-        : round(size, decimalPlaces) . " " . sizeName[sizeIndex]
+        return (sizeIndex = 0) ? Format("{:." decimalPlaces "f} B", size)
+        : Format("{:." decimalPlaces "f} {}", size, sizeName[sizeIndex])
     }
 
     ; 添加搜索结果到列表
@@ -174,11 +174,16 @@ class Plugin_文件搜索 {
                 icoIndex := that.imgPathToImgListIndex[ext]
             }
             ; 添加
-            key := this.cotMode
-            if (key == "path")
-                that.listView.Add("Icon" icoIndex, this.pathStrCompact(item.path, 45)) ;显示压缩的路径
-            else
-                that.listView.Add("Icon" icoIndex, item.%key%) ;显示指定内容模式
+            switch this.cotMode {
+                case "path":
+                    that.listView.Add("Icon" icoIndex, this.pathStrCompact(item.path, 45)) ;显示压缩的路径
+                case "name":
+                    that.listView.Add("Icon" icoIndex, item.name)
+                case "size":
+                    that.listView.Add("Icon" icoIndex, Format("{} - {}", item.size, item.name))
+                case "date":
+                    that.listView.Add("Icon" icoIndex, Format("{} - {}", item.date, item.name))
+            }
         }
     }
 
@@ -245,9 +250,19 @@ class Plugin_文件搜索 {
             that.menu := this.menu
         }
 
+        ; 带有文件时的初始化
+        initWithFile(that) {
+            init(that)
+            PluginHelper.placeholder := "在文件夹内搜索"
+        }
+
         ;定义插件模式下搜索功能
         searchHandler(that, searchText) {
             that.pluginSearchResult := []
+            if (PluginHelper.pastedContentType == "file")
+                searchText := Format('"{}" ', PluginHelper.pastedContent[1])
+            ; 其他类型不修改searchText
+
             if (searchText) {
                 ; that.pluginSearchResult := [{ name: "文件名", path: "路径", size:"大小", "date":"修改时间" },...]
                 Everything.setSearch(searchText)
@@ -267,7 +282,7 @@ class Plugin_文件搜索 {
                             path: path,
                             ext: ext,
                             size: this.byteFormat(Everything.getResultSize(index)),
-                            date: Everything.getResultDateModified(index)
+                            date: FormatTime(Everything.getResultDateModified(index), "yyyy-MM-dd HH:mm:ss")
                         })
                     }
                 } else
@@ -284,6 +299,7 @@ class Plugin_文件搜索 {
             }
         }
 
+        ; 双击right处理函数
         doubleRightHandler(that, rowNum) {
             if (rowNum > 0) {
                 ControlGetPos(&x1, &y1, &w, , that.listView)
@@ -291,6 +307,37 @@ class Plugin_文件搜索 {
                 NumPut("UInt", 0, RECT, 0)
                 SendMessage(0x1038, rowNum - 1, RECT.Ptr, , that.listView)
                 that.menu.show(x1 + w - 150, y1 + (NumGet(RECT, 4, "UInt") + NumGet(RECT, 12, "UInt")) // 2)
+            }
+        }
+
+        ; 粘贴文件/位图处理函数
+        pasteContentHandler(that, typeName, content?) {
+            if (typeName != "file") ;非文件类型都不允许
+                return 0
+            if (!IsSet(content)) {
+                content := A_Clipboard
+                if (InStr(content, "`r`n")) ; 不允许多文件
+                    return false
+                return InStr(FileExist(content), "D") ;仅允许单文件夹
+            }
+            else { ;粘贴完成后的触发
+                PluginHelper.placeholder := "在文件夹内搜索"
+                t := PluginHelper.SearchText
+                PluginHelper.SearchText := t ; 直接触发搜索
+                PluginHelper.setSearchTextSel(StrLen(t)) ; 游标移动到最后
+            }
+        }
+
+        dropFilesHandler(that, fileList, pre) {
+            if (pre) {
+                if (fileList.Length > 1)
+                    return false
+                return InStr(FileExist(fileList[1]), "D") ;仅允许单文件夹
+            } else { ;拖入生效后的触发
+                PluginHelper.placeholder := "在文件夹内搜索"
+                t := PluginHelper.SearchText
+                PluginHelper.SearchText := t ; 直接触发搜索
+                PluginHelper.setSearchTextSel(StrLen(t)) ; 游标移动到最后
             }
         }
 
@@ -303,35 +350,62 @@ class Plugin_文件搜索 {
                 PluginHelper.showPluginMode( ; 启动插件模式
                     [], ;数据靠search获取，不需要传入
                     searchHandler,
-                    runHandler,
-                    doubleRightHandler,
-                    loadImg, ; 需要带有图标
-                    asyncLoading, ; 异步加载
-                    init, ; 初始化
-                    ,
-                    "Search on Everything",
-                    PluginHelper.getPluginHIcon(this.name)
+                    runHandler, {
+                        doubleLeftHandler: doubleRightHandler,
+                        loadImgsHandler: loadImg, ; 需要带有图标
+                        toBottomHandler: asyncLoading, ; 异步加载
+                        initHandler: init, ; 初始化
+                        pasteContentHandler: pasteContentHandler, ; 允许粘贴单文件夹
+                        dropFilesHandler: dropFilesHandler, ; 允许拖入单文件夹
+                        placeholder: "Search on Everything",
+                        thumb: PluginHelper.getPluginHIcon(this.name)
+                    }
                 )
             ), , , PluginHelper.getPluginHIcon(this.name)
         )
 
+        ; 匹配处理函数
+        ; 1. 匹配文本 2. 匹配单文件夹，且文件夹存在，并进行优先级细分
+        matchHandler(obj, searchText, pastedContentType, pastedContent) {
+            if (pastedContentType == 'text' && searchText) {
+                obj.matchData := { type: "text" } ; 标记匹配类型，方便进入插件模式前区分进入方式
+                obj.title := "使用Everything搜索输入内容" ; 修改显示标题
+                return 1 ; 基本优先级
+            } else if (pastedContentType == 'file' && pastedContent.Length = 1 && InStr(FileExist(pastedContent[1]), "D")) {
+                if (PluginHelper.Utils.strStartWith("Everything", searchText)
+                    || PluginHelper.Utils.strStartWith("WJSS", searchText)) {
+                    ; 搜索文本为Everything或者WJSS的开头
+                    obj.matchData := { type: "file", searchTextFlag: false } ; 标记最后不要传入searchText
+                    obj.title := "使用Everything在文件夹内搜索" ; 修改显示标题
+                    return 2 ; 更高优先级
+                } else {
+                    obj.matchData := { type: "file", searchTextFlag: true }
+                    obj.title := "使用Everything在文件夹内搜索输入内容" ; 修改显示标题
+                    return 1 ; 基本优先级
+                }
+            }
+            return 0 ; 不匹配
+        }
+
         ; 添加插件项到智能模式搜索界面
         PluginHelper.addPluginToIntelligentMode(
             this.name,
-            "使用Everything进行搜索",
-            [["(ev|wjss|everything)\s+(?<query>.*)", "${query}"], [".+", "$0"]],
-            (obj, content) => (
+            "Everything文件搜索", ; 这个title不重要，会在matchHandler执行时修改
+            matchHandler,
+            (obj, searchText) => (
                 PluginHelper.showPluginMode( ; 启动插件模式
                     [], ;数据靠search获取，不需要传入
                     searchHandler,
-                    runHandler,
-                    doubleRightHandler,
-                    loadImg, ; 需要带有图标
-                    asyncLoading, ; 异步加载
-                    init, ; 初始化
-                    content,
-                    "Search on Everything",
-                    PluginHelper.getPluginHIcon(this.name)
+                    runHandler, {
+                        doubleLeftHandler: doubleRightHandler,
+                        loadImgsHandler: loadImg, ; 需要带有图标
+                        toBottomHandler: asyncLoading, ; 异步加载
+                        initHandler: obj.matchData.type == 'text' ? init : initWithFile, ; 区分两种初始化
+                        pasteContentHandler: pasteContentHandler, ; 允许粘贴文件
+                        placeholder: "Search on Everything",
+                        searchText: obj.matchData.searchTextFlag ? searchText : "", ; 区分是否要传入搜索文本
+                        thumb: PluginHelper.getPluginHIcon(this.name)
+                    }
                 )
             ), , PluginHelper.getPluginHIcon(this.name)
         )

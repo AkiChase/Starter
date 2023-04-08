@@ -3,6 +3,7 @@ class IntelligentMode {
     ; static menu := unset
     static imgListID := 0
     static rowHeight := 0
+    static defaultPlaceholder := "Hi, type something 😃"
     static imgPathToImgListIndex := Map()
     static hotkeyHandlerMap := Map()
 
@@ -17,11 +18,11 @@ class IntelligentMode {
         get => this.listView.GetNext()
         set {
             if (GlobalData.intelligentSearchResult.Length || this.pluginSearchResult.Length) { ; 有内容才可修改
-                if (value > GlobalData.intelligentSearchResult.Length + this.pluginSearchResult.Length)
-                    value := 1
-                else if (value == 0)
-                    value := GlobalData.startupSearchResult.Length + this.pluginSearchResult.Length
-                this.listView.Modify(value, "Select Focus Vis")
+                if (Value > GlobalData.intelligentSearchResult.Length + this.pluginSearchResult.Length)
+                    Value := 1
+                else if (Value == 0)
+                    Value := GlobalData.startupSearchResult.Length + this.pluginSearchResult.Length
+                this.listView.Modify(Value, "Select Focus Vis")
             }
         }
     }
@@ -36,7 +37,7 @@ class IntelligentMode {
                 if (!WinActive(SearchGui.gui))
                     IntelligentMode.hideGui(), SearchGui.hideTime := A_Now
             }
-            SetTimer(_autoHideFunc, value ? 1000 : 0)
+            SetTimer(_autoHideFunc, Value ? 1000 : 0)
         }
     }
     ;#endregion
@@ -51,14 +52,55 @@ class IntelligentMode {
         ; 鼠标双击运行
         this.listView.OnEvent("DoubleClick", (_lv, rowNum) => this.intelligentRun(rowNum))
         ; 菜单栏
-        this.listView.OnEvent("ContextMenu", (_lv, rowNum, *) => !rowNum ?
-            0 : rowNum > this.pluginSearchResult.Length ?
-                this.menu.Show() : this.pluginSearchResult[rowNum].HasOwnProp("menu") ?
-                    this.pluginSearchResult[rowNum].menu.Show() : 0
-            )
+        showMenuHandler() {
+            if (rowNum := this.focusedRow) {
+                if (rowNum > this.pluginSearchResult.Length)
+                    this.menu.Show()
+                else
+                    this.pluginSearchResult[rowNum].HasOwnProp("contextHandler") ?
+                    this.pluginSearchResult[rowNum].contextHandler() : 0
+            }
+        }
+        this.listView.OnEvent("ContextMenu", (*) => showMenuHandler())
 
-        ; 启动模式热键处理函数
-        this.hotkeyHandlerMap["~Esc"] := () => StrLen(SearchGui.edit.Value) ? SearchGui.searchText := SearchGui.edit.Value := "" : this.hideGui()
+        pasteHandler() {
+            if (DllCall("OpenClipboard", "ptr", 0)) {
+                if (DllCall("IsClipboardFormatAvailable", "uint", 2)) { ; 位图
+                    DllCall("CloseClipboard")
+                    SearchGui._pastedContentType := "bitmap"
+                    SearchGui.pastedContent := "" ; 仅仅是为了触发其加载bitmap
+                    SearchGui.searchText := SearchGui.searchText ; 不修改内容，直接触发搜索
+                } else if (DllCall("IsClipboardFormatAvailable", "uint", 15)) { ; 文件
+                    DllCall("CloseClipboard")
+                    SearchGui._pastedContentType := "file"
+                    SearchGui.pastedContent := A_Clipboard ; 会转化为数组
+                    SearchGui.searchText := SearchGui.searchText ; 不修改内容，直接触发搜索
+                } else {
+                    DllCall("CloseClipboard")
+                    Send("{Ctrl down}v{Ctrl up}") ; 正常的粘贴
+                }
+            } else ; 剪切板占用直接正常的粘贴
+                Send("{Ctrl down}v{Ctrl up}")
+        }
+        this.hotkeyHandlerMap["$^V"] := pasteHandler
+
+        escHandler() {
+            ; 有输入法窗口(同pid但不同class时不执行)
+            pid := ProcessExist()
+            idList := WinGetList("ahk_pid " pid)
+            for id in idList {
+                if (WinGetClass("ahk_id " id) != "AutoHotkeyGUI")
+                    return
+            }
+
+            if (SearchGui.searchText)
+                SearchGui.searchText := SearchGui.edit.Value := ""
+            else if (SearchGui._pastedContentType != "text")
+                SearchGui.clearPastedContent(), SearchGui.searchText := "" ; 同时也要触发搜索
+            else
+                SearchGui.noRecover := true, this.hideGui()
+        }
+        this.hotkeyHandlerMap["~Esc"] := escHandler
         this.hotkeyHandlerMap["Down"] := () => this.focusedRow++
         this.hotkeyHandlerMap["Up"] := () => this.focusedRow--
 
@@ -90,8 +132,8 @@ class IntelligentMode {
         IntelligentEditGui.showGui([group, posIndex])
     }
 
-    ; run-with分组下的处理函数
-    static runWithHandler(item) {
+    ; 运行run-with分组下项目
+    static runRunWithGroupItem(item) {
         searchTxt := SearchGui.searchText
         if (item["match"]["mode"] == "reg") {
             reg := GlobalData.intelligentRegMap[item]
@@ -108,8 +150,8 @@ class IntelligentMode {
             Run(searchTxt)
     }
 
-    ; search分组下的处理函数
-    static searchHandler(item) {
+    ; 运行search分组下项目
+    static runSearchGroupItem(item) {
         searchTxt := SearchGui.searchText
 
         if (item["match"]["mode"] == "reg") {
@@ -122,7 +164,7 @@ class IntelligentMode {
 
     ; 根据项目执行对应操作
     static intelligentRun(rowNum?) {
-        static handler := Map("run-with", this.runWithHandler, "search", this.searchHandler)
+        static handler := Map("run-with", this.runRunWithGroupItem, "search", this.runSearchGroupItem)
         if (!IsSet(rowNum))
             rowNum := this.focusedRow
         if (rowNum > this.pluginSearchResult.Length) { ; 执行项
@@ -131,15 +173,13 @@ class IntelligentMode {
                 handler[item["group"]](this, item)
             this.hideGui()
         } else if (rowNum > 0) { ; 插件项
-            plugin := this.pluginSearchResult[rowNum] ;当前搜索结果对应的正则
-            content := RegExReplace(SearchGui.searchText, plugin.curReg[1], plugin.curReg[2], , 1)
-            plugin.runHandler(content) ;传递正则替换后的结果
+            plugin := this.pluginSearchResult[rowNum] ;当前搜索结果对应插件项
+            plugin.runHandler(SearchGui.searchText) ;直接传递搜索内容
         }
     }
 
     ; 重新加载搜索列表图标资源
     static loadImgs(reloadIL := true) {
-        SearchGui.placeholder := "正在加载智能模式搜索列表..."
         SearchGui.edit.Value := ""    ;清空搜索框
         this.listView.Delete()    ;清空智能列表
         if (reloadIL) {    ; reloadIL为false时是为了仅添加新资源
@@ -171,17 +211,16 @@ class IntelligentMode {
 
         if (reloadIL and oldImgListID)    ; 有需要销毁的图片列表
             DllCall("ImageList_Destroy", "Uint", oldImgListID)
-
-        SearchGui.placeholder := "Hi, type something 😃"
     }
 
     ; 以智能模式显示gui
     static showGui(searchText := "") {
-        if (SearchGui.hideTimeDiff()) {
+        if (!SearchGui.noRecover && SearchGui.hideTimeDiff()) {
             SearchGui.recoverGui()
             return
         }
 
+        SearchGui.noRecover := false
         SearchGui.mode := 1
         SearchGui.edit.Value := SearchGui.searchText := searchText
         SearchGui.gui.Show()
@@ -210,8 +249,10 @@ class IntelligentMode {
 
 
         keyword := SearchGui.searchText
-        if (StrLen(keyword)) {
-            GlobalData.intelligentSearchResult := []
+        GlobalData.intelligentSearchResult := []
+
+        ; 无粘贴内容且有搜索文本时，对原生搜索项进行匹配
+        if (SearchGui._pastedContentType == 'text' && keyword) {
             ; 匹配所有符合项
             for name in GlobalData.intelligentGroups {
                 if (GlobalData.intelligentData.Has(name)) {
@@ -233,14 +274,16 @@ class IntelligentMode {
             }
             ; 按拟定的优先级降序排列
             QuickSort(GlobalData.intelligentSearchResult, customSort)
-        } else    ; 搜索词为空什么都不显示
-            GlobalData.intelligentSearchResult := []
+        }
 
-        ;显示新列表
+
+        ;重置列表
         this.listView.Opt("-Redraw")    ;禁用重绘
         this.listView.Delete()
+
         ;插件搜索并添加插件项到列表
         this.pluginSearchAndAdd()
+
         ; 添加执行项到列表
         for item in GlobalData.intelligentSearchResult {
             if (this.imgPathToImgListIndex.Has(item["thumb"]))
@@ -262,7 +305,10 @@ class IntelligentMode {
                 this.rowHeight := rowH
         }
 
-        LVHeight := len > 0 ? Ceil((len >= 8 ? 8 : len) * this.rowHeight) : 0
+        if (!this.rowHeight)
+            LVHeight := len * Ceil(26.4 * (A_ScreenDPI / 96))
+        else
+            LVHeight := len > 0 ? Ceil((len >= 10 ? 10 : len) * this.rowHeight) : 0
         ControlMove(, , , LVHeight, this.listView) ; 使用ControlMove避免DPI 缩放
         this.listView.ModifyCol(1, "530")
         this.focusedRow := 1    ;聚焦第一行
@@ -284,24 +330,21 @@ class IntelligentMode {
 
     ; 插件搜索并添加插件项到列表
     static pluginSearchAndAdd() {
-        keyword := SearchGui.searchText
-        if (StrLen(keyword)) {
-            this.pluginSearchResult := []
+        this.pluginSearchResult := []
+        ; 有文件、位图时或者有搜索内容时才进行匹配
+        if (SearchGui._pastedContentType != "text" || SearchGui.searchText) {
             ; 匹配所有符合项
             for item in this.pluginData {
-                for index, reg in item.reg
-                    if RegExMatch(keyword, reg[1]) {
-                        item.curReg := reg
-                        item.regIndex := index
-                        this.pluginSearchResult.Push(item)
-                        break
-                    }
+                if (priority := item.matchHandler(SearchGui.searchText, SearchGui._pastedContentType, SearchGui.pastedContent)) {
+                    item.priority := priority
+                    this.pluginSearchResult.Push(item)
+                }
             }
-        } else    ; 搜索词为空什么都不显示
-            this.pluginSearchResult := []
+        }
 
-        ; 按regIndex从小到大
-        QuickSort(this.pluginSearchResult, (itemA, itemB) => itemA.regIndex - itemB.regIndex)
+        ; 按返回的优先级排序
+        QuickSort(this.pluginSearchResult, (itemA, itemB) => itemB.priority - itemA.priority)
+
 
         ; 添加到搜索列表
         for item in this.pluginSearchResult {

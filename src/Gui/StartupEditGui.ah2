@@ -12,7 +12,7 @@ class StartupEditGui {
     static _changeFlag := false
     static changeFlag {
         get => this._changeFlag
-        set => this._changeFlag := this.saveBtn.Enabled := value
+        set => this._changeFlag := this.saveBtn.Enabled := Value
     }
 
     ;#region 当前编辑项
@@ -23,43 +23,43 @@ class StartupEditGui {
 
         static __Item[key] {
             get => this.%key%
-            set => this.%key% := value
+            set => this.%key% := Value
         }
 
         static filePath {
             get => this.outer._curItem[1]
             set {
-                this.outer._curItem[1] := value
+                this.outer._curItem[1] := Value
                 this.outer.changeFlag := true
-                if (this.outer.editGroup[1].Value == value)
+                if (this.outer.editGroup[1].Value == Value)
                     return
-                this.outer.editGroup[1].Value := value
+                this.outer.editGroup[1].Value := Value
             }
         }
 
         static icoPath {
             get => this.outer._curItem[2]
             set {
-                this.outer._curItem[2] := value
+                this.outer._curItem[2] := Value
                 this.outer.reloadILFlag := this.outer.changeFlag := true
-                if (this.outer.editGroup[2].Value == value)
+                if (this.outer.editGroup[2].Value == Value)
                     return
-                this.outer.editGroup[2].Value := value
+                this.outer.editGroup[2].Value := Value
             }
         }
 
         static priority {
             get => this.outer._curItem[3]
             set {
-                if (value < 0)
-                    value := 0
-                else if (value > 999)
-                    value := 999
-                this.outer._curItem[3] := value
+                if (Value < 0)
+                    Value := 0
+                else if (Value > 999)
+                    Value := 999
+                this.outer._curItem[3] := Value
                 this.outer.changeFlag := true
-                if (this.outer.editGroup[3].Value == value)
+                if (this.outer.editGroup[3].Value == Value)
                     return
-                this.outer.editGroup[3].Value := value
+                this.outer.editGroup[3].Value := Value
             }
 
         }
@@ -67,11 +67,11 @@ class StartupEditGui {
         static name {
             get => this.outer._curItem[4]
             set {
-                this.outer._curItem[4] := value
+                this.outer._curItem[4] := Value
                 this.outer.changeFlag := true
-                if (this.outer.editGroup[4].Value == value)
+                if (this.outer.editGroup[4].Value == Value)
                     return
-                this.outer.editGroup[4].Value := value
+                this.outer.editGroup[4].Value := Value
             }
         }
 
@@ -80,7 +80,7 @@ class StartupEditGui {
             static __Item[index] {
                 get => this.outer._curItem[index + 4]
                 set {
-                    this.outer._curItem[index + 4] := value
+                    this.outer._curItem[index + 4] := Value
                     this.outer.changeFlag := true
                 }
             }
