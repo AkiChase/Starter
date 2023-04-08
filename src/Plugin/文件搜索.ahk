@@ -3,7 +3,7 @@
  * @Version: 0.0.2
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-07
+ * @LastEditTime: 2023-04-08
  * @Description: 调用Everything进行文件搜索
  */
 
@@ -304,8 +304,12 @@ class Plugin_文件搜索 {
         pasteContentHandler(that, typeName, content?) {
             if (typeName != "file") ;非文件类型都不允许
                 return 0
-            if (!IsSet(content)) ; 仅允许粘贴文件夹
-                return InStr(FileExist(A_Clipboard), "D")
+            if (!IsSet(content)) {
+                content := A_Clipboard
+                if (InStr(content, "`r`n")) ; 不允许多文件
+                    return false
+                return InStr(FileExist(content), "D") ;仅允许单文件
+            }
             else { ;粘贴完成后的触发
                 PluginHelper.SearchText := Format('"{}" ', content)
                 PluginHelper.setSearchTextSel(StrLen(PluginHelper.SearchText))
