@@ -115,14 +115,15 @@ class SearchGui {
                 this.placeholder := "图片", this._pastedContent := hBitmap
             } else if (this._pastedContentType = "file") {
                 ; 文件
-                firstFile := (i := InStr(value, "`r`n")) ? SubStr(value, 1, i - 1) : value
-                hIcon := SubStr(firstFile, InStr(firstFile, ".", , , -1) + 1) = "exe" ?
-                    LoadPicture(firstFile, "icon1", &_) : PluginHelper.Utils.associatedHIcon(firstFile)
+                fileList := Type(Value) == "Array" ? Value : StrSplit(value, "`r`n") ; 自动处理数组或字符串类型
+
+                hIcon := SubStr(fileList[1], InStr(fileList[1], ".", , , -1) + 1) = "exe" ?
+                    LoadPicture(fileList[1], "icon1", &_) : PluginHelper.Utils.associatedHIcon(fileList[1])
                 this.placeholder := "", this.edit.Move(50, , 455)
                 this.contentThumb.Value := "HICON:" hIcon, this.contentThumb.Visible := true
-                this.placeholder := "文件", this._pastedContent := value
+                this.placeholder := "文件", this._pastedContent := fileList
                 if (i)
-                    this.showFileListInfo(Value)
+                    this.showFileListInfo(fileList)
             } else {
                 ; 视作文本
                 this._pastedContentType := "text"
@@ -196,20 +197,20 @@ class SearchGui {
 
     ; 拖拽添加
     static dropAddItem(fileList) {
-        if (SearchGui.mode !== 0) {
-            Tip.show("拖拽添加启动项", "仅支持启动模式拖拽添加", 2000)
-            return
-        }
-
-        for filePath in fileList {
-            SplitPath(filePath, , , , &fileNameNoExt)
-            GlobalData.startupData.Push([filePath, filePath, 0, fileNameNoExt, ChineseFirstChar(fileNameNoExt)])
-        }
-
-        StartupMode.loadImgs(false)    ;载入新图片，不重新加载其他图片
-
-        StartupMode.search()
-        Tip.show("拖拽添加启动项", "添加成功, 新增 " fileList.Length " 个启动项", 2000)
+        if (SearchGui.mode == 0) {
+            for filePath in fileList {
+                SplitPath(filePath, , , , &fileNameNoExt)
+                GlobalData.startupData.Push([filePath, filePath, 0, fileNameNoExt, ChineseFirstChar(fileNameNoExt)])
+            }
+            StartupMode.loadImgs(false)    ;载入新图片，不重新加载其他图片
+            StartupMode.search()
+            Tip.show("拖拽添加启动项", "添加成功, 新增 " fileList.Length " 个启动项", 2000)
+        } else if (SearchGui.mode == 1) {
+            SearchGui._pastedContentType := "file"
+            SearchGui.pastedContent := fileList
+            SearchGui.searchText := SearchGui.searchText ; 不修改内容，直接触发搜索
+        } else if (SearchGui.mode == -1)
+            PluginMode.onDropFiles(fileList)
     }
 
     ; 热键初始化
@@ -289,8 +290,7 @@ class SearchGui {
     }
 
     ; 显示文件列表信息
-    static showFileListInfo(s) {
-        fileList := StrSplit(s, "`r`n")
+    static showFileListInfo(fileList) {
         msg := "共" fileList.Length "个文件"
         loop 3 {
             if (fileList.Has(A_Index))

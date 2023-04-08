@@ -3,7 +3,7 @@
  * @Version: 0.0.3
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-07
+ * @LastEditTime: 2023-04-08
  * @Description: 插件API封装
  */
 
@@ -151,7 +151,13 @@ class PluginHelper {
      * 
      * 在粘贴**bitmap/file**内容后还会触发一次 (that, typeName, content) => any
      * 
-     * file: content为文件路径; bitmap: content为位图句柄;
+     * file: content为文件路径数组; bitmap: content为位图句柄;
+     * 
+     * options.dropFilesHandler (可选)拖拽文件到搜索框的处理函数(that, fileList, pre) => bool
+     * 
+     * 在拖拽文件后会触发一次 (that, fileList, true) => bool 返回true则允许拖拽生效
+     * 
+     * 拖拽生效后还会触发一次 (that, fileList) => any
      * 
      * options.initHandler (可选)初始化处理函数 (that) => void
      * 

@@ -3,7 +3,7 @@
  * @Version: 0.0.1
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-07
+ * @LastEditTime: 2023-04-08
  * @Description: 插件模式
  */
 
@@ -25,6 +25,7 @@ class PluginMode {
     static loadImgsHandler := (*) => 0
     static toBottomHandler := (*) => 0
     static pasteContentHandler := (*) => 0
+    static dropFilesHandler := (*) => 0
 
     static pluginSearchData := []
     static pluginSearchResult := []
@@ -146,6 +147,14 @@ class PluginMode {
         this._default_thumb := LoadPicture(GlobalData.imgDir "\plugin.png", "w64")
     }
 
+    static onDropFiles(fileList) {
+        if (this.dropFilesHandler(fileList, true)) {
+            SearchGui._pastedContentType := "file"
+            SearchGui.pastedContent := fileList
+            this.dropFilesHandler(SearchGui.pastedContent)
+        }
+    }
+
     ; 检测是否触底并发出通知
     static toBottomNotify(*) {
         static LVM_ISITEMVISIBLE := 0x10B6
@@ -193,6 +202,7 @@ class PluginMode {
 
         this.enabledPasteContent := options.HasOwnProp("pasteContentHandler")
         this.pasteContentHandler := options.HasOwnProp("pasteContentHandler") ? options.pasteContentHandler : (*) => 0
+        this.dropFilesHandler := options.HasOwnProp("dropFilesHandler") ? options.dropFilesHandler : (*) => 0
 
         this.pluginOtherData := 0
         this.rowHeight := 0
