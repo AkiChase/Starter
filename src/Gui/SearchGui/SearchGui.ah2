@@ -116,12 +116,13 @@ class SearchGui {
             } else if (this._pastedContentType = "file") {
                 ; 文件
                 firstFile := (i := InStr(value, "`r`n")) ? SubStr(value, 1, i - 1) : value
-
                 hIcon := SubStr(firstFile, InStr(firstFile, ".", , , -1) + 1) = "exe" ?
                     LoadPicture(firstFile, "icon1", &_) : PluginHelper.Utils.associatedHIcon(firstFile)
                 this.placeholder := "", this.edit.Move(50, , 455)
                 this.contentThumb.Value := "HICON:" hIcon, this.contentThumb.Visible := true
                 this.placeholder := "文件", this._pastedContent := value
+                if (i)
+                    this.showFileListInfo(Value)
             } else {
                 ; 视作文本
                 this._pastedContentType := "text"
@@ -177,20 +178,8 @@ class SearchGui {
         this.thumb.OnEvent("Click", (*) => this.winInfoMatchFlag ? this.showWinInfo() : 0)
 
         this.contentThumb := this.gui.AddPicture("x7 y7 w36 h36 +Border +Hidden")
-        showFileListInfo(s) {
-            fileList := StrSplit(s, "`r`n")
-            msg := "共" fileList.Length "个文件"
-            loop 3 {
-                if (fileList.Has(A_Index))
-                    msg .= "`n`n" fileList[A_Index]
-                else
-                    break
-            }
-            if (fileList.Has(4))
-                msg .= "`n......"
-            Tip.show("文件信息: ", msg, 4000)
-        }
-        this.contentThumb.OnEvent("Click", (*) => this._pastedContentType = "file" ? showFileListInfo(this.pastedContent) : 0)
+
+        this.contentThumb.OnEvent("Click", (*) => this._pastedContentType = "file" ? this.showFileListInfo(this.pastedContent) : 0)
 
         ; 回车触发
         this.gui.AddButton("Default Hidden").OnEvent("Click", (*) => this.mode == 0 ?
@@ -297,6 +286,21 @@ class SearchGui {
             WinGetPos(, , , &h)
             WinMove(x, y - h - 10)
         }
+    }
+
+    ; 显示文件列表信息
+    static showFileListInfo(s) {
+        fileList := StrSplit(s, "`r`n")
+        msg := "共" fileList.Length "个文件"
+        loop 3 {
+            if (fileList.Has(A_Index))
+                msg .= "`n`n" fileList[A_Index]
+            else
+                break
+        }
+        if (fileList.Has(4))
+            msg .= "`n......"
+        Tip.show("文件信息: ", msg, 4000)
     }
 
     ; 隐藏时间是否在时限
