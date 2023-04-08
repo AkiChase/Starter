@@ -186,7 +186,7 @@ class Plugin_Demo {
             this.name,
             "插件示例-智能模式项目",
             matchHandler, ; 自定义匹配函数
-            (obj, searchText) => PluginHelper.Utils.tip(obj.title, "传递内容:" content, 1000),
+            (obj, searchText) => PluginHelper.Utils.tip(obj.title, "传递内容:" searchText, 1000),
             contextHandler
         )
 
