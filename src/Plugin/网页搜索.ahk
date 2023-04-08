@@ -179,7 +179,7 @@ class Plugin_网页搜索 {
                 (obj, searchText, pastedContentType, pastedContent) => (
                     pastedContentType == "text" &&
                     searchText
-                ),
+                ) ? -1 : 0, ; 匹配则优先级设为-1
                 (obj, searchText) => (
                     PluginHelper.showPluginMode( ; 启动插件模式
                         [], ;数据靠search获取，不需要传入
@@ -267,7 +267,7 @@ class Plugin_网页搜索 {
                 (obj, searchText, pastedContentType, pastedContent) => (
                     pastedContentType == "text" &&
                     searchText
-                ),
+                ) ? -1 : 0, ; 匹配则优先级设为-1
                 (obj, searchText) => (
                     PluginHelper.showPluginMode( ; 启动插件模式
                         [], ;数据靠search获取，不需要传入
@@ -350,7 +350,7 @@ class Plugin_网页搜索 {
                 (obj, searchText, pastedContentType, pastedContent) => (
                     pastedContentType == "text" &&
                     searchText
-                ),
+                ) ? -1 : 0, ; 匹配则优先级设为-1
                 (obj, searchText) => (
                     PluginHelper.showPluginMode( ; 启动插件模式
                         [], ;数据靠search获取，不需要传入

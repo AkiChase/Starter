@@ -364,56 +364,34 @@ class Plugin_文件搜索 {
             ), , , PluginHelper.getPluginHIcon(this.name)
         )
 
-        ; 添加插件项到智能模式搜索界面
-        ; 1. 匹配文本搜索
-        PluginHelper.addPluginToIntelligentMode(
-            this.name,
-            "使用Everything进行搜索",
-            ; 匹配条件为 text类型 且 是everything开头部分或wjss开头部分
-            (obj, searchText, pastedContentType, pastedContent) => (
-                pastedContentType == 'text' && (
-                    PluginHelper.Utils.strStartWith("Everything", searchText) ||
-                    PluginHelper.Utils.strStartWith("WJSS", searchText)
-                )
-            ),
-            (obj, searchText) => (
-                PluginHelper.showPluginMode( ; 启动插件模式
-                    [], ;数据靠search获取，不需要传入
-                    searchHandler,
-                    runHandler, {
-                        doubleLeftHandler: doubleRightHandler,
-                        loadImgsHandler: loadImg, ; 需要带有图标
-                        toBottomHandler: asyncLoading, ; 异步加载
-                        initHandler: init, ; 初始化
-                        pasteContentHandler: pasteContentHandler, ; 允许粘贴文件
-                        placeholder: "Search on Everything",
-                        searchText: searchText,
-                        thumb: PluginHelper.getPluginHIcon(this.name)
-                    }
-                )
-            ), , PluginHelper.getPluginHIcon(this.name)
-        )
-        test(obj, searchText, pastedContentType, pastedContent) {
-            static s:=""
-            if (pastedContentType != 'file')
-                return false
-            if (pastedContent.Length) > 1
-                return false
-            return InStr(FileExist(pastedContent[1]), "D")
+        ; 匹配处理函数
+        ; 1. 匹配文本 2. 匹配单文件夹，且文件夹存在，并进行优先级细分
+        matchHandler(obj, searchText, pastedContentType, pastedContent) {
+            if (pastedContentType == 'text' && searchText) {
+                obj.matchData := { type: "text" } ; 标记匹配类型，方便进入插件模式前区分进入方式
+                obj.title := "使用Everything搜索输入内容" ; 修改显示标题
+                return 1 ; 基本优先级
+            } else if (pastedContentType == 'file' && pastedContent.Length = 1 && InStr(FileExist(pastedContent[1]), "D")) {
+                if (PluginHelper.Utils.strStartWith("Everything", searchText)
+                    || PluginHelper.Utils.strStartWith("WJSS", searchText)) {
+                    ; 搜索文本为Everything或者WJSS的开头
+                    obj.matchData := { type: "file", searchTextFlag: false } ; 标记最后不要传入searchText
+                    obj.title := "使用Everything在文件夹内搜索" ; 修改显示标题
+                    return 2 ; 更高优先级
+                } else {
+                    obj.matchData := { type: "file", searchTextFlag: true }
+                    obj.title := "使用Everything在文件夹内搜索输入内容" ; 修改显示标题
+                    return 1 ; 基本优先级
+                }
+            }
+            return 0 ; 不匹配
         }
 
-        ; 2. 匹配粘贴带有文件
+        ; 添加插件项到智能模式搜索界面
         PluginHelper.addPluginToIntelligentMode(
             this.name,
-            "使用Everything进行目录内搜索",
-            ;匹配条件为仅允许单文件夹
-            test,
-            ; (obj, searchText, pastedContentType, pastedContent) => (
-            ;     pastedContentType == 'file' && (
-            ;         pastedContent.Length > 1 ?
-            ;         false : InStr(FileExist(pastedContent[1]), "D")
-            ;     )
-            ; ),
+            "Everything文件搜索", ; 这个title不重要，会在matchHandler执行时修改
+            matchHandler,
             (obj, searchText) => (
                 PluginHelper.showPluginMode( ; 启动插件模式
                     [], ;数据靠search获取，不需要传入
@@ -422,10 +400,10 @@ class Plugin_文件搜索 {
                         doubleLeftHandler: doubleRightHandler,
                         loadImgsHandler: loadImg, ; 需要带有图标
                         toBottomHandler: asyncLoading, ; 异步加载
-                        initHandler: initWithFile, ; 初始化
+                        initHandler: obj.matchData.type == 'text' ? init : initWithFile, ; 区分两种初始化
                         pasteContentHandler: pasteContentHandler, ; 允许粘贴文件
                         placeholder: "Search on Everything",
-                        searchText: searchText,
+                        searchText: obj.matchData.searchTextFlag ? searchText : "", ; 区分是否要传入搜索文本
                         thumb: PluginHelper.getPluginHIcon(this.name)
                     }
                 )

@@ -335,12 +335,16 @@ class IntelligentMode {
         if (SearchGui._pastedContentType != "text" || SearchGui.searchText) {
             ; 匹配所有符合项
             for item in this.pluginData {
-                if (item.matchHandler(SearchGui.searchText, SearchGui._pastedContentType, SearchGui.pastedContent))
+                if (priority := item.matchHandler(SearchGui.searchText, SearchGui._pastedContentType, SearchGui.pastedContent)) {
+                    item.priority := priority
                     this.pluginSearchResult.Push(item)
+                }
             }
         }
 
-        ; TODO 添加排序依据，item.matchHandler返回值为int(0表示不匹配, 其他值都匹配(包括负数),值越大排序越靠前)
+        ; 按返回的优先级排序
+        QuickSort(this.pluginSearchResult, (itemA, itemB) => itemB.priority - itemA.priority)
+
 
         ; 添加到搜索列表
         for item in this.pluginSearchResult {
