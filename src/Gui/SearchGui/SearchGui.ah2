@@ -273,6 +273,18 @@ class SearchGui {
         Hotkey("Down", hotkeyHandler)
         Hotkey("Up", hotkeyHandler)
         Hotkey("$^V", hotkeyHandler)
+
+        ; Alt+数字快捷选中
+        altHandler(key) {
+            i := Integer(SubStr(key, 2))
+            ; LVM_GETTOPINDEX := 0x1027
+            LV := [PluginMode, StartupMode, IntelligentMode][this.mode + 2].listView
+            topIndex := SendMessage(0x1027, 0, 0, , LV)
+            if (topIndex + i <= LV.GetCount())
+                LV.Modify(topIndex + i, "Select Focus Vis")
+        }
+        loop 10
+            Hotkey("!" A_Index - 1, altHandler)
         HotIf()
     }
 
