@@ -1,6 +1,6 @@
 /**
  * @Name: 网页搜索.ahk
- * @Version: 0.0.1
+ * @Version: 0.0.2
  * @Author: ruchuby
  * @LastEditors: ruchuby
  * @LastEditTime: 2023-04-08
@@ -11,7 +11,7 @@
 ===Starter Plugin Info==>
 {
     "author": "ruchuby",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "introduction": "网页搜索(带联想词)，已支持百度、谷歌搜索",
     "icon": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABA9JREFUWEfFl2toXFUQx/9z3DUBi/ngWyg+SKV2Q8zeObsBK2g/VBEqotBA0A9+SBRF1A+2IgimHyris6Xiq0YRH4gVnyjoF1vED5u9czeNpLb4QKq1KCn4QAgme0bOujdstnf3btZgLyz33nNmzvxmzrkzs4RTfNEpto8VAzBznzHmLFU928MT0Zxz7oSI/N6NMx0DBEGwxRhzu6re0MLQjwCeNMa8Wy6X/XNHVyqAtXYjgAcSDP+kqseJaAOAMxqs/Q3g+YWFhZ0zMzO/plG0BWDmewDsri8yq6qvAviaiEREjseLM/N6IhpwzuWIaKI+flhVd0ZR9Ho7iJYAzKyxoqruyGazT5VKpT/SPGLmawE8BuCKuuxdIvJcK71EAGb21Ld4Je9VpVI5lGa4eZ6Z7wfweH38OhH5LGmNkwCstder6ifNiroXEyA8DMUmGsf+ToCCINhGRD4a3wC4unHbYv0kgA/rB+49EbnZC+pkzXC8t+toDN92AuBlgiCYIqKC38YoiuI1ltSXAfhPjYg+AnAsk8lwqVT6Zcnzf1VGaAz7OjXu5ay116jq5wB+9q/NUVgGYK2Nvd8mIk/oC8jiNPwA4MJujDd8Je8DuDEpCksAw8PDZy4uLsbZrHZodC/uA+FpAPtpDJtW4nmjLDM/AuBBAPtEZKRxbgmgWCxeUq1Wv/eTmUzm/Fr4X8IrAG6DYozGMdktgLV2VFXfBDArIgOJAPl83hpjygCOishFtcP3MkZRxXk0jl3dGvd6xWLxsmq1esQ/i8iybV96sdYWVbWkquUoior/xWCzbi6XW9Pb2/sngDkROScxAoVC4VLn3HcA/hKRNasJwMxXAfgCwBERWZ8I4MssgN/qk5eLyOHVgrDW3q2qewB8KSIeJjkPMPNRAGuJaGsYhu+sFkAQBHuIyEP44vRQO4B7AexS1YkoinasFgAz+zqwmYiGwzCcaglQKBTWOud8mj0dQMsCshKwIAhuJaLXAEyJyHCz7km1gJl9/fd9wEERGVqJsWbZ/v7+nr6+vnk/TkSjYRi+lQowODh4bjabPQDAn9ZaSu4WgpnfBrAVwKSIjCWtk9gPNIQNqro9iqK4rnfE4r/7np6eT4noSp/9nHMjrXqKdh3RnQCerWVE1bIxZnsYhql9ADP7nO9zv79mAeTaQaT1hL69egbAuvqCHwA4RERfGWNkfn7+WDabHSCinHPO332e31yX3e2ce9EY47ehJURqV8zMF6jqHUQ0Xi/LadtQAvCoiPgSjHw+v6EdRCpAbK0BxLfh/ue9mgNwwt99G6eqH1cqlYPNhM0Q1Wp1y/T0tO8zVv7PKM39VvNNEDfFEeo4At0abtQbGhq62BizMYqiN+Lx/xWg4zywGt52usY/oT63MIvoAk0AAAAASUVORK5CYII="
 }
