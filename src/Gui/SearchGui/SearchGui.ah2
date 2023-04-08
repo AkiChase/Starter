@@ -122,7 +122,7 @@ class SearchGui {
                 this.placeholder := "", this.edit.Move(50, , 455)
                 this.contentThumb.Value := "HICON:" hIcon, this.contentThumb.Visible := true
                 this.placeholder := "文件", this._pastedContent := fileList
-                if (i)
+                if (fileList.Length > 1)
                     this.showFileListInfo(fileList)
             } else {
                 ; 视作文本
