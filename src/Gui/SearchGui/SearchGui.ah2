@@ -218,13 +218,13 @@ class SearchGui {
         capsLockHandler(key) {
             if (KeyWait("CapsLock", "T0.4")) { ; 非长按
                 if (A_ThisHotkey = A_PriorHotkey && A_TimeSincePriorHotkey < 300) {
-                    StartupMode.showGui()
+                    StartupMode.showGui() ; 显示并清空搜索框
                 }
             } else { ; 长按0.4秒
                 clipSaved := ClipboardAll()
                 content := GetSelectedText(0.1, &outType) ; 等待最多0.1s剪切板
                 this.noRecover := true ; 保证能显示智能模式
-                IntelligentMode.showGui()
+                IntelligentMode.showGui()  ; 显示并清空搜索框
                 if (!content && (outType = 'text' || outType = "timeout")) { ;
                     ; 获取窗口信息
                     WinExist("A")
@@ -239,6 +239,7 @@ class SearchGui {
                     this._pastedContentType := outType
                     this.pastedContent := content
                 }
+                this.searchText := "" ; 触发搜索
                 A_Clipboard := clipSaved
                 KeyWait("CapsLock")    ;等待松开, 避免重复调用
             }

@@ -335,7 +335,10 @@ class StartupMode {
                 this.rowHeight := rowH
         }
 
-        LVHeight := len > 0 ? Ceil((len >= 8 ? 8 : len) * this.rowHeight) : 0
+        if (!this.rowHeight)
+            LVHeight := len * Ceil(26.4 * (A_ScreenDPI / 96))
+        else
+            LVHeight := len > 0 ? Ceil((len >= 10 ? 10 : len) * this.rowHeight) : 0
         ControlMove(, , , LVHeight, this.listView) ; 使用ControlMove避免DPI 缩放
         this.listView.ModifyCol(1, "530")
         this.focusedRow := 1    ;聚焦第一行

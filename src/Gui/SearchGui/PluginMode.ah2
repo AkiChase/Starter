@@ -122,7 +122,7 @@ class PluginMode {
             if (SearchGui.searchText)
                 SearchGui.searchText := SearchGui.edit.Value := ""
             else if (this.enabledPasteContent && SearchGui._pastedContentType != "text")
-                SearchGui.clearPastedContent(), SearchGui.searchText:="" ; 同时也要触发搜索
+                SearchGui.clearPastedContent(), SearchGui.searchText := "" ; 同时也要触发搜索
             else
                 SearchGui.mode := this.oldMode ;切回原来的模式
         }
@@ -244,7 +244,10 @@ class PluginMode {
                 this.rowHeight := rowH
         }
 
-        LVHeight := len > 0 ? Ceil((len >= 8 ? 8 : len) * this.rowHeight) : 0
+        if (!this.rowHeight)
+            LVHeight := len * Ceil(26.4 * (A_ScreenDPI / 96))
+        else
+            LVHeight := len > 0 ? Ceil((len >= 10 ? 10 : len) * this.rowHeight) : 0
         ControlMove(, , , LVHeight, this.listView) ; 使用ControlMove避免DPI 缩放
         this.listView.ModifyCol(1, "530")
         this.focusedRow := 1    ;聚焦第一行
