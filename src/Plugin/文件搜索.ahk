@@ -253,6 +253,10 @@ class Plugin_文件搜索 {
         ;定义插件模式下搜索功能
         searchHandler(that, searchText) {
             that.pluginSearchResult := []
+            if (PluginHelper.pastedContentType == "file")
+                searchText := Format('"{}" ', PluginHelper.pastedContent[1])
+            ; 其他类型不修改searchText
+
             if (searchText) {
                 ; that.pluginSearchResult := [{ name: "文件名", path: "路径", size:"大小", "date":"修改时间" },...]
                 Everything.setSearch(searchText)
@@ -308,11 +312,26 @@ class Plugin_文件搜索 {
                 content := A_Clipboard
                 if (InStr(content, "`r`n")) ; 不允许多文件
                     return false
-                return InStr(FileExist(content), "D") ;仅允许单文件
+                return InStr(FileExist(content), "D") ;仅允许单文件夹
             }
             else { ;粘贴完成后的触发
-                PluginHelper.SearchText := Format('"{}" ', content)
-                PluginHelper.setSearchTextSel(StrLen(PluginHelper.SearchText))
+                PluginHelper.placeholder := "在文件夹内搜索"
+                t := PluginHelper.SearchText
+                PluginHelper.SearchText := t ; 直接触发搜索
+                PluginHelper.setSearchTextSel(StrLen(t)) ; 游标移动到最后
+            }
+        }
+
+        dropFilesHandler(that, fileList, pre) {
+            if (pre) {
+                if (fileList.Length > 1)
+                    return false
+                return InStr(FileExist(fileList[1]), "D") ;仅允许单文件夹
+            } else { ;拖入生效后的触发
+                PluginHelper.placeholder := "在文件夹内搜索"
+                t := PluginHelper.SearchText
+                PluginHelper.SearchText := t ; 直接触发搜索
+                PluginHelper.setSearchTextSel(StrLen(t)) ; 游标移动到最后
             }
         }
 
@@ -330,7 +349,8 @@ class Plugin_文件搜索 {
                         loadImgsHandler: loadImg, ; 需要带有图标
                         toBottomHandler: asyncLoading, ; 异步加载
                         initHandler: init, ; 初始化
-                        pasteContentHandler: pasteContentHandler, ; 允许粘贴文件
+                        pasteContentHandler: pasteContentHandler, ; 允许粘贴单文件夹
+                        dropFilesHandler: dropFilesHandler, ; 允许拖入单文件夹
                         placeholder: "Search on Everything",
                         thumb: PluginHelper.getPluginHIcon(this.name)
                     }

@@ -104,6 +104,23 @@ class PluginHelper {
     }
 
     /**
+     * @description: 粘贴内容类型 file bitmap text
+     */
+    static pastedContentType => SearchGui._pastedContentType
+    /**
+     * @description: 粘贴内容 fileList hbitmap str
+     */
+    static pastedContent => SearchGui._pastedContent
+
+    /**
+     * @description: 搜索框占位符
+     */
+    static placeholder {
+        get => SearchGui.placeholder
+        set => SearchGui.placeholder := Value
+    }
+
+    /**
      * @description: 搜索框内容
      */
     static SearchText {
