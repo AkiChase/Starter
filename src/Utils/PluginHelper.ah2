@@ -39,7 +39,7 @@ class PluginHelper {
      * obj指向添加的插件项对象; searchText为当前搜索内容; pastedContentType为粘贴内容类型; pastedContentType为粘贴内容
      * 
      * @param runHandler 鼠标双击、回车该插件项时执行的函数
-     * (obj, content)=>any obj指向添加的插件项对象, content为正则替换后的内容
+     * (obj, searchText)=>any obj指向添加的插件项对象, searchText为搜索框文本内容
      * @param contextHandler 选填, 右键该插件项显示的菜单
      * @param hIcon 选填, 插件项显示的图标HICON, 默认使用插件的图标
      */

@@ -340,7 +340,7 @@ class IntelligentMode {
             }
         }
 
-        ; TODO 添加排序依据，在config.json中为每项添加优先级，注意判断是否存在当前项（调试模式时可能不存在）
+        ; TODO 添加排序依据，item.matchHandler返回值为int(0表示不匹配, 其他值都匹配(包括负数),值越大排序越靠前)
 
         ; 添加到搜索列表
         for item in this.pluginSearchResult {

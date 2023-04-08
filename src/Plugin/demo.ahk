@@ -3,7 +3,7 @@
  * @Version: 0.0.5
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-07
+ * @LastEditTime: 2023-04-08
  * @Description: 插件示例
  */
 
@@ -174,12 +174,19 @@ class Plugin_Demo {
             PluginHelper.Utils.base64ToHICON("iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAnBJREFUWEfVlj9oFEEUxt+bLa6wF0whQcRCENOo2EUQYy/xZmb3sDKCoK0RhURQSFoFwdhcuNuZPY+AXKU22gmKiI2FAREbwUrwrI6dJxN2wv3Z21vZDWe2291vv/fbNx9vBmHKF065Pvy/AEKI60R0EhGPFekSEX1BxE9a68dpPqkdEEI0AcAvUjjl21BrHQw/HwGoVqsXGGMvE+E3ItosAoKIVwBg1noYYxZardarfr8RACHEDQB4aEWe5800m80fRQCCIDgax/F24nFTa/0oE4BzvoqIK1aktS4lpEIIsn5EdC+KotX9CyClXDLGzGQtCWNs2/O8541G44/TldIBKeUcEX3MkwfG2OkwDN+XCsA5n0XECADOTID4UKlUztfr9V+lAuT583GaUpZg6gC1Wu1Ar9dbdENlHJANYbfb7XQ6nd+lLoHv+6eMMe/ydIKIzkVR9KZUgCAIDsVxfBsATmRB2M0niqJr/Zr9mwHbymRP+BmG4ec87Xca3/ePx3F80N4j4uuJo1hKeYSI1gDABm3kQsR1pdRyHggp5RoR3RqjbSPislLq6w6cE3HOnyDi0oQCT7XWmRohxAYAXJ2Qkw2Xk12A/qAAwG6Ckxbav7mYmA68Syk0nzx7QUTrQ+/nh3faVIDhLdOaCCHuA8CdPEsAAA+01neHtWlbfW4AayalXDDGnM2CYIy9VUq5E9WAtDBAzr8fK+OcryDizoHEHXb+qQMlAIyctnKFsGjhvu8zQ/hs3AwoEcBZtbXWlwfmgJRykYiqAHBpDwr2W24hYksp1R4AcAo7EY0xh/cCgjH23U1A51/KsbsI7NQB/gIoe4UwRdVGRAAAAABJRU5ErkJggg==")
         )
 
+        ; 自定义智能模式匹配函数，可以根据多种条件判断是否匹配当前插件
+        matchHandler(obj, searchText, pastedContentType, pastedContent) {
+            ; 比如根据粘贴内容是否为文件等等，可以参考"文件搜索插件"
+            ; 此处简单的使用搜索词是否在"CJSL"文本的开头
+            return PluginHelper.Utils.strStartWith("CJSL", searchText)
+        }
+
         ; 添加这个插件项到智能模式搜索界面，更详细的用法见PluginHelper.ahk
         PluginHelper.addPluginToIntelligentMode(
             this.name,
             "插件示例-智能模式项目",
-            [[".+", "$0"], ["(demo|sl|示例)\s+(?<query>.*)", "${query}"]], ;一种是任意字符匹配，一种是前缀匹配，都用正则实现
-            (obj, content) => PluginHelper.Utils.tip(obj.title, "传递内容:" content, 1000),
+            matchHandler, ; 自定义匹配函数
+            (obj, searchText) => PluginHelper.Utils.tip(obj.title, "传递内容:" content, 1000),
             contextHandler
         )
 

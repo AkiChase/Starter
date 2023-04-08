@@ -376,7 +376,7 @@ class Plugin_文件搜索 {
                     PluginHelper.Utils.strStartWith("WJSS", searchText)
                 )
             ),
-            (obj, content) => (
+            (obj, searchText) => (
                 PluginHelper.showPluginMode( ; 启动插件模式
                     [], ;数据靠search获取，不需要传入
                     searchHandler,
@@ -387,7 +387,7 @@ class Plugin_文件搜索 {
                         initHandler: init, ; 初始化
                         pasteContentHandler: pasteContentHandler, ; 允许粘贴文件
                         placeholder: "Search on Everything",
-                        searchText: content,
+                        searchText: searchText,
                         thumb: PluginHelper.getPluginHIcon(this.name)
                     }
                 )
@@ -414,7 +414,7 @@ class Plugin_文件搜索 {
             ;         false : InStr(FileExist(pastedContent[1]), "D")
             ;     )
             ; ),
-            (obj, content) => (
+            (obj, searchText) => (
                 PluginHelper.showPluginMode( ; 启动插件模式
                     [], ;数据靠search获取，不需要传入
                     searchHandler,
@@ -425,7 +425,7 @@ class Plugin_文件搜索 {
                         initHandler: initWithFile, ; 初始化
                         pasteContentHandler: pasteContentHandler, ; 允许粘贴文件
                         placeholder: "Search on Everything",
-                        searchText: content,
+                        searchText: searchText,
                         thumb: PluginHelper.getPluginHIcon(this.name)
                     }
                 )

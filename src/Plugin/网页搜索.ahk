@@ -3,7 +3,7 @@
  * @Version: 0.0.1
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-07
+ * @LastEditTime: 2023-04-08
  * @Description: 网页搜索(带联想词)
  */
 
@@ -176,13 +176,16 @@ class Plugin_网页搜索 {
             PluginHelper.addPluginToIntelligentMode(
                 this.outer.name,
                 this.title,
-                [["(gg|google|谷歌)\s+(?<query>.*)", "${query}"], [".+", "$0"]],
-                (obj, content) => (
+                (obj, searchText, pastedContentType, pastedContent) => (
+                    pastedContentType == "text" &&
+                    searchText
+                ),
+                (obj, searchText) => (
                     PluginHelper.showPluginMode( ; 启动插件模式
                         [], ;数据靠search获取，不需要传入
                         searchHandler,
                         runHandler, {
-                            searchText: content, ; 搜索词替换为传入的内容
+                            searchText: searchText,
                             placeholder: "Search on Google",
                             thumb: this.hIcon
                         }
@@ -261,13 +264,16 @@ class Plugin_网页搜索 {
             PluginHelper.addPluginToIntelligentMode(
                 this.outer.name,
                 this.title,
-                [["(by|bing|必应)\s+(?<query>.*)", "${query}"], [".+", "$0"]],
-                (obj, content) => (
+                (obj, searchText, pastedContentType, pastedContent) => (
+                    pastedContentType == "text" &&
+                    searchText
+                ),
+                (obj, searchText) => (
                     PluginHelper.showPluginMode( ; 启动插件模式
                         [], ;数据靠search获取，不需要传入
                         searchHandler,
                         runHandler, {
-                            searchText: content, ; 搜索词替换为传入的内容
+                            searchText: searchText,
                             placeholder: "Search on Bing",
                             thumb: this.hIcon
                         }
@@ -341,13 +347,16 @@ class Plugin_网页搜索 {
             PluginHelper.addPluginToIntelligentMode(
                 this.outer.name,
                 this.title,
-                [["(bd|baidu|百度)\s+(?<query>.*)", "${query}"], [".+", "$0"]],
-                (obj, content) => (
+                (obj, searchText, pastedContentType, pastedContent) => (
+                    pastedContentType == "text" &&
+                    searchText
+                ),
+                (obj, searchText) => (
                     PluginHelper.showPluginMode( ; 启动插件模式
                         [], ;数据靠search获取，不需要传入
                         searchHandler,
                         runHandler, {
-                            searchText: content, ; 搜索词替换为传入的内容
+                            searchText: searchText,
                             placeholder: "百度一下，你就知道",
                             thumb: this.hIcon
                         }
