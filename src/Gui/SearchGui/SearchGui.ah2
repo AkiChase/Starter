@@ -195,7 +195,7 @@ class SearchGui {
         this.hotkeyInit()
     }
 
-    ; 拖拽添加
+    ; 拖入添加
     static dropAddItem(fileList) {
         if (SearchGui.mode == 0) {
             for filePath in fileList {
@@ -204,7 +204,7 @@ class SearchGui {
             }
             StartupMode.loadImgs(false)    ;载入新图片，不重新加载其他图片
             StartupMode.search()
-            Tip.show("拖拽添加启动项", "添加成功, 新增 " fileList.Length " 个启动项", 2000)
+            Tip.show("拖入添加启动项", "添加成功, 新增 " fileList.Length " 个启动项", 2000)
         } else if (SearchGui.mode == 1) {
             SearchGui._pastedContentType := "file"
             SearchGui.pastedContent := fileList

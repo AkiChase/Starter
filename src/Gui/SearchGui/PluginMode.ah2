@@ -151,7 +151,7 @@ class PluginMode {
         if (this.dropFilesHandler(fileList, true)) {
             SearchGui._pastedContentType := "file"
             SearchGui.pastedContent := fileList
-            this.dropFilesHandler(SearchGui.pastedContent)
+            this.dropFilesHandler(SearchGui.pastedContent, false)
         }
     }
 

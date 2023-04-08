@@ -153,11 +153,11 @@ class PluginHelper {
      * 
      * file: content为文件路径数组; bitmap: content为位图句柄;
      * 
-     * options.dropFilesHandler (可选)拖拽文件到搜索框的处理函数(that, fileList, pre) => bool
+     * options.dropFilesHandler (可选)拖入文件到搜索框的处理函数(that, fileList, pre) => bool
      * 
-     * 在拖拽文件后会触发一次 (that, fileList, true) => bool 返回true则允许拖拽生效
+     * 在拖入文件后会触发一次 (that, fileList, true) => bool 返回true则允许拖入生效
      * 
-     * 拖拽生效后还会触发一次 (that, fileList) => any
+     * 拖入生效后还会触发一次 (that, fileList, false) => any
      * 
      * options.initHandler (可选)初始化处理函数 (that) => void
      * 
