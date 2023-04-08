@@ -173,9 +173,8 @@ class IntelligentMode {
                 handler[item["group"]](this, item)
             this.hideGui()
         } else if (rowNum > 0) { ; 插件项
-            plugin := this.pluginSearchResult[rowNum] ;当前搜索结果对应的正则
-            content := RegExReplace(SearchGui.searchText, plugin.curReg[1], plugin.curReg[2], , 1)
-            plugin.runHandler(content) ;传递正则替换后的结果
+            plugin := this.pluginSearchResult[rowNum] ;当前搜索结果对应插件项
+            plugin.runHandler(SearchGui.searchText) ;直接传递搜索内容
         }
     }
 
@@ -306,7 +305,10 @@ class IntelligentMode {
                 this.rowHeight := rowH
         }
 
-        LVHeight := len > 0 ? Ceil((len >= 8 ? 8 : len) * this.rowHeight) : 0
+        if (!this.rowHeight)
+            LVHeight := len * Ceil(26.4 * (A_ScreenDPI / 96))
+        else
+            LVHeight := len > 0 ? Ceil((len >= 10 ? 10 : len) * this.rowHeight) : 0
         ControlMove(, , , LVHeight, this.listView) ; 使用ControlMove避免DPI 缩放
         this.listView.ModifyCol(1, "530")
         this.focusedRow := 1    ;聚焦第一行
@@ -328,24 +330,17 @@ class IntelligentMode {
 
     ; 插件搜索并添加插件项到列表
     static pluginSearchAndAdd() {
-        keyword := SearchGui.searchText
         this.pluginSearchResult := []
-        if (keyword) {
-            this.pluginSearchResult := []
+        ; 有文件、位图时或者有搜索内容时才进行匹配
+        if (SearchGui._pastedContentType != "text" || SearchGui.searchText) {
             ; 匹配所有符合项
             for item in this.pluginData {
-                for index, reg in item.reg
-                    if RegExMatch(keyword, reg[1]) {
-                        item.curReg := reg
-                        item.regIndex := index
-                        this.pluginSearchResult.Push(item)
-                        break
-                    }
+                if (item.matchHandler(SearchGui.searchText, SearchGui._pastedContentType, SearchGui.pastedContent))
+                    this.pluginSearchResult.Push(item)
             }
         }
 
-        ; 按regIndex从小到大
-        QuickSort(this.pluginSearchResult, (itemA, itemB) => itemA.regIndex - itemB.regIndex)
+        ; TODO 添加排序依据，在config.json中为每项添加优先级，注意判断是否存在当前项（调试模式时可能不存在）
 
         ; 添加到搜索列表
         for item in this.pluginSearchResult {

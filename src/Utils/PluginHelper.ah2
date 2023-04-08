@@ -34,14 +34,17 @@ class PluginHelper {
      * @description: 添加插件项到智能模式列表
      * @param name 插件id, 即文件名
      * @param title 插件项显示标题
-     * @param reg 插件项正则替换列表[[exp1,replace1],...]
+     * @param matchHandler 插件项匹配函数 (obj, searchText, pastedContentType, pastedContent)=>bool
+     * 
+     * obj指向添加的插件项对象; searchText为当前搜索内容; pastedContentType为粘贴内容类型; pastedContentType为粘贴内容
+     * 
      * @param runHandler 鼠标双击、回车该插件项时执行的函数
      * (obj, content)=>any obj指向添加的插件项对象, content为正则替换后的内容
      * @param contextHandler 选填, 右键该插件项显示的菜单
      * @param hIcon 选填, 插件项显示的图标HICON, 默认使用插件的图标
      */
-    static addPluginToIntelligentMode(name, title, reg, runHandler, contextHandler?, hIcon?) {
-        plugin := { name: name, title: title, reg: reg, runHandler: runHandler }
+    static addPluginToIntelligentMode(name, title, matchHandler, runHandler, contextHandler?, hIcon?) {
+        plugin := { name: name, title: title, matchHandler: matchHandler, runHandler: runHandler }
         for n in ["contextHandler", "hIcon"] {
             if (IsSet(%n%))
                 plugin.%n% := %n%
@@ -189,6 +192,19 @@ class PluginHelper {
     }
 
     class Utils {
+
+        /**
+         * @description: ori是否以sub开头
+         * @param caseSense 默认false 是否区分大小写
+         * @return bool
+         */
+        static strStartWith(ori, sub, caseSense := false) {
+            return !sub ? false : (
+                caseSense ? SubStr(ori, 1, StrLen(sub)) == sub :
+                    SubStr(ori, 1, StrLen(sub)) = sub
+                )
+        }
+
         /**
          * @description: 复制路径指向文件到剪切板
          */
