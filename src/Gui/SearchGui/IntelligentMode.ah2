@@ -132,8 +132,8 @@ class IntelligentMode {
         IntelligentEditGui.showGui([group, posIndex])
     }
 
-    ; run-with分组下的处理函数
-    static runWithHandler(item) {
+    ; 运行run-with分组下项目
+    static runRunWithGroupItem(item) {
         searchTxt := SearchGui.searchText
         if (item["match"]["mode"] == "reg") {
             reg := GlobalData.intelligentRegMap[item]
@@ -150,8 +150,8 @@ class IntelligentMode {
             Run(searchTxt)
     }
 
-    ; search分组下的处理函数
-    static searchHandler(item) {
+    ; 运行search分组下项目
+    static runSearchGroupItem(item) {
         searchTxt := SearchGui.searchText
 
         if (item["match"]["mode"] == "reg") {
@@ -164,7 +164,7 @@ class IntelligentMode {
 
     ; 根据项目执行对应操作
     static intelligentRun(rowNum?) {
-        static handler := Map("run-with", this.runWithHandler, "search", this.searchHandler)
+        static handler := Map("run-with", this.runRunWithGroupItem, "search", this.runSearchGroupItem)
         if (!IsSet(rowNum))
             rowNum := this.focusedRow
         if (rowNum > this.pluginSearchResult.Length) { ; 执行项
