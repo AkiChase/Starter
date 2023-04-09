@@ -2,8 +2,3 @@
 resource/data/
 Starter.lnk
 src/Plugin/*.txt
-
-node_modules/
-docs/.vuepress/.cache/
-docs/.vuepress/.temp/
-docs/.vuepress/dist/
