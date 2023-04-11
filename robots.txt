@@ -2,4 +2,4 @@
 User-agent:*
 Disallow:
 
-Sitemap: https://vuepress-theme-hope-docs-demo.netlify.app/Starter/sitemap.xml
+Sitemap: https://ruchuby.github.io/Starter/Starter/sitemap.xml
