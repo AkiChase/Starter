@@ -3,7 +3,7 @@
  * @Version: 0.0.2
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-06
+ * @LastEditTime: 2023-04-11
  * @Description: 菜单栏
  */
 
@@ -72,7 +72,7 @@ class TrayMenu {
 
         checkboxList := [
             g.AddCheckbox("x75 yp+30 Checked", "用户数据"),
-            g.AddCheckbox("xp+150 yp Checked", "插件"),
+            g.AddCheckbox("xp+150 yp", "插件"),
         ]
 
         options() {
@@ -132,6 +132,10 @@ class TrayMenu {
             return
         }
 
+        if (!options[2] || MsgBox("导入插件时将用导入的数据覆盖所有同名文件,`n请勿在更新导入旧数据时使用, 避免旧版本插件覆盖新版本插件`n是否继续导入?", "提示", 0x2044) != "Yes") {
+            return
+        }
+
         tmpDir := A_Temp "\" A_TickCount "_starter"
         this.zipper.Extract(path, tmpDir, , "-aoa")
 
@@ -141,8 +145,9 @@ class TrayMenu {
                 DirCopy(dir, GlobalData.dataDir, true), res .= "用户数据导入成功`n"
         }
         if (options[2]) {
-            if (FileExist(dir := tmpDir "\Plugin"))
+            if (FileExist(dir := tmpDir "\Plugin")){
                 DirCopy(dir, GlobalData.pluginDir, true), res .= "插件导入成功`n"
+            }
         }
         DirDelete(tmpDir, true)
         if (StrLen(res)) {
