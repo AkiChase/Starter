@@ -37,10 +37,12 @@ class BootGui {
         this.menu.Add("添加`t(&A)", (*) => this.choseAddItem())
         this.menu.Add("刷新`t(&R)", (*) => this.loadItems())
         this.menu.Add("删除`t(&X)", (*) => this.delItem(this.menuRow))
+        this.menu.Add("目录`t(&X)", (*) => Run(GlobalData.bootDir))
 
         this.menu.SetIcon("1&", GlobalData.imgDir "\add.ico")
         this.menu.SetIcon("2&", GlobalData.imgDir "\reload.ico")
         this.menu.SetIcon("3&", GlobalData.imgDir "\delete.ico")
+        this.menu.SetIcon("4&", GlobalData.imgDir "\folder.ico")
     }
 
     static showGui() {
