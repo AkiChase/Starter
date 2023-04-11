@@ -23,6 +23,7 @@ export default hopeTheme({
 
   repo: "ruchuby/Starter",
   docsDir: "/docs",
+  docsBranch: "master",
 
   navbarLayout: {
     start: ["Brand"],
