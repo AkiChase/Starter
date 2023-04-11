@@ -3,6 +3,7 @@ import { zhNavbar } from "./navbar.js";
 import { zhSidebar } from "./sidebar.js";
 
 
+
 export default hopeTheme({
   hostname: "https://ruchuby.github.io/Starter/",
 
@@ -13,7 +14,10 @@ export default hopeTheme({
   },
 
 
-  iconAssets: ["/fontawesome/css/solid.min.css", "/fontawesome/css/fontawesome.min.css"],
+  iconAssets: [
+    "https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/solid.min.css",
+    "https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/fontawesome.min.css"
+  ],
   iconPrefix: "fas fa-",
 
   favicon: "/favicon.ico",
@@ -88,8 +92,6 @@ export default hopeTheme({
       include: true,
       // 流程图支持
       flowchart: true,
-      // 幻灯片支持
-      presentation: true
     },
   },
 });
