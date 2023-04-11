@@ -7,7 +7,8 @@ on:
       # 确保这是你正在使用的分支名称
       - master
   pull_request:
-    branches: [ "master" ]
+    branches:
+      - master
 
 jobs:
   deploy-gh-pages:
