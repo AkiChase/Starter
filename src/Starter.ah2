@@ -11,10 +11,12 @@
 ListLines False
 #SingleInstance Force
 FileEncoding("UTF-8-RAW")
+SetWinDelay(0)
 
 ; 调试模式下，退出时不保存用户数据，不会动态载入插件
 ; 手动#inclide 需要调试的插件
 ; DEBUG := true
+; #Include .\Plugin\OCR.ahk
 ; #Include .\Plugin\文件搜索.ahk
 ; #Include .\Plugin\文件选择对话框导航.ahk
 ; #Include .\Plugin\网页搜索.ahk
@@ -43,6 +45,7 @@ PluginGui.init() ;同时重启以加载插件
 #Include .\Utils\EditCtrlFunc.ah2
 #Include .\Utils\CopyToClipboard.ah2
 #Include .\Utils\7Zip\SevenZip.ahk
+#Include .\Utils\ImagePut.ah2
 
 Tip := WiseGuiHelper("tooltip")
 Tip.setOpt(, , "s14 Bold, 雅痞-简", "s12, 雅痞-简", 225

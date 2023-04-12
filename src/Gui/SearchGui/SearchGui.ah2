@@ -105,14 +105,13 @@ class SearchGui {
         set {
             if (this._pastedContentType = "bitmap"
                 && DllCall("OpenClipboard", "ptr", 0) && DllCall("IsClipboardFormatAvailable", "uint", 2)) {
-                ; 位图
-                hBitmap := DllCall("GetClipboardData", "uint", 2, "ptr") ; 指向剪切板内数据
-                hBitmap := LoadPicture("HBITMAP:*" hBitmap) ;复制一份
                 DllCall("CloseClipboard")
+                buf := ImagePutBuffer(ClipboardAll)
 
                 this.placeholder := "", this.edit.Move(50, , 455)
-                this.contentThumb.Value := "HBITMAP:*" hBitmap, this.contentThumb.Visible := true
-                this.placeholder := "图片", this._pastedContent := hBitmap
+                this.contentThumb.Value := "HBITMAP:" ImagePutHBitmap(buf) ; 创建hBitmap用于控件显示
+                this.contentThumb.Visible := true
+                this.placeholder := "图片", this._pastedContent := buf
             } else if (this._pastedContentType = "file") {
                 ; 文件
                 fileList := Type(Value) == "Array" ? Value : StrSplit(Value, "`r`n") ; 自动处理数组或字符串类型
@@ -178,8 +177,16 @@ class SearchGui {
 
         this.contentThumb := this.gui.AddPicture("x7 y7 w36 h36 +Border +Hidden")
 
-        this.contentThumb.OnEvent("Click", (*) => this._pastedContentType = "file" ? this.showFileListInfo(this.pastedContent) : 0)
+        clickThumbHandler(*) {
+            switch this._pastedContentType {
+                case "file":
+                    this.showFileListInfo(this.pastedContent)
+                case "bitmap":
+                    ImagePutWindow(this.pastedContent, "查看图像")
+            }
+        }
 
+        this.contentThumb.OnEvent("Click", clickThumbHandler)
         ; 回车触发
         this.gui.AddButton("Default Hidden").OnEvent("Click", (*) => this.mode == 0 ?
             StartupMode.startupRun() : this.mode == 1 ?
