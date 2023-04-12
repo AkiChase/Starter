@@ -176,7 +176,7 @@ class Plugin_文件搜索 {
             ; 添加
             switch this.cotMode {
                 case "path":
-                    that.listView.Add("Icon" icoIndex, this.pathStrCompact(item.path, 45)) ;显示压缩的路径
+                    that.listView.Add("Icon" icoIndex, PluginHelper.Utils.pathStrCompact(item.path, 45)) ;显示压缩的路径
                 case "name":
                     that.listView.Add("Icon" icoIndex, item.name)
                 case "size":
@@ -373,11 +373,11 @@ class Plugin_文件搜索 {
 
         ; 匹配处理函数
         ; 1. 匹配文本 2. 匹配单文件夹，且文件夹存在，并进行优先级细分
-        matchHandler(obj, searchText, pastedContentType, pastedContent) {
-            if (PluginHelper.winInfoMatchFlag) {
-                pName := PluginHelper.workWinInfo.processName
-                cName := PluginHelper.workWinInfo.class
-                path := PluginHelper.workWinInfo.title
+        matchHandler(obj, searchText, pastedContentType, pastedContent, workWinInfo, winInfoMatchFlag) {
+            if (winInfoMatchFlag) {
+                pName := workWinInfo.processName
+                cName := workWinInfo.class
+                path := workWinInfo.title
                 ; 匹配资源管理器 且 标题指向的文件夹存在
                 if ((pName == 'explorer.exe' || cName == "CabinetWClass" || cName == "ExploreWClass")
                     && InStr(FileExist(path), "D")
@@ -430,17 +430,14 @@ class Plugin_文件搜索 {
                         doubleLeftHandler: doubleRightHandler,
                         loadImgsHandler: loadImg, ; 需要带有图标
                         toBottomHandler: asyncLoading, ; 异步加载
-
                         initHandler:
                             obj.matchData.type == 'text' ?  ; 区分初始化
                             initWithText : obj.matchData.type == 'file' ?
                                 initWithFile : initWithWindow.Bind(obj.matchData.path),
-                                
                         placeholder:
                             obj.matchData.type == 'text' ?  ; 区分占位符
                             "Search on Everything" : obj.matchData.type == 'file' ?
-                                "在文件夹内搜索" : Format('"{}" 内搜索', this.pathStrCompact(obj.matchData.path, 25)),
-
+                                "在文件夹内搜索" : Format('"{}" 内搜索', PluginHelper.Utils.pathStrCompact(obj.matchData.path, 25)),
                         pasteContentHandler: pasteContentHandler, ; 允许粘贴文件
                         searchText: obj.matchData.searchTextFlag ? searchText : "", ; 区分是否要传入搜索文本
                         thumb: PluginHelper.getPluginHIcon(this.name)
@@ -448,16 +445,5 @@ class Plugin_文件搜索 {
                 )
             ), , PluginHelper.getPluginHIcon(this.name)
         )
-    }
-
-    ; 压缩文件路径
-    static pathStrCompact(fullPath, maxChars) {
-        out := Buffer(255)
-        DllCall("shlwapi.dll\PathCompactPathExW"
-            , "UPtr", out.Ptr
-            , "WStr", fullPath
-            , "UInt", maxChars
-        )
-        return StrGet(out)
     }
 }

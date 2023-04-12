@@ -3,7 +3,7 @@
  * @Version: 0.0.5
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-08
+ * @LastEditTime: 2023-04-12
  * @Description: 插件示例
  */
 
@@ -175,7 +175,7 @@ class Plugin_Demo {
         )
 
         ; 自定义智能模式匹配函数，可以根据多种条件判断是否匹配当前插件
-        matchHandler(obj, searchText, pastedContentType, pastedContent) {
+        matchHandler(obj, searchText, *) {
             ; 比如根据粘贴内容是否为文件等等，可以参考"文件搜索插件"
             ; 此处简单的使用搜索词是否在"CJSL"文本的开头
             return PluginHelper.Utils.strStartWith("CJSL", searchText)
