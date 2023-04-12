@@ -37,8 +37,8 @@ class Plugin_文件选择对话框导航 {
         matchHandler(obj, searchText, pastedContentType, pastedContent, workWinInfo, winInfoMatchFlag) {
             hwnd := workWinInfo.hwnd
             cName := workWinInfo.class
-            ; 匹配文件选择对话框
-            if (cName == "#32770") {
+            ; 匹配文件选择对话框 winInfoMatchFlag开启，才能保证cName是最新的
+            if (winInfoMatchFlag && cName == "#32770") {
                 obj.matchData := { hwnd: hwnd }
                 return PluginHelper.Utils.strStartWith("WJXZDHK", searchText) ? 3 : 2 ; 优先级
             }
