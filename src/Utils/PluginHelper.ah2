@@ -115,7 +115,7 @@ class PluginHelper {
      */
     static pastedContentType => SearchGui._pastedContentType
     /**
-     * @description: 粘贴内容 fileList hbitmap str
+     * @description: 粘贴内容 fileList buffer(ImagePut type) str
      */
     static pastedContent => SearchGui._pastedContent
 
@@ -482,19 +482,17 @@ class PluginHelper {
                 return ImagePut("show", image, title, pos, style, styleEx, parent)
             }
 
-            static IImageDestroy(image) {
+            static ImageDestroy(image) {
                 return ImagePut.Destroy(image)
             }
 
-            static IImageWidth(image) {
+            static ImageWidth(image) {
                 return ImagePut.Dimensions(image)[1]
             }
 
-            static IImageHeight(image) {
+            static ImageHeight(image) {
                 return ImagePut.Dimensions(image)[2]
             }
         }
     }
-
-
 }
