@@ -3,7 +3,7 @@
  * @Version: 0.3.0
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-08
+ * @LastEditTime: 2023-04-12
  * @Description: 介绍Starter 是一款AHK编写的快速启动工具，旨在方便快捷地启动文件、文件夹，提高电脑的使用效率。
  */
 #NoTrayIcon ; 先隐藏图标
@@ -16,6 +16,7 @@ FileEncoding("UTF-8-RAW")
 ; 手动#inclide 需要调试的插件
 ; DEBUG := true
 ; #Include .\Plugin\文件搜索.ahk
+; #Include .\Plugin\文件选择对话框跳转.ahk
 ; #Include .\Plugin\网页搜索.ahk
 ; #Include .\Plugin\demo.ahk
 
