@@ -236,7 +236,7 @@ class SearchGui {
                     this.winInfoMatchFlag := false ; 关闭窗口匹配模式
 
                 this.noRecover := true ; 保证能显示智能模式
-                IntelligentMode.showGui()  ; 显示并清空搜索框
+                IntelligentMode.showGui(outType = 'text' ? content : "")  ; 显示并视情况填入搜索框
 
                 if (this.winInfoMatchFlag) {
                     this.placeholder := "Hi, Window Match 💻"
