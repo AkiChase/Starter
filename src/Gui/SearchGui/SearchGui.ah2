@@ -222,15 +222,14 @@ class SearchGui {
                 clipSaved := ClipboardAll()
                 content := GetSelectedText(0.1, &outType) ; 等待最多0.1s剪切板
 
-                ; 获取窗口信息
-                this.workWinInfo.hwnd := WinExist("A")
-                this.workWinInfo.class := WinGetClass()
-                this.workWinInfo.processPath := WinGetProcessPath()
-                this.workWinInfo.processName := WinGetProcessName()
-                this.workWinInfo.title := WinGetTitle()
-
                 ; 是否进入窗口匹配模式
                 if (!content && (outType = 'text' || outType = "timeout")) { ;
+                    ; 获取窗口信息
+                    this.workWinInfo.hwnd := WinExist("A")
+                    this.workWinInfo.class := WinGetClass()
+                    this.workWinInfo.processPath := WinGetProcessPath()
+                    this.workWinInfo.processName := WinGetProcessName()
+                    this.workWinInfo.title := WinGetTitle()
                     this.winInfoMatchFlag := true ; 开启窗口匹配模式
                 } else
                     this.winInfoMatchFlag := false ; 关闭窗口匹配模式
