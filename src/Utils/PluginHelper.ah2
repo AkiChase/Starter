@@ -34,9 +34,13 @@ class PluginHelper {
      * @description: 添加插件项到智能模式列表
      * @param name 插件id, 即文件名
      * @param title 插件项显示标题
-     * @param matchHandler 插件项匹配函数 (obj, searchText, pastedContentType, pastedContent)=>bool
+     * @param matchHandler 插件项匹配函数 (obj, searchText, pastedContentType, pastedContent, workWinInfo, winInfoMatchFlag)=>bool
      * 
-     * obj指向添加的插件项对象; searchText为当前搜索内容; pastedContentType为粘贴内容类型; pastedContentType为粘贴内容
+     * obj指向添加的插件项对象; searchText为当前搜索内容;
+     * 
+     * pastedContentType为粘贴内容类型; pastedContentType为粘贴内容
+     * 
+     * workWinInfo为工作窗口信息; winInfoMatchFlag为是否开启工作窗口模式（即没有选中任何内容）
      * 
      * @param runHandler 鼠标双击、回车该插件项时执行的函数
      * (obj, searchText)=>any obj指向添加的插件项对象, searchText为搜索框文本内容
@@ -118,6 +122,8 @@ class PluginHelper {
     /**
      * @description: 工作窗口信息
      * 
+     * workWinInfo.hwnd   hwnd
+     * 
      * workWinInfo.title    窗口标题
      * 
      * workWinInfo.class    窗口类名
@@ -125,7 +131,7 @@ class PluginHelper {
      * workWinInfo.processPath  程序路径
      * 
      * workWinInfo.processName  程序名称
-     */    
+     */
     static workWinInfo => SearchGui.workWinInfo
     ; 是否处于窗口匹配状态
     static winInfoMatchFlag => SearchGui.winInfoMatchFlag
@@ -207,6 +213,12 @@ class PluginHelper {
     }
 
     class Utils {
+        /**
+         * @description: 将文本的中文部分转换为拼音首字母(多音字不正确)
+         */
+        static chineseFirstChar(str) {
+            return ChineseFirstChar(str)
+        }
 
         /**
          * @description: ori是否以sub开头
@@ -218,6 +230,22 @@ class PluginHelper {
                 caseSense ? SubStr(ori, 1, StrLen(sub)) == sub :
                     SubStr(ori, 1, StrLen(sub)) = sub
                 )
+        }
+
+        /**
+         * @description: 压缩文件路径文本
+         * @param fullPath 文件完整路径
+         * @param maxChars 压缩后最大字符数
+         * @return 压缩后路径文本
+         */
+        static pathStrCompact(fullPath, maxChars) {
+            out := Buffer(255)
+            DllCall("shlwapi.dll\PathCompactPathExW"
+                , "UPtr", out.Ptr
+                , "WStr", fullPath
+                , "UInt", maxChars
+            )
+            return StrGet(out)
         }
 
         /**

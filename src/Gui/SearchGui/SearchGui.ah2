@@ -137,6 +137,7 @@ class SearchGui {
 
     ; 长按获取的当前窗口信息
     static workWinInfo := {
+        hwnd: 0,
         title: "",
         class: "",
         processPath: "",
@@ -220,13 +221,16 @@ class SearchGui {
             } else { ; 长按0.4秒
                 clipSaved := ClipboardAll()
                 content := GetSelectedText(0.1, &outType) ; 等待最多0.1s剪切板
+
+                ; 获取窗口信息
+                this.workWinInfo.hwnd := WinExist("A")
+                this.workWinInfo.class := WinGetClass()
+                this.workWinInfo.processPath := WinGetProcessPath()
+                this.workWinInfo.processName := WinGetProcessName()
+                this.workWinInfo.title := WinGetTitle()
+
+                ; 是否进入窗口匹配模式
                 if (!content && (outType = 'text' || outType = "timeout")) { ;
-                    ; 获取窗口信息
-                    WinExist("A")
-                    this.workWinInfo.class := WinGetClass()
-                    this.workWinInfo.processPath := WinGetProcessPath()
-                    this.workWinInfo.processName := WinGetProcessName()
-                    this.workWinInfo.title := WinGetTitle()
                     this.winInfoMatchFlag := true ; 开启窗口匹配模式
                 } else
                     this.winInfoMatchFlag := false ; 关闭窗口匹配模式
@@ -234,7 +238,7 @@ class SearchGui {
                 this.noRecover := true ; 保证能显示智能模式
                 IntelligentMode.showGui()  ; 显示并清空搜索框
 
-                if (this.winInfoMatchFlag){
+                if (this.winInfoMatchFlag) {
                     this.placeholder := "Hi, Window Match 💻"
                     this.showWinInfo()
                 }
