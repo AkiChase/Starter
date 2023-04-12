@@ -3,7 +3,7 @@
  * @Version: 0.0.3
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-08
+ * @LastEditTime: 2023-04-12
  * @Description: 插件API封装
  */
 
@@ -114,6 +114,21 @@ class PluginHelper {
      * @description: 粘贴内容 fileList hbitmap str
      */
     static pastedContent => SearchGui._pastedContent
+
+    /**
+     * @description: 工作窗口信息
+     * 
+     * workWinInfo.title    窗口标题
+     * 
+     * workWinInfo.class    窗口类名
+     * 
+     * workWinInfo.processPath  程序路径
+     * 
+     * workWinInfo.processName  程序名称
+     */    
+    static workWinInfo => SearchGui.workWinInfo
+    ; 是否处于窗口匹配状态
+    static winInfoMatchFlag => SearchGui.winInfoMatchFlag
 
     /**
      * @description: 搜索框占位符

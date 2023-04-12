@@ -139,18 +139,15 @@ class SearchGui {
     static workWinInfo := {
         title: "",
         class: "",
-        process: ""
+        processPath: "",
+        processName: ""
     }
 
     ;#region 是否处于窗口匹配
     static _winInfoMatchFlag := false
     static winInfoMatchFlag {
         get => this._winInfoMatchFlag
-        set {
-            if (Value)
-                this.placeholder := "Hi, Window Match Mode 💻"
-            this._winInfoMatchFlag := Value
-        }
+        set => this._winInfoMatchFlag := Value
     }
     ;#endregion
 
@@ -223,17 +220,25 @@ class SearchGui {
             } else { ; 长按0.4秒
                 clipSaved := ClipboardAll()
                 content := GetSelectedText(0.1, &outType) ; 等待最多0.1s剪切板
-                this.noRecover := true ; 保证能显示智能模式
-                IntelligentMode.showGui()  ; 显示并清空搜索框
                 if (!content && (outType = 'text' || outType = "timeout")) { ;
                     ; 获取窗口信息
                     WinExist("A")
                     this.workWinInfo.class := WinGetClass()
-                    this.workWinInfo.process := WinGetProcessPath()
+                    this.workWinInfo.processPath := WinGetProcessPath()
+                    this.workWinInfo.processName := WinGetProcessName()
                     this.workWinInfo.title := WinGetTitle()
                     this.winInfoMatchFlag := true ; 开启窗口匹配模式
                 } else
                     this.winInfoMatchFlag := false ; 关闭窗口匹配模式
+
+                this.noRecover := true ; 保证能显示智能模式
+                IntelligentMode.showGui()  ; 显示并清空搜索框
+
+                if (this.winInfoMatchFlag){
+                    this.placeholder := "Hi, Window Match 💻"
+                    this.showWinInfo()
+                }
+
 
                 if (outType != 'timeout') {
                     this._pastedContentType := outType
@@ -291,9 +296,9 @@ class SearchGui {
     ; 显示窗口匹配信息
     static showWinInfo() {
         WiseGuiHelper.WiseGui("workWinInfo", "Main: 0", "Theme: ,,,0", "FontSub: s14 ,雅痞-简",
-            "Shadow: 1", "TextWidth: 530", "Transparency: 192", "Timer: 1500",
+            "Shadow: 1", "TextWidth: 530", "Transparency: 192", "Timer: 3000",
             "SubText: " Format("@工作窗口标题`n{}`n@工作窗口类`n{}`n@工作窗口程序`n{}"
-                , this.workWinInfo.title, this.workWinInfo.class, this.workWinInfo.process)
+                , this.workWinInfo.title, this.workWinInfo.class, this.workWinInfo.processName)
         )
         if (WinExist("WiseGui\workWinInfo ahk_class AutoHotkeyGUI")) {
             WinGetPos(&x, &y, , , this.gui)

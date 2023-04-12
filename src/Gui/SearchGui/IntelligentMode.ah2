@@ -331,8 +331,8 @@ class IntelligentMode {
     ; 插件搜索并添加插件项到列表
     static pluginSearchAndAdd() {
         this.pluginSearchResult := []
-        ; 有文件、位图时或者有搜索内容时才进行匹配
-        if (SearchGui._pastedContentType != "text" || SearchGui.searchText) {
+        ; 有文件、位图时或者工作窗口或者有搜索内容时才进行匹配
+        if (SearchGui._pastedContentType != "text" || SearchGui.winInfoMatchFlag ||SearchGui.searchText) {
             ; 匹配所有符合项
             for item in this.pluginData {
                 if (priority := item.matchHandler(SearchGui.searchText, SearchGui._pastedContentType, SearchGui.pastedContent)) {
