@@ -60,10 +60,10 @@ class Pligin_OCR {
         this.gPic := g.AddPicture("x15 y40 w380 h460")
         this.gPic.OnEvent("Click", (*) => this.curImg ? ImagePutWindow(this.curImg, "查看图像") : 0)
 
-        this.gResEdit := g.AddEdit("x420 y20 w370 h350")
+        this.gResEdit := g.AddEdit("x420 y20 w370 h300")
 
         addRadio(i, text) {
-            r := g.AddRadio(Format("x450 y{} {}", 355 + 30 * i, i = this.sepIndex ? "Checked" : ""), text)
+            r := g.AddRadio(Format("x450 y{} {}", 305 + 30 * i, i = this.sepIndex ? "Checked" : ""), text)
             r.OnEvent(
                 "Click",
                 (*) => (
@@ -77,7 +77,7 @@ class Pligin_OCR {
             addRadio(i, v)
         }
 
-        g.AddCheckbox("x450 yp+27 " . (this.autoCopy ? "Checked" : ""), "自动复制").OnEvent("Click",
+        g.AddCheckbox("x450 yp+35 " . (this.autoCopy ? "Checked" : ""), "自动复制").OnEvent("Click",
             (c, *) => this.autoCopy := c.Value)
 
         run(*) {
@@ -108,12 +108,11 @@ class Pligin_OCR {
         }
 
         g.SetFont("s12")
-        g.AddButton("x600 y380 w120 h25", "重新识别").OnEvent("Click", run)
-        b := g.AddButton("xp yp+30 w120 h25 default", "剪切板导入")
-        b.OnEvent("Click", importFromClipboard)
-        b.Focus()
+        g.AddButton("x600 y330 w120 h25", "重新识别").OnEvent("Click", run)
+        g.AddButton("xp yp+30 w120 h25 default", "剪切板导入").OnEvent("Click", importFromClipboard)
         g.AddButton("xp yp+30 w120 h25", "复制文本").OnEvent("Click", (*) => A_Clipboard := this.gResEdit.Value)
         g.AddButton("xp yp+30 w120 h25", "复制并退出").OnEvent("Click", (*) => (A_Clipboard := this.gResEdit.Text, g.Hide()))
+        g.AddButton("xp yp+30 w120 h25", "设置界面").OnEvent("Click", (*) => this.setting())
         g.OnEvent("Close", (*) => g.Hide())
 
         dropHandler(guiObj, ctrl, fileList, *) {
