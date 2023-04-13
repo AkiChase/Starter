@@ -3,7 +3,7 @@
  * @Version: 0.0.1
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-12
+ * @LastEditTime: 2023-04-13
  * @Description: OCR识别文字
  */
 
@@ -41,6 +41,7 @@ class Pligin_OCR {
         SplitPath(A_LineFile, &name) ; 获取插件id即文件名
         this.name := name
 
+        this.menu.Add("显示", (*) => this.showGui())
         this.menu.Add("设置", (*) => this.setting())
         PluginHelper.pluginMenu.Add("OCR识别文字", this.menu)
 
@@ -56,14 +57,20 @@ class Pligin_OCR {
         g.SetFont("s14 q5 c333333", "NSimSun")
         g.SetFont(, "雅痞-简")    ;优先使用更好看的字体
 
-        g.AddGroupBox("x10 y10 w400 h500", "图片")
+        g.AddGroupBox("x10 y10 w400 h500", "粘贴、选择、拖入图片")
         this.gPic := g.AddPicture("x15 y40 w380 h460")
-        this.gPic.OnEvent("Click", (*) => this.curImg ? ImagePutWindow(this.curImg, "查看图像") : 0)
+
+        chooseFile(*) {
+            res := FileSelect("3", , "请选择进行图片识别的文件")
+            if (res)
+                this.ocrFromFile(res)
+        }
+        this.gPic.OnEvent("Click", chooseFile)
 
         this.gResEdit := g.AddEdit("x420 y20 w370 h300")
 
         addRadio(i, text) {
-            r := g.AddRadio(Format("x450 y{} {}", 305 + 30 * i, i = this.sepIndex ? "Checked" : ""), text)
+            r := g.AddRadio(Format("x450 y{} {}", 325 + 30 * i, i = this.sepIndex ? "Checked" : ""), text)
             r.OnEvent(
                 "Click",
                 (*) => (
@@ -77,7 +84,7 @@ class Pligin_OCR {
             addRadio(i, v)
         }
 
-        g.AddCheckbox("x450 yp+35 " . (this.autoCopy ? "Checked" : ""), "自动复制").OnEvent("Click",
+        g.AddCheckbox("x450 yp+30 " . (this.autoCopy ? "Checked" : ""), "自动复制").OnEvent("Click",
             (c, *) => this.autoCopy := c.Value)
 
         run(*) {
@@ -92,24 +99,29 @@ class Pligin_OCR {
         }
 
         importFromClipboard(*) {
-            if (DllCall("OpenClipboard", "ptr", 0) && DllCall("IsClipboardFormatAvailable", "uint", 2)) {
-                DllCall("CloseClipboard")
-                this.curImg := ImagePutBuffer(ClipboardAll())
+            if (DllCall("IsClipboardFormatAvailable", "uint", 2)) {
+                ; 位图
+                this.curImg := PluginHelper.Utils.ImagePutHelper.ImagePutBuffer(ClipboardAll())
                 this.gPic.Value := "hBitmap:" PluginHelper.Utils.ImagePutHelper.ImagePutHBitmap(this.curImg)
                 if (this.ocr(this.curImg)) {
                     this.gResEdit.Value := this.join(this.sepIndexToSep[this.sepIndex], this.ocrRes*)
                     if (this.autoCopy)
                         A_Clipboard := this.gResEdit.Value
                 }
-            } else {
-                DllCall("CloseClipboard")
-                PluginHelper.Utils.tip(this.name, "当前剪切板内容无法导入", 2000)
-            }
+            } else if (DllCall("IsClipboardFormatAvailable", "uint", 15) && !InStr(A_Clipboard, "`r`n")) {
+                ; 单个文件
+                this.ocrFromFile(A_Clipboard)
+            } else
+                Send("^v")
         }
 
+        HotIfWinActive("ahk_id " this.gui.Hwnd)
+        Hotkey("$^v", importFromClipboard)
+        HotIf()
+
+
         g.SetFont("s12")
-        g.AddButton("x600 y330 w120 h25", "重新识别").OnEvent("Click", run)
-        g.AddButton("xp yp+30 w120 h25 default", "剪切板导入").OnEvent("Click", importFromClipboard)
+        g.AddButton("x600 y350 w120 h25", "重新识别").OnEvent("Click", run)
         g.AddButton("xp yp+30 w120 h25", "复制文本").OnEvent("Click", (*) => A_Clipboard := this.gResEdit.Value)
         g.AddButton("xp yp+30 w120 h25", "复制并退出").OnEvent("Click", (*) => (A_Clipboard := this.gResEdit.Text, g.Hide()))
         g.AddButton("xp yp+30 w120 h25", "设置界面").OnEvent("Click", (*) => this.setting())
@@ -117,22 +129,27 @@ class Pligin_OCR {
 
         dropHandler(guiObj, ctrl, fileList, *) {
             if (fileList.Length == 1) {
-                try
-                    this.gPic.Value := fileList[1]
-                catch {
-                    PluginHelper.Utils.tip(this.name, "不支持当前文件格式！", 2000)
-                    return
-                }
-                this.curImg := fileList[1]
-                if (this.ocr(this.curImg)) {
-                    this.gResEdit.Value := this.join(this.sepIndexToSep[this.sepIndex], this.ocrRes*)
-                    if (this.autoCopy)
-                        A_Clipboard := this.gResEdit.Value
-                }
+                this.ocrFromFile(fileList[1])
             }
         }
         g.OnEvent("DropFiles", dropHandler)
         g.Show("w800 Hide")
+    }
+
+    ; 根据文件进行ocr识别
+    static ocrFromFile(filePath) {
+        try {
+            this.curImg := PluginHelper.Utils.ImagePutHelper.ImagePutBuffer(filePath)
+            this.gPic.Value := "hBitmap:" PluginHelper.Utils.ImagePutHelper.ImagePutHBitmap(this.curImg)
+            if (this.ocr(this.curImg)) {
+                this.gResEdit.Value := this.join(this.sepIndexToSep[this.sepIndex], this.ocrRes*)
+                if (this.autoCopy)
+                    A_Clipboard := this.gResEdit.Value
+            }
+        } catch {
+            PluginHelper.Utils.tip(this.name, "不支持当前文件格式！", 2000)
+            return
+        }
     }
 
     static showGui(image?) {
@@ -180,7 +197,12 @@ class Pligin_OCR {
         oldTitle := this.gui.Title
         this.gui.Title := "正在进行文字识别..."
         if (!this.accessToken)
-            this.accessToken := this.genAccessToken()
+            if (this.accessToken := this.genAccessToken()) {
+                this.storeData()
+            } else {
+                this.gui.Title := oldTitle
+                return
+            }
 
         base64 := PluginHelper.Utils.ImagePutHelper.ImagePutURI(image, "jpg", 100)
         if (res := this.baiduOcr(base64)) {
@@ -215,15 +237,16 @@ class Pligin_OCR {
         idEdit := g.AddEdit("w300 h30", this.apiKey.id)
         g.AddText(, "百度OCR SECRET")
         secretEdit := g.AddEdit("w300 h30", this.apiKey.secret)
-
-        g.AddText(, "连接方式:`t" . ["空格连接", "换行连接", "直接连接"][this.sepIndex])
+        g.AddText(, "其他选项 ↓ ")
+        g.AddText(, "● " . ["空格连接", "换行连接", "直接连接"][this.sepIndex])
+        if (this.autoCopy)
+            g.AddText(, "● 自动复制")
 
         f(*) {
             this.apiKey.id := idEdit.Value, this.apiKey.secret := secretEdit.Value
             this.storeData()
             g.Hide()
         }
-
         g.AddButton("x135 yp+50", "保存").OnEvent("Click", f)
         g.OnEvent("Close", (*) => g.Hide())
         g.Show()
@@ -234,7 +257,8 @@ class Pligin_OCR {
         SplitPath(A_LineFile, , &dir)
         dataPath := dir "\OCR配置.txt"
         f := FileOpen(dataPath, "w")
-        f.Write(Jxon_Dump(Map("id", this.apiKey.id, "secret", this.apiKey.secret, "accessToken", this.accessToken)))
+        f.Write(Jxon_Dump(Map("id", this.apiKey.id, "secret", this.apiKey.secret,
+            "accessToken", this.accessToken, "autoCopy", this.autoCopy, "sepIndex", this.sepIndex)))
         f.Close()
     }
 
@@ -245,9 +269,13 @@ class Pligin_OCR {
         if (FileExist(dataPath)) {
             content := FileRead(dataPath)
             config := Jxon_Load(&content)
-            this.apiKey.id := config["id"]
-            this.apiKey.secret := config["secret"]
-            this.accessToken := config["accessToken"]
+            if (Type(config) == "Map") {
+                this.apiKey.id := config.Has("id") ? config["id"] : ""
+                this.apiKey.secret := config.Has("secret") ? config["secret"] : ""
+                this.accessToken := config.Has("accessToken") ? config["accessToken"] : ""
+                this.autoCopy := config.Has("autoCopy") ? config["autoCopy"] : 1
+                this.sepIndex := config.Has("sepIndex") ? config["sepIndex"] : 1
+            }
         }
     }
 
@@ -259,13 +287,16 @@ class Pligin_OCR {
 
     ; 生成access_token
     static genAccessToken() {
+        if !(this.apiKey.id || this.apiKey.secret) {
+            PluginHelper.Utils.tip(this.name, "请进入设置界面填写百度OCR接口密钥")
+            return ""
+        }
         url := Format("{}oauth/2.0/token?grant_type=client_credentials&client_id={}&client_secret={}",
             this.baseUrl, this.apiKey.id, this.apiKey.secret)
         if (res := this.post(url))
             return res["access_token"]
-        return 0
+        return ""
     }
-
     ; post请求
     static post(url, data?, contentType := "application/json") {
         try {
@@ -274,17 +305,31 @@ class Pligin_OCR {
             res := this.clicent.Download(url, opt, headers, data?)
             if (!res := Jxon_Load(&res))
                 return 0
-
             ; 请求错误
-            if (res.Has("error_description"))
-                PluginHelper.Utils.tip(this.name, res["error_description"] "`n请重试或检查插件设置")
-            else if (res.Has("error_msg"))
+            if (res.Has("error_description")) {
+                ; 生成access_token失败
+                PluginHelper.Utils.tip(this.name, res["error_description"] "`n生成access_token失败`n请重试或检查插件设置")
+                return 0
+            } else if (res.Has("error_code") && (res["error_code"] = 110 || res["error_code"] = 111)) {
+                ; access_token非法或者过期
+                if (this.accessToken := this.genAccessToken()) { ; 重新生成access_token
+                    this.storeData()
+                    ; 使用新access_token的url
+                    url := Format("{}rest/2.0/ocr/v1/general_basic?access_token={}", this.baseUrl, this.accessToken)
+                    return this.post(url, data, contentType) ; 重新提交ocr请求
+                }
+                return 0
+            } else if (res.Has("error_msg")) {
+                ; OCR接口调用失败
                 PluginHelper.Utils.tip(this.name, res["error_msg"] "`n请重试或检查插件设置")
-
+                return 0
+            }
             return res
         } catch Error as e {
             if (this.clicent.Error.Has("Message"))
                 PluginHelper.Utils.tip(this.name, this.clicent.Error["Message"] "`n请重试或检查插件设置")
+            else
+                PluginHelper.Utils.tip(this.name, "未知错误")
         }
         return 0
     }
