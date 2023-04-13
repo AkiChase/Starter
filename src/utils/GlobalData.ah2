@@ -21,6 +21,7 @@ class GlobalData {
     static intelligentGroups := ["run-with", "search"]
     static intelligentMatchPriority := Map("str", 1, "reg", 2)
 
+    static hotkeyList := []
     ; static onExitHandler := unset
 
     static init() {
@@ -158,19 +159,58 @@ class GlobalData {
         DataHelper.storeData(this.startupData, this.startupDataPath)
     }
 
+    ; 生成默认配置
+    static newDefaultConfig(key?) {
+        if (IsSet(key)) {
+            switch key {
+                case "plugin":
+                    return []
+                case "hotkey":
+                    return [{
+                        index: 3,
+                        key: "CapsLock",
+                        block: false
+                    }, {
+                        index: 4,
+                        key: "CapsLock",
+                        block: false
+                    }]
+            }
+        } else {
+            config := Map()
+            config["plugin"] := []
+            config["hotkey"] := [{
+                index: 3,
+                key: "CapsLock",
+                block: false
+            }, {
+                index: 4,
+                key: "CapsLock",
+                block: false
+            }]
+            return config
+        }
+    }
+
     ; 重新读取配置文件
     static refreshConfig() {
         if (FileExist(this.configPath)) {
             this.config := DataHelper.loadJSONFile(this.configPath)
-            if (Type(this.config) != "Map")
-                this.config := Map("plugin", [])
+            if (Type(this.config) != "Map") {
+                this.config := this.newDefaultConfig()
+            }
 
-            if (!this.config.Has("plugin"))
-                this.config["plugin"] := []
-
+            for name in ["plugin", "hotkey"] {
+                if (!this.config.Has(name))
+                    this.config[name] := this.newDefaultConfig(name)
+            }
+            pluginDefault := this.newDefaultConfig("plugin")
+            ; 热键数量变化则重置
+            if (this.config["hotkey"].Length < pluginDefault.Length)
+                this.config["hotkey"] := pluginDefault
         } else {
-            FileAppend('{"plugin":[]}', this.configPath)
-            this.config := Map("plugin", [])
+            this.config := this.newDefaultConfig()
+            this.storeConfig()
         }
     }
 
