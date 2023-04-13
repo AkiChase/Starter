@@ -1,5 +1,5 @@
 /**
- * @Name: OCR
+ * @Name: OCR识别文字
  * @Version: 0.0.1
  * @Author: ruchuby
  * @LastEditors: ruchuby
@@ -177,7 +177,7 @@ class Pligin_OCR {
 
         PluginHelper.addPluginToIntelligentMode(
             this.name,
-            "OCR识别文字",
+            "OCR识别当前图片",
             matchHandler,
             (obj, searchText) => (this.showGui(obj.buf), PluginHelper.hideSearchGui())
             , , PluginHelper.getPluginHIcon(this.name)
@@ -255,7 +255,7 @@ class Pligin_OCR {
     ; 保存数据
     static storeData() {
         SplitPath(A_LineFile, , &dir)
-        dataPath := dir "\OCR配置.txt"
+        dataPath := dir "\OCR识别文字配置.txt"
         f := FileOpen(dataPath, "w")
         f.Write(Jxon_Dump(Map("id", this.apiKey.id, "secret", this.apiKey.secret,
             "accessToken", this.accessToken, "autoCopy", this.autoCopy, "sepIndex", this.sepIndex)))
@@ -265,7 +265,7 @@ class Pligin_OCR {
     ; 加载数据
     static loadData() {
         SplitPath(A_LineFile, , &dir)
-        dataPath := dir "\OCR配置.txt"
+        dataPath := dir "\OCR识别文字配置.txt"
         if (FileExist(dataPath)) {
             content := FileRead(dataPath)
             config := Jxon_Load(&content)
