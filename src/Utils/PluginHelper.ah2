@@ -3,7 +3,7 @@
  * @Version: 0.0.3
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-12
+ * @LastEditTime: 2023-04-13
  * @Description: 插件API封装
  */
 
@@ -18,8 +18,6 @@ class PluginHelper {
         ;加载插件的图标
         StartupMode.pluginLoadImgs()
         IntelligentMode.pluginLoadImgs()
-
-        Hotkey("~CapsLock", "On") ;加载完毕，恢复热键
     }
 
     /**
