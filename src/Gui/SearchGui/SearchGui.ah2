@@ -220,47 +220,40 @@ class SearchGui {
 
     ; 热键初始化
     static hotkeyInit() {
-        capsLockHandler(key) {
-            if (KeyWait("CapsLock", "T0.4")) { ; 非长按
-                if (A_ThisHotkey = A_PriorHotkey && A_TimeSincePriorHotkey < 300) {
-                    StartupMode.showGui() ; 显示并清空搜索框
-                }
-            } else { ; 长按0.4秒
-                clipSaved := ClipboardAll()
-                content := GetSelectedText(0.1, &outType) ; 等待最多0.1s剪切板
+        showIntellientBoxCB(*) {
+            clipSaved := ClipboardAll()
+            content := GetSelectedText(0.1, &outType) ; 等待最多0.1s剪切板
 
-                ; 是否进入窗口匹配模式
-                if (!content && (outType = 'text' || outType = "timeout")) { ;
-                    ; 获取窗口信息
-                    this.workWinInfo.hwnd := WinExist("A")
-                    this.workWinInfo.class := WinGetClass()
-                    this.workWinInfo.processPath := WinGetProcessPath()
-                    this.workWinInfo.processName := WinGetProcessName()
-                    this.workWinInfo.title := WinGetTitle()
-                    this.winInfoMatchFlag := true ; 开启窗口匹配模式
-                } else
-                    this.winInfoMatchFlag := false ; 关闭窗口匹配模式
+            ; 是否进入窗口匹配模式
+            if (!content && (outType = 'text' || outType = "timeout")) { ;
+                ; 获取窗口信息
+                this.workWinInfo.hwnd := WinExist("A")
+                this.workWinInfo.class := WinGetClass()
+                this.workWinInfo.processPath := WinGetProcessPath()
+                this.workWinInfo.processName := WinGetProcessName()
+                this.workWinInfo.title := WinGetTitle()
+                this.winInfoMatchFlag := true ; 开启窗口匹配模式
+            } else
+                this.winInfoMatchFlag := false ; 关闭窗口匹配模式
 
-                this.noRecover := true ; 保证能显示智能模式
-                IntelligentMode.showGui(outType = 'text' ? content : "")  ; 显示并视情况填入搜索框
+            this.noRecover := true ; 保证能显示智能模式
+            IntelligentMode.showGui(outType = 'text' ? content : "")  ; 显示并视情况填入搜索框
 
-                if (this.winInfoMatchFlag) {
-                    this.placeholder := "Hi, Window Match 💻"
-                    this.showWinInfo()
-                }
-
-
-                if (outType != 'timeout') {
-                    this._pastedContentType := outType
-                    this.pastedContent := content
-                }
-                this.searchText := "" ; 触发搜索
-                A_Clipboard := clipSaved
-                KeyWait("CapsLock")    ;等待松开, 避免重复调用
+            if (this.winInfoMatchFlag) {
+                this.placeholder := "Hi, Window Match 💻"
+                this.showWinInfo()
             }
-        }
 
-        Hotkey("~CapsLock", capsLockHandler, "Off") ;先不开启热键，等加载完毕后再开启
+
+            if (outType != 'timeout') {
+                this._pastedContentType := outType
+                this.pastedContent := content
+            }
+            this.searchText := "" ; 触发搜索
+            A_Clipboard := clipSaved
+        }
+        GlobalData.hotkeyList.Push({ cb: (*) => StartupMode.showGui() }) ; 呼出搜索框
+        GlobalData.hotkeyList.Push({ cb: showIntellientBoxCB }) ; 智能搜索框
 
         ; 根据模式和热键内容执行
         hotkeyHandler(key) {
