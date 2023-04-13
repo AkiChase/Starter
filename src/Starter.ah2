@@ -18,8 +18,8 @@ SetWinDelay(0)
 
 ; 调试模式下，退出时不保存用户数据，不会动态载入插件
 ; 手动#inclide 需要调试的插件
-DEBUG := true
-F2::ListHotkeys()
+; DEBUG := true
+; F2::ListHotkeys()
 ; #Include .\Plugin\OCR.ahk
 ; #Include .\Plugin\文件搜索.ahk
 ; #Include .\Plugin\文件选择对话框导航.ahk
