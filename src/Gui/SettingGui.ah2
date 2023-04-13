@@ -45,12 +45,14 @@ class SettingGui {
         ; this.hotkeyMap[原始按键][按键方式]:=属于的热键序号
         for index, obj in GlobalData.config["hotkey"] {
             GlobalData.hotkeyList[index].obj := obj
-            rawKey := Trim(obj.key, "~$")
-            ; 标记按键占用的方式
-            if (this.hotkeyMap.Has(rawKey)) {
-                this.hotkeyMap[rawKey][obj.index] := index
-            } else {
-                this.hotkeyMap[rawKey] := Map(obj.index, index)
+            rawKey := Trim(obj["key"], "~$")
+            if (rawKey) {
+                ; 标记按键占用的方式
+                if (this.hotkeyMap.Has(rawKey)) {
+                    this.hotkeyMap[rawKey][obj["index"]] := index
+                } else {
+                    this.hotkeyMap[rawKey] := Map(obj["index"], index)
+                }
             }
         }
 
@@ -68,9 +70,12 @@ class SettingGui {
 
         ; 填充设置界面热键文本
         for index, obj in GlobalData.config["hotkey"] {
-            rawKey := Trim(obj.key, "~$")
-            this.hkTextCtrlList[index].Text := this.hotkeyMap[rawKey].Has(obj.index) ?
-            (this.hotkeyMap[rawKey][obj.index] = index ? this.keyObjToString(obj) : "无效") : "无效"
+            rawKey := Trim(obj["key"], "~$")
+            if (rawKey) {
+                this.hkTextCtrlList[index].Text := this.hotkeyMap[rawKey].Has(obj["index"]) ?
+                (this.hotkeyMap[rawKey][obj["index"]] = index ? this.keyObjToString(obj) : "无效") : "无效"
+            } else
+                this.hkTextCtrlList[index].Text := "无效"
         }
 
         ; 启用热键
@@ -87,13 +92,13 @@ class SettingGui {
                 gItem := GlobalData.hotkeyList[item[keyWay]]
                 switch keyWay {
                     case 1: ; 普通
-                        Hotkey((gItem.obj.block ? "" : "~") gItem.obj.key, gItem.cb, "On") ;需要判断是否加~
+                        Hotkey((gItem.obj["block"] ? "" : "~") gItem.obj["key"], gItem.cb, "On") ;需要判断是否加~
                     case 2: ;自定义
-                        Hotkey(gItem.obj.key, gItem.cb, "On") ; 不需要加~判断直接使用obj.key
+                        Hotkey(gItem.obj["key"], gItem.cb, "On") ; 不需要加~判断直接使用obj["key"]
                     case 3: ; 双击
-                        HotkeyHelper.doubleAndSingleHotKey(gItem.obj.key, 0.5, gItem.cb, , gItem.obj.block)
+                        HotkeyHelper.doubleAndSingleHotKey(gItem.obj["key"], 0.5, gItem.cb, , gItem.obj["block"])
                     case 4: ; 长按
-                        HotkeyHelper.longPressHotKey(gItem.obj.key, 0.5, gItem.cb)
+                        HotkeyHelper.longPressHotKey(gItem.obj["key"], 0.5, gItem.cb)
                 }
             }
 
@@ -128,12 +133,12 @@ class SettingGui {
     static keyObjToString(obj) {
         out := []
 
-        if (obj.HasOwnProp("block") && obj.block)
+        if (obj.Has("block") && obj["block"])
             out.Push("Block")
 
-        switch obj.index {
+        switch obj["index"] {
             case 1:
-                tmp := obj.key
+                tmp := obj["key"]
                 names := ["Shift", "Ctrl", "Alt"]
                 for k in ["+", "^", "!"] {
                     if (InStr(tmp, k)) {
@@ -143,8 +148,8 @@ class SettingGui {
                 }
                 out.Push(tmp)
             default:
-                out.Push(["自定义", "双击", "长按"][obj.index - 1])
-                out.Push(obj.key)
+                out.Push(["自定义", "双击", "长按"][obj["index"] - 1])
+                out.Push(obj["key"])
         }
         res := ""
         for v in out
@@ -197,7 +202,7 @@ class SettingGui {
             this.title := g.AddText("x10 y10 w230")
             g.AddText("x10 yp+40", "按键类型")
             this.hkDDL := g.AddDropDownList("xp+80 yp-3 w150", ["普通", "自定义", "双击", "长按"])
-            this.hkDDL.OnEvent("change", (obj, *) => this.khDDLChoice := obj.Value)
+            this.hkDDL.OnEvent("change", (ctrl, *) => this.khDDLChoice := ctrl.Value)
 
             g.AddText("x10 yp+50", "按键内容")
             this.ordHotkey := g.Add("Hotkey", "xp+80 yp-3 w150")
@@ -225,25 +230,25 @@ class SettingGui {
                         ToolTip("非法按键，请重新设置")
                         SetTimer((*) => ToolTip(), -2500)
                     } else {
-                        return {
-                            index: index,
-                            key: key,
-                            block: block
-                        }
+                        return Map(
+                            "index", index,
+                            "key", key,
+                            "block", block
+                        )
                     }
                 case 2:
-                    return {
-                        index: index,
-                        key: key
-                    }
+                    return Map(
+                        "index", index,
+                        "key", key
+                    )
                 default:
                     name := GetKeyName(key)
                     if (name && name = key) {
-                        return {
-                            index: index,
-                            key: key,
-                            block: block
-                        }
+                        return Map(
+                            "index", index,
+                            "key", key,
+                            "block", block
+                        )
                     } else {
                         ToolTip("非法按键，请使用按键列表中的某一个按键名称")
                         SetTimer((*) => ToolTip(), -2500)
@@ -257,10 +262,10 @@ class SettingGui {
         static showGui(cb, obj, title) {
             this.title.Text := title
             this.callBack := cb
-            this.khDDLChoice := obj.index
-            if (obj.HasOwnProp("block"))
-                this.checkBox.Value := obj.block
-            (obj.index = 1 ? this.ordHotkey : this.sinHotkeyEdit).Value := obj.key
+            this.khDDLChoice := obj["index"]
+            if (obj.Has("block"))
+                this.checkBox.Value := obj["block"]
+            (obj["index"] = 1 ? this.ordHotkey : this.sinHotkeyEdit).Value := obj["key"]
             this.gui.Show()
         }
     }

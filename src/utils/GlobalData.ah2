@@ -166,28 +166,28 @@ class GlobalData {
                 case "plugin":
                     return []
                 case "hotkey":
-                    return [{
-                        index: 3,
-                        key: "CapsLock",
-                        block: false
-                    }, {
-                        index: 4,
-                        key: "CapsLock",
-                        block: false
-                    }]
+                    return [Map(
+                        "index", 3,
+                        "key", "CapsLock",
+                        "block", false
+                    ), Map(
+                        "index", 4,
+                        "key", "CapsLock",
+                        "block", false
+                    )]
             }
         } else {
             config := Map()
             config["plugin"] := []
-            config["hotkey"] := [{
-                index: 3,
-                key: "CapsLock",
-                block: false
-            }, {
-                index: 4,
-                key: "CapsLock",
-                block: false
-            }]
+            config["hotkey"] := [Map(
+                "index", 3,
+                "key", "CapsLock",
+                "block", false
+            ), Map(
+                "index", 4,
+                "key", "CapsLock",
+                "block", false
+            )]
             return config
         }
     }
@@ -195,19 +195,24 @@ class GlobalData {
     ; 重新读取配置文件
     static refreshConfig() {
         if (FileExist(this.configPath)) {
-            this.config := DataHelper.loadJSONFile(this.configPath)
-            if (Type(this.config) != "Map") {
-                this.config := this.newDefaultConfig()
-            }
+            try {
+                this.config := DataHelper.loadJSONFile(this.configPath)
+                if (Type(this.config) != "Map") {
+                    this.config := this.newDefaultConfig()
+                }
 
-            for name in ["plugin", "hotkey"] {
-                if (!this.config.Has(name))
-                    this.config[name] := this.newDefaultConfig(name)
+                for name in ["plugin", "hotkey"] {
+                    if (!this.config.Has(name))
+                        this.config[name] := this.newDefaultConfig(name)
+                }
+                pluginDefault := this.newDefaultConfig("plugin")
+                ; 热键数量变化则重置
+                if (this.config["hotkey"].Length < pluginDefault.Length)
+                    this.config["hotkey"] := pluginDefault
+            } catch {
+                this.config := this.newDefaultConfig()
+                this.storeConfig()
             }
-            pluginDefault := this.newDefaultConfig("plugin")
-            ; 热键数量变化则重置
-            if (this.config["hotkey"].Length < pluginDefault.Length)
-                this.config["hotkey"] := pluginDefault
         } else {
             this.config := this.newDefaultConfig()
             this.storeConfig()
