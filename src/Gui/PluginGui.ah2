@@ -3,7 +3,7 @@
  * @Version: 0.0.1
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-03
+ * @LastEditTime: 2023-04-13
  * @Description: 插件界面
  */
 
@@ -35,8 +35,17 @@ class PluginGui {
 
     static loadPlugins() {
         fList := []
+        pluginList := []
         for name in GlobalData.config["plugin"] {
-            fList.Push(GlobalData.pluginDir "\" name)
+            path := GlobalData.pluginDir "\" name
+            if (FileExist(path)) ; 仅添加有效的文件
+                fList.Push(GlobalData.pluginDir "\" name), pluginList.Push(name)
+        }
+
+        ; 如果插件列表出现变动
+        if (pluginList.Length != GlobalData.config["plugin"].Length) {
+            GlobalData.config["plugin"] := pluginList
+            GlobalData.storeConfig()
         }
         Loader.loadFromFiles(fList)
     }
