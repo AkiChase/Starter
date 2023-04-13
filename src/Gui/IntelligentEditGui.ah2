@@ -566,11 +566,10 @@ class IntelligentEditGui {
 
     ; 显示智能模式编辑界面，并编辑某项
     static showGui(editPos := unset) {
-        Critical('On')    ;防止线程被中断
         for c in [SearchGui, StartupEditGui]
             if (WinExist(c.gui))
                 c.hideGui()
-        Hotkey("~CapsLock", "Off")    ; 关闭热键，防止数据冲突
+        Suspend(1)    ; 关闭热键，防止数据冲突
 
         ; 重新加载树状图
         this.reloadTV()
@@ -584,12 +583,11 @@ class IntelligentEditGui {
             this.itemEdit(editPos[1], editPos[2])
 
         this.gui.Show()
-        Critical('Off')
     }
 
     ; 隐藏编辑界面
     static hideGui() {
-        Hotkey("~CapsLock", "On")    ; 恢复热键
+        Suspend(0)    ; 恢复热键
         if (this.changeFlag) {
             if (MsgBox("是否将当前项修改内容保存？", "提示", 0x2044) = "Yes")
                 this.saveCurItem()

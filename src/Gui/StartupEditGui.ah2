@@ -186,11 +186,10 @@ class StartupEditGui {
 
     ; 显示Gui
     static showGui(index := 1) {
-        Critical('On')    ;防止线程被中断
         for c in [SearchGui, IntelligentEditGui]
             if (WinExist(c.gui))
                 c.hideGui()
-        Hotkey("~CapsLock", "Off")    ; 关闭热键，防止数据冲突
+        Suspend(1)    ; 关闭热键，防止数据冲突
 
         this.reloadSULV()    ; 重载启动项列表
         this.changeFlag := false
@@ -198,24 +197,20 @@ class StartupEditGui {
         if (GlobalData.startupData.Length >= index) {
             this.gui.Show()
             this.itemEdit(index)
-            Critical('Off')
         } else {    ; 无任何项目时，curItem.index置0从而禁用各种按钮响应和关键字列表响应
-            Critical('Off')
             MsgBox("启动列表内无可编辑项，请添加文件", "提示", 0x2040)
             if (this.chooseAddItem()) {
                 this.gui.Show()
                 this.itemEdit(1)
             }
-            else {
-                Hotkey("~CapsLock", "On")    ; 恢复热键
-            }
-
+            else
+                Suspend(0)    ; 恢复热键
         }
     }
 
     ; 隐藏Gui
     static hideGui() {
-        Hotkey("~CapsLock", "On")    ; 恢复热键
+        Suspend(0)   ; 恢复热键
         if (this.changeFlag) {
             if (MsgBox("是否将当前项修改内容保存？", "提示", 0x2044) = "Yes")
                 this.saveCurItem()
