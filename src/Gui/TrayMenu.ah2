@@ -3,7 +3,7 @@
  * @Version: 0.0.2
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-11
+ * @LastEditTime: 2023-04-13
  * @Description: 菜单栏
  */
 
@@ -19,18 +19,19 @@ class TrayMenu {
         this.menu.Delete()
 
         this.menu.Add("搜索界面`t双击CapsLock", (*) => StartupMode.showGui())
-        this.menu.Add("编辑启动模式`t(&S)", (*) => StartupEditGui.showGui())
-        this.menu.Add("编辑智能模式`t(&I)", (*) => IntelligentEditGui.showGui())
-        this.menu.Add("自启界面`t(&B)", (*) => BootGui.showGui())
-        this.menu.Add("插件界面`t(&P)", (*) => PluginGui.showGui())
-        this.menu.Add("关于界面`t(&A)", (*) => AboutGui.showGui())
+        this.menu.Add("编辑启动模式`t(&2)", (*) => StartupEditGui.showGui())
+        this.menu.Add("编辑智能模式`t(&3)", (*) => IntelligentEditGui.showGui())
+        this.menu.Add("自启界面`t(&4)", (*) => BootGui.showGui())
+        this.menu.Add("插件界面`t(&5)", (*) => PluginGui.showGui())
+        this.menu.Add("设置界面`t(&6)", (*) => SettingGui.showGui())
+        this.menu.Add("关于界面`t(&7)", (*) => AboutGui.showGui())
         this.menu.Add()
         this.menu.Add("开机启动", (*) => this.toggleStartupState())
 
         userDataMenu := Menu()
-        userDataMenu.Add("打开数据目录`t(&D)", (*) => Start.startFile(GlobalData.dataDir))
-        userDataMenu.Add("导出用户数据`t(&B)", (*) => this.guideGui(0))
-        userDataMenu.Add("导入用户数据`t(&I)", (*) => this.guideGui(1))
+        userDataMenu.Add("打开数据目录`t(&1)", (*) => Start.startFile(GlobalData.dataDir))
+        userDataMenu.Add("导出用户数据`t(&2)", (*) => this.guideGui(0))
+        userDataMenu.Add("导入用户数据`t(&3)", (*) => this.guideGui(1))
         this.menu.Add("用户数据`t(&D)", userDataMenu)
 
         this.menu.Add("退出`t(&X)", (*) => ExitApp())
@@ -40,7 +41,8 @@ class TrayMenu {
         this.menu.SetIcon("3&", GlobalData.imgDir "\edit.ico")
         this.menu.SetIcon("4&", GlobalData.imgDir "\run.ico")
         this.menu.SetIcon("5&", GlobalData.imgDir "\plugin.ico")
-        this.menu.SetIcon("6&", GlobalData.imgDir "\info.ico")
+        this.menu.SetIcon("6&", GlobalData.imgDir "\setting.ico")
+        this.menu.SetIcon("7&", GlobalData.imgDir "\info.ico")
 
         if (this.getStartupState())
             this.menu.Check("开机启动")
@@ -145,7 +147,7 @@ class TrayMenu {
                 DirCopy(dir, GlobalData.dataDir, true), res .= "用户数据导入成功`n"
         }
         if (options[2]) {
-            if (FileExist(dir := tmpDir "\Plugin")){
+            if (FileExist(dir := tmpDir "\Plugin")) {
                 DirCopy(dir, GlobalData.pluginDir, true), res .= "插件导入成功`n"
             }
         }
@@ -164,7 +166,7 @@ class TrayMenu {
     ; 获取加入注册表状态
     static getStartupState() {
         try
-            return RegRead("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run", "Starter")
+            return !!RegRead("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run", "Starter")
         catch
             return false
     }
