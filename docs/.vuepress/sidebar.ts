@@ -28,6 +28,11 @@ export const zhSidebar = sidebar({
       link: "/guide/plugin/",
     },
     {
+      text: "设置界面",
+      icon: "gear",
+      link: "/guide/setting/",
+    },
+    {
       text: "自启界面",
       icon: "desktop",
       link: "/guide/boot/",
