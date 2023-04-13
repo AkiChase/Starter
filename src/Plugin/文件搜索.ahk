@@ -3,7 +3,7 @@
  * @Version: 0.1.0
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-08
+ * @LastEditTime: 2023-04-12
  * @Description: 调用Everything进行文件搜索
  */
 
@@ -11,7 +11,7 @@
 ===Starter Plugin Info==>
 {
     "author": "ruchuby",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "introduction": "调用Everything进行文件搜索",
     "icon": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsSAAALEgHS3X78AAAE60lEQVRYhb2W628UVRjGf+fszG67oReE1lBJW26FBkovKxIDIgZvNJCoCX41IZEYEqipIcaELySKklRLxBRDSPwDNFE0BmnUFLBNrSyuy8UCUkqBVMvSQlnc3bmc8cN06W7L7rYIPF8m875n5nnmPc953xH8D2wD34IAK6SkWjjMBnAchh2b3v4QPa0Qy/UOcT/ErQFWah6aNa9vo2Ml8u+5SOoJ2zQPK5O9TSGOPhABu5cwq7iQ/Ug2eTVYOAcqSmBWAfh97ppYAm5EYeA6/DUIcRNsm+9vKd7cGWTwvgW01lKne/lO15lbNw/q54GuZX/GsiF8GYIXwTAZsg1ebQrRNW0BH9dR6/NytCCfosYAzC6cqmwXI1E4fBJGovxrG7yQKiKngN1LmFVYQKjAz9zXnoYZedMjTyJmwNfdMBIlcnOEup0XuAaQo4hQXMh+6WHu+obJ5HHDLfGlf+DmHTdW5IeKUqitHPcFQL4XGgPwZRezi4v5AngRwJONvDXASk2jtWEBVJWl5/qH4FAPDERQd+J02jZf2Q6dsQSJv2+K8rNXkIX5rkGTyPOCJuHqMAueL6X7yCAXs1ZA89Ds1VzDTST/4SRYit/icTbvCHM6Nb+nzlnkOBz8Mcwah3Txyyog1A+2TTNwRGYi3wY+ARsXzkl3e9yAn8JgK0709fDsRHKAd0NcOGXzvLLp6DgN0fh4ziNhcRkIKda11TAzo4CxDpdfUZIeD1+GuIlK2GzO1ukOBDFjCTZbaEaoLz1XXgJSOB5DZ1VGAVJSDel7CK7hHEXXO0FOZXo2iR1hLjmW1X5pKD2efKeUVGcUkOztqU4G1+2OQ08u8iSUQ080DqY9HvPp7lYA/owCnGw9QqCmKkAwttaZFAcgowAcboDb21NR5AcBgSkLEAT8vnQjGxZYCjRBPHMFbHrBHSypqCwFIcWaluVU5SJ/fxFPSN27vrI0PT58272ait6MAvpD9CD1xMD19PjySvBqjifPx8EtAfQs/LKomANSGXkT+8hABJSDGobOjAJaIWab5uELg+5US8Lvg7VLQXp4pkZy5MNaKic+u2cxZftW8K3HQ+Pqaij0j+eUgnPXAMWxXUEiWTuhUnyaMHklfBka5o/HF5W5nuo4zXOFunbus6esduXQI0AJQUDq3vVSGXmrq2Fpefo7/7zqNiZbsRdyDCMhqQGIjE7OVZVB2WPwe5/l7R9iQzTOhmSFKksM6uenfznAaAy6z4Nt80tTkEOQ5ajtC/AWHtrmP454qf7uuc0I0waczD8pCRO++RUio9ySMRq2nqIPMlRguuQAepa5ejvm/pBERjEsm01vj5HDPSqQjdxxoOsczPC5Uy2XMKXcPe8+D3GDW7bN601B2lPXpAnIRX78LJy54t77fe5UKx/7KfWNHUjDcs/5QMR1ezTu7rknzhtbU758koCpkls2LSg6hGS7kGKdFI4H3PUCt8OBe85RHLMVe5OGuxcEQNtKtiiHz+flILctPtp2gveSubYaZho6q6SkWgh3eHlg2FT0DkPnriCRTMR3BbQspyrfL89UlihtOuQPClL30ihQ2tplj54cQErhTkSRYsdHRQ4g4wnalYM6ftZ1sGnD0TOPhhzGTLhvBc0IWnSPe68csCw+2H6CnQ+T/K4AgE/qeVLTeBkQlsHPzX/Q+bDJAf4DkxsIASilfOoAAAAASUVORK5CYII="
 }
@@ -176,7 +176,7 @@ class Plugin_文件搜索 {
             ; 添加
             switch this.cotMode {
                 case "path":
-                    that.listView.Add("Icon" icoIndex, this.pathStrCompact(item.path, 45)) ;显示压缩的路径
+                    that.listView.Add("Icon" icoIndex, PluginHelper.Utils.pathStrCompact(item.path, 45)) ;显示压缩的路径
                 case "name":
                     that.listView.Add("Icon" icoIndex, item.name)
                 case "size":
@@ -241,8 +241,8 @@ class Plugin_文件搜索 {
             }
         }
 
-        ; 进入插件模式初始化
-        init(that) {
+        ; 仅带有纯文本时的初始化
+        initWithText(that) {
             that.pluginOtherData := {
                 totalNum: 0,
                 offset: 0
@@ -252,15 +252,22 @@ class Plugin_文件搜索 {
 
         ; 带有文件时的初始化
         initWithFile(that) {
-            init(that)
-            PluginHelper.placeholder := "在文件夹内搜索"
+            initWithText(that)
+        }
+
+        ; 窗口匹配时的初始化
+        initWithWindow(path, that) {
+            initWithText(that)
+            that.pluginOtherData.path := path
         }
 
         ;定义插件模式下搜索功能
         searchHandler(that, searchText) {
             that.pluginSearchResult := []
             if (PluginHelper.pastedContentType == "file")
-                searchText := Format('"{}" ', PluginHelper.pastedContent[1])
+                searchText := Format('"{}" {}', PluginHelper.pastedContent[1], searchText)
+            else if (that.pluginOtherData.HasOwnProp("path"))
+                searchText := Format('"{}" {}', that.pluginOtherData.path, searchText)
             ; 其他类型不修改searchText
 
             if (searchText) {
@@ -354,7 +361,7 @@ class Plugin_文件搜索 {
                         doubleLeftHandler: doubleRightHandler,
                         loadImgsHandler: loadImg, ; 需要带有图标
                         toBottomHandler: asyncLoading, ; 异步加载
-                        initHandler: init, ; 初始化
+                        initHandler: initWithText, ; 初始化
                         pasteContentHandler: pasteContentHandler, ; 允许粘贴单文件夹
                         dropFilesHandler: dropFilesHandler, ; 允许拖入单文件夹
                         placeholder: "Search on Everything",
@@ -366,26 +373,49 @@ class Plugin_文件搜索 {
 
         ; 匹配处理函数
         ; 1. 匹配文本 2. 匹配单文件夹，且文件夹存在，并进行优先级细分
-        matchHandler(obj, searchText, pastedContentType, pastedContent) {
-            if (pastedContentType == 'text' && searchText) {
-                obj.matchData := { type: "text" } ; 标记匹配类型，方便进入插件模式前区分进入方式
-                obj.title := "使用Everything搜索输入内容" ; 修改显示标题
-                return 1 ; 基本优先级
-            } else if (pastedContentType == 'file' && pastedContent.Length = 1 && InStr(FileExist(pastedContent[1]), "D")) {
-                if (PluginHelper.Utils.strStartWith("Everything", searchText)
-                    || PluginHelper.Utils.strStartWith("WJSS", searchText)) {
-                    ; 搜索文本为Everything或者WJSS的开头
-                    obj.matchData := { type: "file", searchTextFlag: false } ; 标记最后不要传入searchText
-                    obj.title := "使用Everything在文件夹内搜索" ; 修改显示标题
-                    return 2 ; 更高优先级
-                } else {
-                    obj.matchData := { type: "file", searchTextFlag: true }
-                    obj.title := "使用Everything在文件夹内搜索输入内容" ; 修改显示标题
+        matchHandler(obj, searchText, pastedContentType, pastedContent, workWinInfo, winInfoMatchFlag) {
+            if (winInfoMatchFlag) {
+                pName := workWinInfo.processName
+                cName := workWinInfo.class
+                path := workWinInfo.title
+                ; 匹配资源管理器 且 标题指向的文件夹存在
+                if ((pName == 'explorer.exe' || cName == "CabinetWClass" || cName == "ExploreWClass")
+                    && InStr(FileExist(path), "D")
+                ) {
+                    if (PluginHelper.Utils.strStartWith("Everything", searchText)
+                        || PluginHelper.Utils.strStartWith("WJSS", searchText)) {
+                        ; 搜索文本为Everything或者WJSS的开头
+                        obj.matchData := { type: "window", searchTextFlag: false, path: path }
+                        obj.title := "在工作窗口目录内搜索" ; 修改显示标题
+                        return 2 ; 更高优先级
+                    } else {
+                        obj.matchData := { type: "window", searchTextFlag: true, path: path }
+                        obj.title := "在工作窗口目录内搜索输入内容" ; 修改显示标题
+                        return 1 ; 基本优先级
+                    }
+                }
+            } else {
+                if (pastedContentType == 'text' && searchText) {
+                    obj.matchData := { type: "text" } ; 标记匹配类型，方便进入插件模式前区分进入方式
+                    obj.title := "使用Everything搜索输入内容" ; 修改显示标题
                     return 1 ; 基本优先级
+                } else if (pastedContentType == 'file' && pastedContent.Length = 1 && InStr(FileExist(pastedContent[1]), "D")) {
+                    if (PluginHelper.Utils.strStartWith("Everything", searchText)
+                        || PluginHelper.Utils.strStartWith("WJSS", searchText)) {
+                        ; 搜索文本为Everything或者WJSS的开头
+                        obj.matchData := { type: "file", searchTextFlag: false } ; 标记最后不要传入searchText
+                        obj.title := "使用Everything在文件夹内搜索" ; 修改显示标题
+                        return 2 ; 更高优先级
+                    } else {
+                        obj.matchData := { type: "file", searchTextFlag: true }
+                        obj.title := "使用Everything在文件夹内搜索输入内容" ; 修改显示标题
+                        return 1 ; 基本优先级
+                    }
                 }
             }
             return 0 ; 不匹配
         }
+
 
         ; 添加插件项到智能模式搜索界面
         PluginHelper.addPluginToIntelligentMode(
@@ -400,25 +430,20 @@ class Plugin_文件搜索 {
                         doubleLeftHandler: doubleRightHandler,
                         loadImgsHandler: loadImg, ; 需要带有图标
                         toBottomHandler: asyncLoading, ; 异步加载
-                        initHandler: obj.matchData.type == 'text' ? init : initWithFile, ; 区分两种初始化
+                        initHandler:
+                            obj.matchData.type == 'text' ?  ; 区分初始化
+                            initWithText : obj.matchData.type == 'file' ?
+                                initWithFile : initWithWindow.Bind(obj.matchData.path),
+                        placeholder:
+                            obj.matchData.type == 'text' ?  ; 区分占位符
+                            "Search on Everything" : obj.matchData.type == 'file' ?
+                                "在文件夹内搜索" : Format('"{}" 内搜索', PluginHelper.Utils.pathStrCompact(obj.matchData.path, 25)),
                         pasteContentHandler: pasteContentHandler, ; 允许粘贴文件
-                        placeholder: "Search on Everything",
                         searchText: obj.matchData.searchTextFlag ? searchText : "", ; 区分是否要传入搜索文本
                         thumb: PluginHelper.getPluginHIcon(this.name)
                     }
                 )
             ), , PluginHelper.getPluginHIcon(this.name)
         )
-    }
-
-    ; 压缩文件路径
-    static pathStrCompact(fullPath, maxChars) {
-        out := Buffer(255)
-        DllCall("shlwapi.dll\PathCompactPathExW"
-            , "UPtr", out.Ptr
-            , "WStr", fullPath
-            , "UInt", maxChars
-        )
-        return StrGet(out)
     }
 }

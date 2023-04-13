@@ -1,4 +1,4 @@
-UrlEncode(str, sExcepts := "!#$&'()*+,-./:;=?@_~", enc := "UTF-8")
+UrlEncode(str, sExcepts := "-_.", enc := "UTF-8")
 {
 	hex := "00", func := "msvcrt\swprintf"
 	buff := Buffer(StrPut(str, enc)), StrPut(str, buff, enc)   ;转码

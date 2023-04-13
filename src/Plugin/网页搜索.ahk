@@ -3,7 +3,7 @@
  * @Version: 0.0.2
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-08
+ * @LastEditTime: 2023-04-12
  * @Description: 网页搜索(带联想词)
  */
 
@@ -176,7 +176,7 @@ class Plugin_网页搜索 {
             PluginHelper.addPluginToIntelligentMode(
                 this.outer.name,
                 this.title,
-                (obj, searchText, pastedContentType, pastedContent) => (
+                (obj, searchText, pastedContentType, *) => (
                     pastedContentType == "text" &&
                     searchText
                 ) ? -1 : 0, ; 匹配则优先级设为-1
@@ -264,7 +264,7 @@ class Plugin_网页搜索 {
             PluginHelper.addPluginToIntelligentMode(
                 this.outer.name,
                 this.title,
-                (obj, searchText, pastedContentType, pastedContent) => (
+                (obj, searchText, pastedContentType, *) => (
                     pastedContentType == "text" &&
                     searchText
                 ) ? -1 : 0, ; 匹配则优先级设为-1
@@ -347,7 +347,7 @@ class Plugin_网页搜索 {
             PluginHelper.addPluginToIntelligentMode(
                 this.outer.name,
                 this.title,
-                (obj, searchText, pastedContentType, pastedContent) => (
+                (obj, searchText, pastedContentType, *) => (
                     pastedContentType == "text" &&
                     searchText
                 ) ? -1 : 0, ; 匹配则优先级设为-1

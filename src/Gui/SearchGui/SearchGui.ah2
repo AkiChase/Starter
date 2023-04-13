@@ -105,14 +105,13 @@ class SearchGui {
         set {
             if (this._pastedContentType = "bitmap"
                 && DllCall("OpenClipboard", "ptr", 0) && DllCall("IsClipboardFormatAvailable", "uint", 2)) {
-                ; 位图
-                hBitmap := DllCall("GetClipboardData", "uint", 2, "ptr") ; 指向剪切板内数据
-                hBitmap := LoadPicture("HBITMAP:*" hBitmap) ;复制一份
                 DllCall("CloseClipboard")
+                buf := ImagePutBuffer(ClipboardAll)
 
                 this.placeholder := "", this.edit.Move(50, , 455)
-                this.contentThumb.Value := "HBITMAP:*" hBitmap, this.contentThumb.Visible := true
-                this.placeholder := "图片", this._pastedContent := hBitmap
+                this.contentThumb.Value := "HBITMAP:" ImagePutHBitmap(buf) ; 创建hBitmap用于控件显示
+                this.contentThumb.Visible := true
+                this.placeholder := "图片", this._pastedContent := buf
             } else if (this._pastedContentType = "file") {
                 ; 文件
                 fileList := Type(Value) == "Array" ? Value : StrSplit(Value, "`r`n") ; 自动处理数组或字符串类型
@@ -137,20 +136,18 @@ class SearchGui {
 
     ; 长按获取的当前窗口信息
     static workWinInfo := {
+        hwnd: 0,
         title: "",
         class: "",
-        process: ""
+        processPath: "",
+        processName: ""
     }
 
     ;#region 是否处于窗口匹配
     static _winInfoMatchFlag := false
     static winInfoMatchFlag {
         get => this._winInfoMatchFlag
-        set {
-            if (Value)
-                this.placeholder := "Hi, Window Match Mode 💻"
-            this._winInfoMatchFlag := Value
-        }
+        set => this._winInfoMatchFlag := Value
     }
     ;#endregion
 
@@ -180,8 +177,16 @@ class SearchGui {
 
         this.contentThumb := this.gui.AddPicture("x7 y7 w36 h36 +Border +Hidden")
 
-        this.contentThumb.OnEvent("Click", (*) => this._pastedContentType = "file" ? this.showFileListInfo(this.pastedContent) : 0)
+        clickThumbHandler(*) {
+            switch this._pastedContentType {
+                case "file":
+                    this.showFileListInfo(this.pastedContent)
+                case "bitmap":
+                    ImagePutWindow(this.pastedContent, "查看图像")
+            }
+        }
 
+        this.contentThumb.OnEvent("Click", clickThumbHandler)
         ; 回车触发
         this.gui.AddButton("Default Hidden").OnEvent("Click", (*) => this.mode == 0 ?
             StartupMode.startupRun() : this.mode == 1 ?
@@ -215,37 +220,40 @@ class SearchGui {
 
     ; 热键初始化
     static hotkeyInit() {
-        capsLockHandler(key) {
-            if (KeyWait("CapsLock", "T0.4")) { ; 非长按
-                if (A_ThisHotkey = A_PriorHotkey && A_TimeSincePriorHotkey < 300) {
-                    StartupMode.showGui() ; 显示并清空搜索框
-                }
-            } else { ; 长按0.4秒
-                clipSaved := ClipboardAll()
-                content := GetSelectedText(0.1, &outType) ; 等待最多0.1s剪切板
-                this.noRecover := true ; 保证能显示智能模式
-                IntelligentMode.showGui()  ; 显示并清空搜索框
-                if (!content && (outType = 'text' || outType = "timeout")) { ;
-                    ; 获取窗口信息
-                    WinExist("A")
-                    this.workWinInfo.class := WinGetClass()
-                    this.workWinInfo.process := WinGetProcessPath()
-                    this.workWinInfo.title := WinGetTitle()
-                    this.winInfoMatchFlag := true ; 开启窗口匹配模式
-                } else
-                    this.winInfoMatchFlag := false ; 关闭窗口匹配模式
+        showIntellientBoxCB(*) {
+            clipSaved := ClipboardAll()
+            content := GetSelectedText(0.1, &outType) ; 等待最多0.1s剪切板
 
-                if (outType != 'timeout') {
-                    this._pastedContentType := outType
-                    this.pastedContent := content
-                }
-                this.searchText := "" ; 触发搜索
-                A_Clipboard := clipSaved
-                KeyWait("CapsLock")    ;等待松开, 避免重复调用
+            ; 是否进入窗口匹配模式
+            if (!content && (outType = 'text' || outType = "timeout")) { ;
+                ; 获取窗口信息
+                this.workWinInfo.hwnd := WinExist("A")
+                this.workWinInfo.class := WinGetClass()
+                this.workWinInfo.processPath := WinGetProcessPath()
+                this.workWinInfo.processName := WinGetProcessName()
+                this.workWinInfo.title := WinGetTitle()
+                this.winInfoMatchFlag := true ; 开启窗口匹配模式
+            } else
+                this.winInfoMatchFlag := false ; 关闭窗口匹配模式
+
+            this.noRecover := true ; 保证能显示智能模式
+            IntelligentMode.showGui(outType = 'text' ? content : "")  ; 显示并视情况填入搜索框
+
+            if (this.winInfoMatchFlag) {
+                this.placeholder := "Hi, Window Match 💻"
+                this.showWinInfo()
             }
-        }
 
-        Hotkey("~CapsLock", capsLockHandler, "Off") ;先不开启热键，等加载完毕后再开启
+
+            if (outType != 'timeout') {
+                this._pastedContentType := outType
+                this.pastedContent := content
+            }
+            this.searchText := "" ; 触发搜索
+            A_Clipboard := clipSaved
+        }
+        GlobalData.hotkeyList.Push({ cb: (*) => StartupMode.showGui() }) ; 呼出搜索框
+        GlobalData.hotkeyList.Push({ cb: showIntellientBoxCB }) ; 智能搜索框
 
         ; 根据模式和热键内容执行
         hotkeyHandler(key) {
@@ -291,9 +299,9 @@ class SearchGui {
     ; 显示窗口匹配信息
     static showWinInfo() {
         WiseGuiHelper.WiseGui("workWinInfo", "Main: 0", "Theme: ,,,0", "FontSub: s14 ,雅痞-简",
-            "Shadow: 1", "TextWidth: 530", "Transparency: 192", "Timer: 1500",
+            "Shadow: 1", "TextWidth: 530", "Transparency: 192", "Timer: 3000",
             "SubText: " Format("@工作窗口标题`n{}`n@工作窗口类`n{}`n@工作窗口程序`n{}"
-                , this.workWinInfo.title, this.workWinInfo.class, this.workWinInfo.process)
+                , this.workWinInfo.title, this.workWinInfo.class, this.workWinInfo.processName)
         )
         if (WinExist("WiseGui\workWinInfo ahk_class AutoHotkeyGUI")) {
             WinGetPos(&x, &y, , , this.gui)

@@ -3,19 +3,26 @@
  * @Version: 0.3.0
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-08
+ * @LastEditTime: 2023-04-13
  * @Description: 介绍Starter 是一款AHK编写的快速启动工具，旨在方便快捷地启动文件、文件夹，提高电脑的使用效率。
  */
 #NoTrayIcon ; 先隐藏图标
 
 ListLines False
 #SingleInstance Force
+InstallKeybdHook(true, true)
+InstallMouseHook(true, true)
 FileEncoding("UTF-8-RAW")
+SetWinDelay(0)
+
 
 ; 调试模式下，退出时不保存用户数据，不会动态载入插件
 ; 手动#inclide 需要调试的插件
 ; DEBUG := true
+; F2::ListHotkeys()
+; #Include .\Plugin\OCR.ahk
 ; #Include .\Plugin\文件搜索.ahk
+; #Include .\Plugin\文件选择对话框导航.ahk
 ; #Include .\Plugin\网页搜索.ahk
 ; #Include .\Plugin\demo.ahk
 
@@ -31,6 +38,7 @@ PluginGui.init() ;同时重启以加载插件
 #Include .\Utils\ChineseFirstChar.ah2
 #Include .\Utils\MapArrClone.ah2
 #Include .\Utils\GetSelectedText.ah2
+#Include .\Utils\HotkeyHelper.ah2
 #Include .\Utils\JXON.ah2
 #Include .\Utils\WinHttp.ah2
 #Include .\Utils\IME.ah2
@@ -42,6 +50,7 @@ PluginGui.init() ;同时重启以加载插件
 #Include .\Utils\EditCtrlFunc.ah2
 #Include .\Utils\CopyToClipboard.ah2
 #Include .\Utils\7Zip\SevenZip.ahk
+#Include .\Utils\ImagePut.ah2
 
 Tip := WiseGuiHelper("tooltip")
 Tip.setOpt(, , "s14 Bold, 雅痞-简", "s12, 雅痞-简", 225
@@ -72,6 +81,8 @@ TrayMenu.init()
 #Include .\Utils\PluginHelper.ah2
 PluginHelper.init() ;同时执行所有插件的入口函数
 
+#Include .\Gui\SettingGui.ah2
+SettingGui.init()
 
 if (!IsSet(DEBUG) || !DEBUG)
     OnExit((*) => GlobalData.onExitHandler())    ;退出时保存数据

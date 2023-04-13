@@ -3,7 +3,7 @@
  * @Version: 0.0.3
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-08
+ * @LastEditTime: 2023-04-13
  * @Description: 插件API封装
  */
 
@@ -18,8 +18,6 @@ class PluginHelper {
         ;加载插件的图标
         StartupMode.pluginLoadImgs()
         IntelligentMode.pluginLoadImgs()
-
-        Hotkey("~CapsLock", "On") ;加载完毕，恢复热键
     }
 
     /**
@@ -34,9 +32,13 @@ class PluginHelper {
      * @description: 添加插件项到智能模式列表
      * @param name 插件id, 即文件名
      * @param title 插件项显示标题
-     * @param matchHandler 插件项匹配函数 (obj, searchText, pastedContentType, pastedContent)=>bool
+     * @param matchHandler 插件项匹配函数 (obj, searchText, pastedContentType, pastedContent, workWinInfo, winInfoMatchFlag)=>bool
      * 
-     * obj指向添加的插件项对象; searchText为当前搜索内容; pastedContentType为粘贴内容类型; pastedContentType为粘贴内容
+     * obj指向添加的插件项对象; searchText为当前搜索内容;
+     * 
+     * pastedContentType为粘贴内容类型; pastedContentType为粘贴内容
+     * 
+     * workWinInfo为工作窗口信息; winInfoMatchFlag为是否开启工作窗口模式（即没有选中任何内容）
      * 
      * @param runHandler 鼠标双击、回车该插件项时执行的函数
      * (obj, searchText)=>any obj指向添加的插件项对象, searchText为搜索框文本内容
@@ -111,9 +113,26 @@ class PluginHelper {
      */
     static pastedContentType => SearchGui._pastedContentType
     /**
-     * @description: 粘贴内容 fileList hbitmap str
+     * @description: 粘贴内容 fileList buffer(ImagePut type) str
      */
     static pastedContent => SearchGui._pastedContent
+
+    /**
+     * @description: 工作窗口信息
+     * 
+     * workWinInfo.hwnd   hwnd
+     * 
+     * workWinInfo.title    窗口标题
+     * 
+     * workWinInfo.class    窗口类名
+     * 
+     * workWinInfo.processPath  程序路径
+     * 
+     * workWinInfo.processName  程序名称
+     */
+    static workWinInfo => SearchGui.workWinInfo
+    ; 是否处于窗口匹配状态
+    static winInfoMatchFlag => SearchGui.winInfoMatchFlag
 
     /**
      * @description: 搜索框占位符
@@ -192,6 +211,12 @@ class PluginHelper {
     }
 
     class Utils {
+        /**
+         * @description: 将文本的中文部分转换为拼音首字母(多音字不正确)
+         */
+        static chineseFirstChar(str) {
+            return ChineseFirstChar(str)
+        }
 
         /**
          * @description: ori是否以sub开头
@@ -203,6 +228,22 @@ class PluginHelper {
                 caseSense ? SubStr(ori, 1, StrLen(sub)) == sub :
                     SubStr(ori, 1, StrLen(sub)) = sub
                 )
+        }
+
+        /**
+         * @description: 压缩文件路径文本
+         * @param fullPath 文件完整路径
+         * @param maxChars 压缩后最大字符数
+         * @return 压缩后路径文本
+         */
+        static pathStrCompact(fullPath, maxChars) {
+            out := Buffer(255)
+            DllCall("shlwapi.dll\PathCompactPathExW"
+                , "UPtr", out.Ptr
+                , "WStr", fullPath
+                , "UInt", maxChars
+            )
+            return StrGet(out)
         }
 
         /**
@@ -294,7 +335,162 @@ class PluginHelper {
         static quickSort(arr, fn) {
             return QuickSort(arr, fn)
         }
+
+        ; modified from iseahound's ImagePut
+        ; Wiki:https://github.com/iseahound/ImagePut/wiki/Input-Types-&-Output-Functions
+        class ImagePutHelper {
+            ; Puts the image into a file format and returns a base64 encoded string.
+            ;   extension  -  File Encoding           |  string   ->   bmp, gif, jpg, png, tiff
+            ;   quality    -  JPEG Quality Level      |  integer  ->   0 - 100
+            static ImagePutBase64(image, extension := "", quality := "") {
+                return ImagePut("base64", image, extension, quality)
+            }
+
+            ; Puts the image into a GDI+ Bitmap and returns a pointer.
+            static ImagePutBitmap(image) {
+                return ImagePut("bitmap", image)
+            }
+
+            ; Puts the image into a GDI+ Bitmap and returns a buffer object with GDI+ scope.
+            static ImagePutBuffer(image) {
+                return ImagePut("buffer", image)
+            }
+
+            ; Puts the image onto the clipboard and returns ClipboardAll().
+            static ImagePutClipboard(image) {
+                return ImagePut("clipboard", image)
+            }
+
+            ; Puts the image as the cursor and returns the variable A_Cursor.
+            ;   xHotspot   -  X Click Point           |  pixel    ->   0 - width
+            ;   yHotspot   -  Y Click Point           |  pixel    ->   0 - height
+            static ImagePutCursor(image, xHotspot := "", yHotspot := "") {
+                return ImagePut("cursor", image, xHotspot, yHotspot)
+            }
+
+            ; Puts the image onto a device context and returns the handle.
+            ;   alpha      -  Alpha Replacement Color |  RGB      ->   0xFFFFFF
+            static ImagePutDC(image, alpha := "") {
+                return ImagePut("dc", image, alpha)
+            }
+
+            ; Puts the image behind the desktop icons and returns the string "desktop".
+            static ImagePutDesktop(image) {
+                return ImagePut("desktop", image)
+            }
+
+            ; Puts the image into the most recently active explorer window.
+            static ImagePutExplorer(image, default := "") {
+                return ImagePut("explorer", image, default)
+            }
+
+            ; Puts the image into a file and returns its filepath.
+            ;   filepath   -  Filepath + Extension    |  string   ->   *.bmp, *.gif, *.jpg, *.png, *.tiff
+            ;   quality    -  JPEG Quality Level      |  integer  ->   0 - 100
+            static ImagePutFile(image, filepath := "", quality := "") {
+                return ImagePut("file", image, filepath, quality)
+            }
+
+            ; Puts the image into a multipart/form-data in binary and returns a SafeArray COM Object.
+            ;   boundary   -  Content-Type            |  string   ->   multipart/form-data; boundary=something
+            static ImagePutFormData(image, boundary := "ImagePut-abcdef") {
+                return ImagePut("formdata", image, boundary)
+            }
+
+            ; Puts the image into a device independent bitmap and returns the handle.
+            ;   alpha      -  Alpha Replacement Color |  RGB      ->   0xFFFFFF
+            static ImagePutHBitmap(image, alpha := "") {
+                return ImagePut("hBitmap", image, alpha)
+            }
+
+            ; Puts the image into a file format and returns a hexadecimal encoded string.
+            ;   extension  -  File Encoding           |  string   ->   bmp, gif, jpg, png, tiff
+            ;   quality    -  JPEG Quality Level      |  integer  ->   0 - 100
+            static ImagePutHex(image, extension := "", quality := "") {
+                return ImagePut("hex", image, extension, quality)
+            }
+
+            ; Puts the image into an icon and returns the handle.
+            static ImagePutHIcon(image) {
+                return ImagePut("hIcon", image)
+            }
+
+            ; Puts the image into a file format and returns a pointer to a RandomAccessStream.
+            ;   extension  -  File Encoding           |  string   ->   bmp, gif, jpg, png, tiff
+            ;   quality    -  JPEG Quality Level      |  integer  ->   0 - 100
+            static ImagePutRandomAccessStream(image, extension := "", quality := "") {
+                return ImagePut("RandomAccessStream", image, extension, quality)
+            }
+
+            ; Puts the image into a file format and returns a SafeArray COM Object.
+            ;   extension  -  File Encoding           |  string   ->   bmp, gif, jpg, png, tiff
+            ;   quality    -  JPEG Quality Level      |  integer  ->   0 - 100
+            static ImagePutSafeArray(image, extension := "", quality := "") {
+                return ImagePut("safeArray", image, extension, quality)
+            }
+
+            ; Puts the image on the shared screen device context and returns an array of coordinates.
+            ;   screenshot -  Screen Coordinates      |  array    ->   [x,y,w,h] or [0,0]
+            ;   alpha      -  Alpha Replacement Color |  RGB      ->   0xFFFFFF
+            static ImagePutScreenshot(image, screenshot := "", alpha := "") {
+                return ImagePut("screenshot", image, screenshot, alpha)
+            }
+
+            ; Puts the image into a file format and returns a pointer to a stream.
+            ;   extension  -  File Encoding           |  string   ->   bmp, gif, jpg, png, tiff
+            ;   quality    -  JPEG Quality Level      |  integer  ->   0 - 100
+            static ImagePutStream(image, extension := "", quality := "") {
+                return ImagePut("stream", image, extension, quality)
+            }
+
+            ; Puts the image into a file format and returns a URI string.
+            ;   extension  -  File Encoding           |  string   ->   bmp, gif, jpg, png, tiff
+            ;   quality    -  JPEG Quality Level      |  integer  ->   0 - 100
+            static ImagePutURI(image, extension := "", quality := "") {
+                return ImagePut("uri", image, extension, quality)
+            }
+
+            ; Puts the image as the desktop wallpaper and returns the string "wallpaper".
+            static ImagePutWallpaper(image) {
+                return ImagePut("wallpaper", image)
+            }
+
+            ; Puts the image into a WICBitmap and returns the pointer to the interface.
+            static ImagePutWICBitmap(image) {
+                return ImagePut("wicBitmap", image)
+            }
+
+            ; Puts the image in a window and returns a handle to a window.
+            ;   title      -  Window Title            |  string   ->   MyTitle
+            ;   pos        -  Window Coordinates      |  array    ->   [x,y,w,h] or [0,0]
+            ;   style      -  Window Style            |  uint     ->   WS_VISIBLE
+            ;   styleEx    -  Window Extended Style   |  uint     ->   WS_EX_LAYERED
+            ;   parent     -  Window Parent           |  ptr      ->   hwnd
+            static ImagePutWindow(image, title := "", pos := "", style := 0x82C80000, styleEx := 0x9, parent := "") {
+                return ImagePut("window", image, title, pos, style, styleEx, parent)
+            }
+
+
+            ;   title      -  Window Title            |  string   ->   MyTitle
+            ;   pos        -  Window Coordinates      |  array    ->   [x,y,w,h] or [0,0]
+            ;   style      -  Window Style            |  uint     ->   WS_VISIBLE
+            ;   styleEx    -  Window Extended Style   |  uint     ->   WS_EX_LAYERED
+            ;   parent     -  Window Parent           |  ptr      ->   hwnd
+            static ImageShow(image, title := "", pos := "", style := 0x90000000, styleEx := 0x80088, parent := "") {
+                return ImagePut("show", image, title, pos, style, styleEx, parent)
+            }
+
+            static ImageDestroy(image) {
+                return ImagePut.Destroy(image)
+            }
+
+            static ImageWidth(image) {
+                return ImagePut.Dimensions(image)[1]
+            }
+
+            static ImageHeight(image) {
+                return ImagePut.Dimensions(image)[2]
+            }
+        }
     }
-
-
 }
