@@ -22,7 +22,7 @@ icon: lightbulb
 通过搜索和情景匹配，回应符合要求的内容
 ## 轻量 & 绿色 ✨
 
-![软件体积](../images/file-size.jpg)
+![软件体积](../images/virustotal.jpg)
 
 Starter 使用AHK编写，绿色免安装，体积 < 2M
 ## 简洁 & 颜值在线 ✨

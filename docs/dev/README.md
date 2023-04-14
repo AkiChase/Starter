@@ -5,8 +5,8 @@ icon: code
 
 开发者，欢迎你。
 
-当前`PluginHelper`模块的API尚未稳定，文档也还在构建中，暂时不提供文档。
+创建一个 `Starter` 插件非常简单，只需要了解一些AHK的基本知识并使用 `Starter` 提供的接口和工具函数。实际上，创建插件与编写普通的AHK程序类似，你也可以把自己常用的脚本转化为 `Starter` 插件，通过 `Starter` 实现更加强大的功能。
 
-有兴趣的可以参考已有插件的[源码](https://github.com/ruchuby/Starter/tree/master/src/Plugin)
-
-<!-- <AutoCatalog/> -->
+::: tip
+阅读[快速上手](./get-started/)，创建你的第一个专属插件。
+:::
