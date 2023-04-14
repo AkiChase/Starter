@@ -99,13 +99,13 @@ class Plugin_MyPlugin {
 在模板代码的最开始，我们就通过 `#Include ..\Utils\PluginHelper.ah2` 引入了这个模块
 
 :::tip
-`PluginHelper` 在 **Starter** 中已经引用了。
+`PluginHelper` 在 **Starter** 中已经 `#include` 过。
 
-所以在此引用这个模块的目的仅仅是为了**获得代码提示**，使用**vscode**配合[ahk2扩展](https://marketplace.visualstudio.com/items?itemName=thqby.vscode-autohotkey2-lsp)，
+所以在此重复引用这个模块的目的仅仅是为了**获得代码提示**，使用**vscode**配合[ahk2扩展](https://marketplace.visualstudio.com/items?itemName=thqby.vscode-autohotkey2-lsp)，
 
 可以获得非常详细的代码提示。
 
-![代码提示](../images/code-prompt.jpg)
+![代码提示](./images/code-prompt.jpg)
 :::
 
 为了**代码结构清晰**和**避免变量污染**，把一定规模的代码定义为一个新的函数并给出注释，将其放在`main`函数中执行。
@@ -229,7 +229,7 @@ class Plugin_MyPlugin {
 ```
 重启 **Starter** 后，呼出搜索框就可以在列表中看到当前插件启动项
 
-![插件启动项](../images/myplugin-startup-item.jpg)
+![插件启动项](./images/myplugin-startup-item.jpg)
 
 回车或者鼠标双击，还有双击Right可以看到 `WishGui` 通知。
 

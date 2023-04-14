@@ -3,7 +3,7 @@
  * @Version: 0.0.3
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-13
+ * @LastEditTime: 2023-04-14
  * @Description: 插件API封装
  */
 
@@ -32,7 +32,7 @@ class PluginHelper {
      * @description: 添加插件项到智能模式列表
      * @param name 插件id, 即文件名
      * @param title 插件项显示标题
-     * @param matchHandler 插件项匹配函数 (obj, searchText, pastedContentType, pastedContent, workWinInfo, winInfoMatchFlag)=>bool
+     * @param matchHandler 插件项匹配函数 (obj, searchText, pastedContentType, pastedContent, workWinInfo, winInfoMatchFlag)=>number
      * 
      * obj指向添加的插件项对象; searchText为当前搜索内容;
      * 
