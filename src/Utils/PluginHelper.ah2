@@ -61,13 +61,13 @@ class PluginHelper {
      * @param title 插件项显示标题
      * @param keywords 插件项关键字
      * @param startHandler 鼠标双击、回车该插件项时执行的函数 (obj, searchText)=>any obj指向添加的插件项对象
-     * @param doubleLeftHandler 选填, 双击Left该插件项时执行的函数 (obj, searchText)=>any obj指向添加的插件项对象
+     * @param doubleRightHandler 选填, 双击Right该插件项时执行的函数 (obj, searchText)=>any obj指向添加的插件项对象
      * @param contextHandler 选填, 右键该插件项时的处理函数 (obj)=>any obj指向添加的插件项对象
      * @param hIcon 选填, 插件项显示的图标HICON, 默认使用插件的图标
      */
-    static addPluginToStartupMode(name, title, keywords, startHandler, doubleLeftHandler?, contextHandler?, hIcon?) {
+    static addPluginToStartupMode(name, title, keywords, startHandler, doubleRightHandler?, contextHandler?, hIcon?) {
         plugin := { name: name, title: title, keywords: keywords, startHandler: startHandler }
-        for n in ["doubleLeftHandler", "contextHandler", "hIcon"] {
+        for n in ["doubleRightHandler", "contextHandler", "hIcon"] {
             if (IsSet(%n%))
                 plugin.%n% := %n%
         }
@@ -178,7 +178,7 @@ class PluginHelper {
      * @param runHandler 插件模式回车、双击任意项时的处理函数 (that, rowNum) => void
      * @param options 可选参数对象 {...} 
      * 
-     * options.doubleLeftHandler (可选)插件模式双击Left时的处理函数 (that, rowNum) => void
+     * options.doubleRightHandler (可选)插件模式双击Right时的处理函数 (that, rowNum) => void
      * 
      * options.loadImgsHandler (可选)加载插件模式图片的处理函数, 若需要显示图标一定要带有此参数 (that) => void
      * 

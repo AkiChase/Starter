@@ -21,7 +21,7 @@ class PluginMode {
 
     static searchHandler := (*) => 0
     static runHandler := (*) => 0
-    static doubleLeftHandler := (*) => 0
+    static doubleRightHandler := (*) => 0
     static loadImgsHandler := (*) => 0
     static toBottomHandler := (*) => 0
     static pasteContentHandler := (*) => 0
@@ -196,7 +196,7 @@ class PluginMode {
         this.pluginSearchData := pluginSearchData
         this.searchHandler := searchHandler
         this.runHandler := runHandler
-        this.doubleLeftHandler := options.HasOwnProp("doubleLeftHandler") ? options.doubleLeftHandler : (*) => 0
+        this.doubleRightHandler := options.HasOwnProp("doubleRightHandler") ? options.doubleRightHandler : (*) => 0
         this.loadImgsHandler := options.HasOwnProp("loadImgsHandler") ? options.loadImgsHandler : (*) => 0
         this.toBottomHandler := options.HasOwnProp("toBottomHandler") ? options.toBottomHandler : (*) => 0
 
@@ -255,11 +255,11 @@ class PluginMode {
         WinMove(, , 550 * (A_ScreenDPI / 96), LVHeight + Ceil(55 * (A_ScreenDPI / 96)), SearchGui.gui)
     }
 
-    static pluginRun(rowNum?, doubleLeft := false) {
+    static pluginRun(rowNum?, doubleRight := false) {
         if (!IsSet(rowNum))
             rowNum := this.focusedRow
         ; 此处rowNum可能为0
-        doubleLeft ? this.doubleLeftHandler(rowNum) : this.runHandler(rowNum)
+        doubleRight ? this.doubleRightHandler(rowNum) : this.runHandler(rowNum)
     }
 
     static showMenu() {

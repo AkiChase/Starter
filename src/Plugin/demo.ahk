@@ -128,7 +128,7 @@ class Plugin_Demo {
         }
 
         ; 定义插件项被双击或者回车时执行的处理函数:  启动插件模式
-        ; 注意函数接受两个参数 obj: 指向的是插件项对象{name, title, keywords, startHandler, doubleLeftHandler?, menu?, hIcon}
+        ; 注意函数接受两个参数 obj: 指向的是插件项对象{name, title, keywords, startHandler, doubleRightHandler?, menu?, hIcon}
         ; searchText: 搜索框搜索的内容
         fn(obj, searchText) {
             PluginHelper.showPluginMode(
@@ -136,8 +136,8 @@ class Plugin_Demo {
                 search,
                 (that, rowNum) => rowNum > 0 ? PluginHelper.Utils.tip(this.name, that.pluginSearchResult[rowNum].title, 1500) : 0
                 , {
-                    doubleLeftHandler: (that, rowNum) => rowNum > 0 ?
-                        PluginHelper.Utils.tip(this.name, "double Left" that.pluginSearchResult[rowNum].title, 1500) : 0,
+                    doubleRightHandler: (that, rowNum) => rowNum > 0 ?
+                        PluginHelper.Utils.tip(this.name, "double Right" that.pluginSearchResult[rowNum].title, 1500) : 0,
                     loadImgsHandler: loadImgs,
                     toBottomHandler: (that) => PluginHelper.Utils.tip(this.name, "列表触底通知：可以通过这种方式异步加载数量过大的列表", 1000, true),
                     initHandler: initHandler,
@@ -168,7 +168,7 @@ class Plugin_Demo {
             "插件示例-项目2",
             ["plugin demo", "CJSL"],
             (obj, searchText) => (PluginHelper.Utils.tip(obj.title, "搜索框内容:" searchText, 1000), PluginHelper.hideSearchGui()),
-            (obj, searchText) => PluginHelper.Utils.tip(obj.title, "搜索框内容:" searchText, 1000),  ; 使用匿名函数作为双击left的处理函数
+            (obj, searchText) => PluginHelper.Utils.tip(obj.title, "搜索框内容:" searchText, 1000),  ; 使用匿名函数作为双击Right的处理函数
             contextHandler,
             ; 定义该插件项显示的图标HICON，此处用base64ToHICON方法将base64图片载入得到HICON
             PluginHelper.Utils.base64ToHICON("iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAnBJREFUWEfVlj9oFEEUxt+bLa6wF0whQcRCENOo2EUQYy/xZmb3sDKCoK0RhURQSFoFwdhcuNuZPY+AXKU22gmKiI2FAREbwUrwrI6dJxN2wv3Z21vZDWe2291vv/fbNx9vBmHKF065Pvy/AEKI60R0EhGPFekSEX1BxE9a68dpPqkdEEI0AcAvUjjl21BrHQw/HwGoVqsXGGMvE+E3ItosAoKIVwBg1noYYxZardarfr8RACHEDQB4aEWe5800m80fRQCCIDgax/F24nFTa/0oE4BzvoqIK1aktS4lpEIIsn5EdC+KotX9CyClXDLGzGQtCWNs2/O8541G44/TldIBKeUcEX3MkwfG2OkwDN+XCsA5n0XECADOTID4UKlUztfr9V+lAuT583GaUpZg6gC1Wu1Ar9dbdENlHJANYbfb7XQ6nd+lLoHv+6eMMe/ydIKIzkVR9KZUgCAIDsVxfBsATmRB2M0niqJr/Zr9mwHbymRP+BmG4ec87Xca3/ePx3F80N4j4uuJo1hKeYSI1gDABm3kQsR1pdRyHggp5RoR3RqjbSPislLq6w6cE3HOnyDi0oQCT7XWmRohxAYAXJ2Qkw2Xk12A/qAAwG6Ckxbav7mYmA68Syk0nzx7QUTrQ+/nh3faVIDhLdOaCCHuA8CdPEsAAA+01neHtWlbfW4AayalXDDGnM2CYIy9VUq5E9WAtDBAzr8fK+OcryDizoHEHXb+qQMlAIyctnKFsGjhvu8zQ/hs3AwoEcBZtbXWlwfmgJRykYiqAHBpDwr2W24hYksp1R4AcAo7EY0xh/cCgjH23U1A51/KsbsI7NQB/gIoe4UwRdVGRAAAAABJRU5ErkJggg==")

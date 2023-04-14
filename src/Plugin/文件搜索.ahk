@@ -358,7 +358,7 @@ class Plugin_文件搜索 {
                     [], ;数据靠search获取，不需要传入
                     searchHandler,
                     runHandler, {
-                        doubleLeftHandler: doubleRightHandler,
+                        doubleRightHandler: doubleRightHandler,
                         loadImgsHandler: loadImg, ; 需要带有图标
                         toBottomHandler: asyncLoading, ; 异步加载
                         initHandler: initWithText, ; 初始化
@@ -427,7 +427,7 @@ class Plugin_文件搜索 {
                     [], ;数据靠search获取，不需要传入
                     searchHandler,
                     runHandler, {
-                        doubleLeftHandler: doubleRightHandler,
+                        doubleRightHandler: doubleRightHandler,
                         loadImgsHandler: loadImg, ; 需要带有图标
                         toBottomHandler: asyncLoading, ; 异步加载
                         initHandler:
