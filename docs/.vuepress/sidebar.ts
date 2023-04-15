@@ -71,7 +71,9 @@ export const zhSidebar = sidebar({
     {
       text: "插件模式",
       icon: "list-ul",
-      link: "/dev/pluginMode",
+      link: "/dev/plugin-mode",
+      prefix: "plugin-mode/",
+      children: "structure"
     },
     {
       text: "ImagePut",

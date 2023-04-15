@@ -1,23 +1,80 @@
 ---
-title: PluginHelper.addPluginToStartupMode
+title: addPluginToStartupMode
 author: ruchuby
-date: 2023-04-14
+date: 2023-04-15
 ---
 
+## 定义
+
 ```ahk
-/**
-* @description: 添加插件项到启动模式列表
-* @param name 插件id, 即文件名
-* @param title 插件项显示标题
-* @param keywords 插件项关键字
-* @param startHandler 鼠标双击、回车该插件项时执行的函数 (obj, searchText)=>any obj指向添加的插件项对象
-* @param doubleRightHandler 选填, 双击Right该插件项时执行的函数 (obj, searchText)=>any obj指向添加的插件项对象
-* @param contextHandler 选填, 右键该插件项时的处理函数 (obj)=>any obj指向添加的插件项对象
-* @param hIcon 选填, 插件项显示的图标HICON, 默认使用插件的图标
-*/
-static addPluginToStartupMode(name, title, keywords, startHandler, doubleRightHandler?, contextHandler?, hIcon?)
+static addPluginToStartupMode(
+    name,
+    title,
+    keywords,
+    startHandler,
+    doubleRightHandler?,
+    contextHandler?,
+    hIcon?
+)
 ```
 
-:::tip
-obj 对象格式为 `{ name, title, keywords, startHandler, doubleRightHandler?, contextHandler?, hIcon?}`
-:::
+## 类型
+
+静态方法
+
+## 说明
+
+添加**插件启动项**，应用方式见[插件启动项](../dev/startup/)
+
+## 参数
+
+- ### name {String}
+
+插件id，即插件文件名
+
+- ### title {String}
+
+插件启动项显示标题
+
+- ### keywords {Array}
+
+插件启动项其他关键字，比如 `["其他","QTGJZ"]`
+
+- ### startHandler {[Closure](https://orz707.gitee.io/v2/docs/Functions.htm#closures)}
+
+```ahk
+(obj, searchText) => Any
+```
+
+- 接收参数
+    - `obj`：指向添加的插件启动项对象。
+    - `searchText`：当前搜索内容。
+
+运行（鼠标双击或回车）该插件启动项时执行的函数。
+
+- ### doubleRightHandler {[Closure](https://orz707.gitee.io/v2/docs/Functions.htm#closures)} （可选）
+
+```ahk
+(obj, searchText) => Any
+```
+
+- 接收参数
+    - `obj`：指向添加的插件启动项对象。
+    - `searchText`：当前搜索内容。
+
+选填，选中该插件启动项后，双击 `Right` 按键时执行的函数。
+
+- ### contextHandler {[Closure](https://orz707.gitee.io/v2/docs/Functions.htm#closures)} （可选）
+
+```ahk
+(obj) => Any
+```
+
+- 接收参数
+    - `obj`：指向添加的插件启动项对象。
+
+选填，右键该插件启动项时的处理函数。
+
+- ### hIcon {Int} （可选）
+
+插件启动项显示的图标hIcon，忽略则使用插件的图标。
