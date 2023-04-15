@@ -3,7 +3,7 @@
  * @Version: 0.0.1
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-08
+ * @LastEditTime: 2023-04-15
  * @Description: 插件模式
  */
 
@@ -191,7 +191,7 @@ class PluginMode {
     }
 
     static showPluginMode(pluginSearchData, searchHandler, runHandler, options := {}) {
-        this.oldMode := SearchGui.mode
+        this.oldMode := SearchGui.mode >= 0 ? SearchGui.mode : 0 ; 避免回到不正确的模式
 
         this.pluginSearchData := pluginSearchData
         this.searchHandler := searchHandler
