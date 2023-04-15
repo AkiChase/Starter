@@ -12,7 +12,7 @@ static PluginHelper.pluginMenu
 
 ## 类型
 
-静态属性 `Menu`
+静态属性 \{Menu\}
 
 ## 说明
 
