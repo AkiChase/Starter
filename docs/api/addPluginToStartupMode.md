@@ -28,19 +28,19 @@ static addPluginToStartupMode(
 
 ## 参数
 
-- ### name {String}
+- ### name \{String\}
 
 插件id，即插件文件名
 
-- ### title {String}
+- ### title \{String\}
 
 插件启动项显示标题
 
-- ### keywords {Array}
+- ### keywords \{Array\}
 
 插件启动项其他关键字，比如 `["其他","QTGJZ"]`
 
-- ### startHandler {[Closure](https://orz707.gitee.io/v2/docs/Functions.htm#closures)}
+- ### startHandler \{[Closure](https://orz707.gitee.io/v2/docs/Functions.htm#closures)\}
 
 ```ahk
 (obj, searchText) => Any
@@ -52,7 +52,7 @@ static addPluginToStartupMode(
 
 运行（鼠标双击或回车）该插件启动项时执行的函数。
 
-- ### doubleRightHandler {[Closure](https://orz707.gitee.io/v2/docs/Functions.htm#closures)} （可选）
+- ### doubleRightHandler \{[Closure](https://orz707.gitee.io/v2/docs/Functions.htm#closures)\} （可选）
 
 ```ahk
 (obj, searchText) => Any
@@ -64,7 +64,7 @@ static addPluginToStartupMode(
 
 选填，选中该插件启动项后，双击 `Right` 按键时执行的函数。
 
-- ### contextHandler {[Closure](https://orz707.gitee.io/v2/docs/Functions.htm#closures)} （可选）
+- ### contextHandler \{[Closure](https://orz707.gitee.io/v2/docs/Functions.htm#closures)\} （可选）
 
 ```ahk
 (obj) => Any
@@ -75,6 +75,6 @@ static addPluginToStartupMode(
 
 选填，右键该插件启动项时的处理函数。
 
-- ### hIcon {Int} （可选）
+- ### hIcon \{Int\} （可选）
 
 插件启动项显示的图标hIcon，忽略则使用插件的图标。

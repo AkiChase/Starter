@@ -22,15 +22,15 @@ static addPluginToIntelligentMode(
 
 ## 参数
 
-- ### name {String}
+- ### name \{String\}
 
 插件id，即插件文件名
 
-- ### title {String}
+- ### title \{String\}
 
 插件智能项显示标题
 
-- ### matchHandler {[Closure](https://orz707.gitee.io/v2/docs/Functions.htm#closures)}
+- ### matchHandler \{[Closure](https://orz707.gitee.io/v2/docs/Functions.htm#closures)\}
 
 ```ahk
 (
@@ -61,7 +61,7 @@ static addPluginToIntelligentMode(
 搜索框会短暂显示工作窗口的信息，插件可以根据此时的工作窗口信息进行匹配
 :::
 
-- ### runHandler {[Closure](https://orz707.gitee.io/v2/docs/Functions.htm#closures)}
+- ### runHandler \{[Closure](https://orz707.gitee.io/v2/docs/Functions.htm#closures)\}
 
 ```ahk
 (obj, searchText) => Any
@@ -73,7 +73,7 @@ static addPluginToIntelligentMode(
 
 运行（鼠标双击或回车）该插件智能项时执行的函数。
 
-- ### contextHandler {[Closure](https://orz707.gitee.io/v2/docs/Functions.htm#closures)} （可选）
+- ### contextHandler \{[Closure](https://orz707.gitee.io/v2/docs/Functions.htm#closures)\} （可选）
 
 ```ahk
 (obj) => Any
@@ -83,6 +83,6 @@ static addPluginToIntelligentMode(
 
 选填，右键该插件智能项时执行的函数。
 
-- ### hIcon {Int} （可选）
+- ### hIcon \{Int\} （可选）
 
 选填，插件智能项显示的图标hIcon，忽略则使用插件的图标。

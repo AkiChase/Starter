@@ -24,12 +24,12 @@ static PluginHelper.getPluginHIcon(pluginName)
 
 ## 参数
 
-- ### pluginName {String}
+- ### pluginName \{String\}
 
 插件名称，即插件文件名、插件id
 
 ## 返回值
 
-- ### hIcon {Int}
+- ### hIcon \{Int\}
 
 如果插件有图标，则返回hIcon，否则返回0

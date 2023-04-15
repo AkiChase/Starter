@@ -19,6 +19,6 @@ static PluginHelper.addEntryFunc(f)
 
 ## 参数
 
-- ### f {[Closure](https://orz707.gitee.io/v2/docs/Functions.htm#closures)}
+- ### f \{[Closure](https://orz707.gitee.io/v2/docs/Functions.htm#closures)\}
 
 插件**入口函数**，也可以称为插件的**初始化函数**
