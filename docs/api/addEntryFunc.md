@@ -1,6 +1,7 @@
 ---
 title: addEntryFunc
 author: ruchuby
+order: 1
 date: 2023-04-14
 ---
 ## 定义

@@ -200,8 +200,8 @@ pasteContentHandler(that, typeName, content?) {
     }
     else { ;粘贴完成后的触发
         PluginHelper.placeholder := "在文件夹内搜索"
-        t := PluginHelper.SearchText
-        PluginHelper.SearchText := t ; 直接触发搜索
+        t := PluginHelper.searchText
+        PluginHelper.searchText := t ; 直接触发搜索
         PluginHelper.setSearchTextSel(StrLen(t)) ; 游标移动到最后
     }
 }
@@ -216,8 +216,8 @@ dropFilesHandler(that, fileList, pre) {
         return InStr(FileExist(fileList[1]), "D") ;仅允许单文件夹
     } else { ;拖入生效后的触发
         PluginHelper.placeholder := "在文件夹内搜索"
-        t := PluginHelper.SearchText
-        PluginHelper.SearchText := t ; 直接触发搜索
+        t := PluginHelper.searchText
+        PluginHelper.searchText := t ; 直接触发搜索
         PluginHelper.setSearchTextSel(StrLen(t)) ; 游标移动到最后
     }
 }

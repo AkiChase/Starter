@@ -1,6 +1,7 @@
 ---
-title: PluginHelper.Utils
+title: Utils
 author: ruchuby
+index: false
 ---
 
 `PluginHelper.Utils` 纯工具类
