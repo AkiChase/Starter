@@ -63,7 +63,7 @@ date: 2023-04-11
 正则匹配与替换参考:
 
 1. [正则表达式30分钟入门教程 (deerchao.cn)](https://deerchao.cn/tutorials/regex/regex.htm#mission)
-2. [RegExReplace - 语法 & 使用 | AutoHotkey v2 (autoahk.com)](https://www.autoahk.com/help/autohotkey/v2/docs/commands/RegExReplace.htm)
+2. [RegExReplace - 语法 & 使用 | AutoHotkey v2](https://orz707.gitee.io/v2/docs/commands/RegExReplace.htm)
 
 ### 3. 匹配优先级
 
@@ -89,7 +89,7 @@ date: 2023-04-11
 
 启动处理程序**直接执行传递的内容**，即直接执行 `Run(传递的内容)`，此时程序路径无效。
 
-`Run()` 函数细节可参考[Run / RunWait - 语法 & 使用 ](https://www.autoahk.com/help/autohotkey/v2/docs/commands/Run.htm)中的 `Target` 参数。
+`Run()` 函数细节可参考[Run / RunWait - 语法 & 使用 ](https://orz707.gitee.io/v2/docs/commands/Run.htm)中的 `Target` 参数。
 
 - 单参数模式(arg)
 
@@ -110,5 +110,5 @@ date: 2023-04-11
 **启动处理程序**将收到的内容填充到**搜索URL**中"{}"所在位置，启动填充后的URL。
 
 ::: tip
-启动处理程序的根本功能就是 `Run(Target)` 参考[Run / RunWait - 语法 & 使用 ](https://www.autoahk.com/help/autohotkey/v2/docs/commands/Run.htm)
+启动处理程序的根本功能就是 `Run(Target)` 参考[Run / RunWait - 语法 & 使用 ](https://orz707.gitee.io/v2/docs/commands/Run.htm)
 :::

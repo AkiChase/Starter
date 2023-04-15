@@ -1,6 +1,6 @@
 ---
 title: 进阶
-icon: square-up-right
+icon: circle-right
 author: ruchuby
 date: 2023-04-14
 ---
@@ -72,7 +72,7 @@ static addIntelligentItem() {
 
 混合匹配条件相对比较简单，是为之后**动态修改插件智能项**做铺垫
 
-这里以`文件搜索`插件中的 `matchHandler` 稍作修改后作为例子
+这里以[文件搜索](../../plugin/file-find.md)插件源码中的 `matchHandler` 稍作修改后作为例子
 
 ```ahk
 static addIntelligentItem() {
@@ -125,7 +125,7 @@ static addIntelligentItem() {
 
 所以，可以在匹配时中动态的修改 `obj` 属性，来达到存储数据、修改匹配表现的目的
 
-续接之前的`文件搜索`插件代码例子：
+续接之前的[混合匹配条件](#混合匹配条件)代码例子：
 
 ```ahk
 ; 添加插件智能项
