@@ -108,9 +108,9 @@ class Plugin_文件搜索 {
         sortM := this.sortM
         for name in ["路径", "名称", "大小", "修改时间"] {
             sortM.Add(Format("按{}升序`t(&{})", name, A_Index * 2 - 1),
-                (_, pos, *) => (this.sortMode := pos, PluginHelper.SearchText := PluginHelper.SearchText))
+                (_, pos, *) => (this.sortMode := pos, PluginHelper.searchText := PluginHelper.searchText))
             sortM.Add(Format("按{}降序`t(&{})", name, A_Index * 2),
-                (_, pos, *) => (this.sortMode := pos, PluginHelper.SearchText := PluginHelper.SearchText))
+                (_, pos, *) => (this.sortMode := pos, PluginHelper.searchText := PluginHelper.searchText))
         }
         sm.Add("排序方式`t(&1)", sortM)
 
@@ -329,8 +329,8 @@ class Plugin_文件搜索 {
             }
             else { ;粘贴完成后的触发
                 PluginHelper.placeholder := "在文件夹内搜索"
-                t := PluginHelper.SearchText
-                PluginHelper.SearchText := t ; 直接触发搜索
+                t := PluginHelper.searchText
+                PluginHelper.searchText := t ; 直接触发搜索
                 PluginHelper.setSearchTextSel(StrLen(t)) ; 游标移动到最后
             }
         }
@@ -342,8 +342,8 @@ class Plugin_文件搜索 {
                 return InStr(FileExist(fileList[1]), "D") ;仅允许单文件夹
             } else { ;拖入生效后的触发
                 PluginHelper.placeholder := "在文件夹内搜索"
-                t := PluginHelper.SearchText
-                PluginHelper.SearchText := t ; 直接触发搜索
+                t := PluginHelper.searchText
+                PluginHelper.searchText := t ; 直接触发搜索
                 PluginHelper.setSearchTextSel(StrLen(t)) ; 游标移动到最后
             }
         }
