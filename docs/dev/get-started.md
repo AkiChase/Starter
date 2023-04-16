@@ -171,7 +171,7 @@ class Plugin_MyPlugin {
 重启 **Starter** 后，就可以通过 **Starter菜单** > **插件功能** > **MyPlugin专属菜单** 进行访问。
 
 
-### 2. 添加插件启动项
+### 2. 添加插件启动项{#add-plugin-to-startup-mode}
 
 **插件启动项**的功能类似于**原生启动项**，但是只能通过插件来添加、修改。
 
