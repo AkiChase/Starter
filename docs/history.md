@@ -3,6 +3,15 @@ title: 更新日志
 icon: clock
 ---
 
+## [Starter v0.5.1](https://github.com/ruchuby/Starter/releases/tag/v0.5.1) (2023-04-16)
+
+1. 新增: 完善文档内容 - [插件开发](https://ruchuby.github.io/Starter/dev/)
+2. 新增: 完善文档内容 - [API](https://ruchuby.github.io/Starter/api/)
+3. 新增: pluginHelper插件工具模块完整注释
+4. 修复: 修复双击类型快捷键，双击期间按下其他按键仍会触发的问题
+5. 修复: 导入数据界面按钮失效
+6. 修复：显示插件模式切换错误
+
 ## [Starter v0.5.0](https://github.com/ruchuby/Starter/releases/tag/v0.5.0) (2023-04-14)
 
 1. 新增：添加工作窗口信息作为插件智能模式匹配条件
