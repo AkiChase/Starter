@@ -22,4 +22,8 @@ static PluginHelper.addEntryFunc(f)
 
 - ### f \{[Closure](https://orz707.gitee.io/v2/docs/Functions.htm#closures)\}
 
+```ahk
+(*) => Any
+```
+
 插件**入口函数**，也可以称为插件的**初始化函数**
