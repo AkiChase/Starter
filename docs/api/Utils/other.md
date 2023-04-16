@@ -59,8 +59,8 @@ ori是否以sub开头
     - \{String\} `options`: 见[Run / RunWait - 语法 & 使用 | AutoHotkey v2](https://orz707.gitee.io/v2/docs/commands/Run.htm)
     - \{[Closure](https://orz707.gitee.io/v2/docs/Functions.htm#closures)\} `beforeRun`: 运行文件前执行的处理函数
 
-- 返回值
-    - 无
+- 返回值 \{String\}
+    - PID 如果无法确定 PID, 返回空字符串
 
 ## openFileInFolder(path)
 
