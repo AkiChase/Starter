@@ -3,6 +3,7 @@ title: 进阶
 icon: circle-right
 author: ruchuby
 date: 2023-04-14
+order: 2
 ---
 
 在理解**插件模式**的基本应用之后，可以尝试进阶应用。
