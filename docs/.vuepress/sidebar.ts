@@ -88,5 +88,6 @@ export const zhSidebar = sidebar({
       prefix: "others/",
       children: "structure"
     },
-  ]
+  ],
+  "/history": []
 });

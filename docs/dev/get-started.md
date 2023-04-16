@@ -286,7 +286,7 @@ class Plugin_MyPlugin {
 
 可以在 `MyPlugin专属菜单` 中点击 `GUI` 来显示这个自定义GUI
 
-![自定义GUI](../images/myplugin-gui.jpg)
+![自定义GUI](./images/myplugin-gui.jpg)
 
 
 ## 最后

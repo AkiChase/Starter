@@ -1,5 +1,6 @@
 ---
 title: 更新日志
+icon: clock
 ---
 
 ## [Starter v0.5.0](https://github.com/ruchuby/Starter/releases/tag/v0.5.0) (2023-04-14)
