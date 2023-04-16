@@ -3,7 +3,7 @@
  * @Version: 0.0.2
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-13
+ * @LastEditTime: 2023-04-14
  * @Description: 菜单栏
  */
 
@@ -134,7 +134,8 @@ class TrayMenu {
             return
         }
 
-        if (!options[2] || MsgBox("导入插件时将用导入的数据覆盖所有同名文件,`n请勿在更新导入旧数据时使用, 避免旧版本插件覆盖新版本插件`n是否继续导入?", "提示", 0x2044) != "Yes") {
+        ; 若勾选插件且未确认则返回
+        if (options[2] && MsgBox("导入插件时将用导入的数据覆盖所有同名文件,`n请勿在更新导入旧数据时使用, 避免旧版本插件覆盖新版本插件`n是否继续导入?", "提示", 0x2044) != "Yes") {
             return
         }
 

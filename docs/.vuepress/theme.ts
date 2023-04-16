@@ -55,6 +55,7 @@ export default hopeTheme({
   },
 
   plugins: {
+    prismjs: false,
     comment: {
       provider: "Giscus",
       repo: "ruchuby/giscusRepo",
@@ -68,7 +69,6 @@ export default hopeTheme({
       container: true,
       // 选项卡
       tabs: true,
-      codetabs: true,
       // 附加属性
       attrs: true,
       // 自定义对齐

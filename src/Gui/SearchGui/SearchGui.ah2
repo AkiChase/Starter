@@ -134,7 +134,7 @@ class SearchGui {
     }
     ;#endregion
 
-    ; 长按获取的当前窗口信息
+    ; 当前工作窗口信息
     static workWinInfo := {
         hwnd: 0,
         title: "",

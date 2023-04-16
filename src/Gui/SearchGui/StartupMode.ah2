@@ -88,8 +88,8 @@ class StartupMode {
                     len := this.pluginSearchResult.Length
                     if (rowNum > len)
                         this.openSelectedFileInFolder(rowNum - len)
-                    else if (this.pluginSearchResult[rowNum - len].HasOwnProp("doubleLeftHandler"))
-                        this.pluginSearchResult[rowNum - len].doubleLeftHandler(SearchGui.searchText)
+                    else if (this.pluginSearchResult[rowNum - len].HasOwnProp("doubleRightHandler"))
+                        this.pluginSearchResult[rowNum - len].doubleRightHandler(SearchGui.searchText)
                 }
                 lastEndFlag := true
             } else

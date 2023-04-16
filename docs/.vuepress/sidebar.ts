@@ -49,5 +49,45 @@ export const zhSidebar = sidebar({
     }
   ],
   "/plugin/": "structure",
-  "/dev/": "structure"
+  "/api/": "structure",
+  "/dev/": [
+    {
+      text: "快速上手",
+      icon: "lightbulb",
+      link: "/dev/get-started",
+    },
+    {
+      text: "插件启动项",
+      icon: "bolt",
+      link: "/dev/startup",
+    },
+    {
+      text: "插件智能项",
+      icon: "face-laugh",
+      link: "/dev/intelligent/",
+      prefix: "intelligent/",
+      children: "structure"
+    },
+    {
+      text: "插件模式",
+      icon: "list-ul",
+      link: "/dev/plugin-mode",
+      prefix: "plugin-mode/",
+      children: "structure"
+    },
+    {
+      text: "ImagePut",
+      icon: "image",
+      link: "/dev/image-put",
+    },
+    {
+      text: "其他内容",
+      icon: "ellipsis",
+      link: "/dev/others/",
+      collapsible: true,
+      prefix: "others/",
+      children: "structure"
+    },
+  ],
+  "/history": []
 });

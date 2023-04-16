@@ -150,7 +150,7 @@ class Plugin_网页搜索 {
             }
 
             runHandler(that, rowNum) {
-                kw := rowNum ? that.pluginSearchResult[rowNum] : PluginHelper.SearchText
+                kw := rowNum ? that.pluginSearchResult[rowNum] : PluginHelper.searchText
                 Run(this.searchUrl kw)
                 PluginHelper.hideSearchGui()
             }
@@ -238,7 +238,7 @@ class Plugin_网页搜索 {
             }
 
             runHandler(that, rowNum) {
-                kw := rowNum ? that.pluginSearchResult[rowNum] : PluginHelper.SearchText
+                kw := rowNum ? that.pluginSearchResult[rowNum] : PluginHelper.searchText
                 Run(this.searchUrl kw)
                 PluginHelper.hideSearchGui()
             }
@@ -321,7 +321,7 @@ class Plugin_网页搜索 {
             }
 
             runHandler(that, rowNum) {
-                kw := rowNum ? that.pluginSearchResult[rowNum] : PluginHelper.SearchText
+                kw := rowNum ? that.pluginSearchResult[rowNum] : PluginHelper.searchText
                 Run(this.searchUrl kw)
                 PluginHelper.hideSearchGui()
             }

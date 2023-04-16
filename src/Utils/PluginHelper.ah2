@@ -3,14 +3,12 @@
  * @Version: 0.0.3
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-13
+ * @LastEditTime: 2023-04-16
  * @Description: 插件API封装
  */
 
 class PluginHelper {
     static funcList := []
-    static pluginMenu := Menu()
-
     static init() {
         TrayMenu.menu.Insert("用户数据`t(&D)", "插件功能`t(&F)", this.pluginMenu) ; 插件托盘菜单
         for f in this.funcList ; 执行入口函数
@@ -21,29 +19,57 @@ class PluginHelper {
     }
 
     /**
-     * @description: 添加插件入口函数到执行队列，基本功能初始化后执行
-     * @param f 插件入口函数
+     * @description: 插件菜单对象 位于托盘菜单 > 插件功能
+     */
+    static pluginMenu := Menu()
+
+    /**
+     * @description 添加插件入口函数到执行队列，等待基本功能初始化后，函数将被执行
+     * @param {function(*):any} f 插件入口函数，也可以称为插件的初始化函数
+     * @returns {void}
+     * @example 
+     * PluginHelper.addEntryFunc((*) => Tooltip("plugin init"))
      */
     static addEntryFunc(f) {
         this.funcList.Push(f)
     }
 
     /**
-     * @description: 添加插件项到智能模式列表
-     * @param name 插件id, 即文件名
-     * @param title 插件项显示标题
-     * @param matchHandler 插件项匹配函数 (obj, searchText, pastedContentType, pastedContent, workWinInfo, winInfoMatchFlag)=>bool
+     * @descriptio 添加插件智能项，应用方式见[插件智能项](../dev/intelligent/)
+     * @param {String} name 插件id，即插件文件名
+     * @param {String} title 插件智能项显示标题
+     * @param {function(obj, searchText, pastedContentType, pastedContent, workWinInfo, winInfoMatchFlag):number} matchHandler
      * 
-     * obj指向添加的插件项对象; searchText为当前搜索内容;
+     *  智能插件项的自定义匹配函数，返回值决定当前插件项是否显示
      * 
-     * pastedContentType为粘贴内容类型; pastedContentType为粘贴内容
+     * - 接收参数
+     *     - `obj`：指向添加的插件智能项对象。
+     *     - `searchText`：当前搜索内容。
+     *     - `pastedContentType`：粘贴内容类型。
+     *     - `pastedContent`：粘贴内容。
+     *     - `workWinInfo`：工作窗口信息对象
+     *     - `winInfoMatchFlag`：是否开启工作窗口模式
+     * - 返回值
+     *     - 1：显示该插件智能项
+     *     - 0：不显示该插件智能项
      * 
-     * workWinInfo为工作窗口信息; winInfoMatchFlag为是否开启工作窗口模式（即没有选中任何内容）
+     * @param {function(obj, searchText): any} runHandler 运行（鼠标双击或回车）该插件智能项时执行的函数。
      * 
-     * @param runHandler 鼠标双击、回车该插件项时执行的函数
-     * (obj, searchText)=>any obj指向添加的插件项对象, searchText为搜索框文本内容
-     * @param contextHandler 选填, 右键该插件项显示的菜单
-     * @param hIcon 选填, 插件项显示的图标HICON, 默认使用插件的图标
+     * 运行（鼠标双击或回车）该插件智能项时执行的函数。
+     * 
+     * - 接收参数
+     *     - `obj`：指向添加的插件智能项对象。
+     *     - `searchText`：当前搜索内容。
+     * 
+     * @param {function(obj): any} [contextHandler] 右键该插件智能项时执行的函数。
+     * 
+     * 选填，右键该插件智能项时执行的函数。
+     * 
+     * - 接收参数
+     *     - `obj`：指向添加的插件智能项对象。
+     * 
+     * @param {Int} [hIcon] 插件智能项显示的图标hIcon，忽略则使用插件的图标。
+     * @returns {void}
      */
     static addPluginToIntelligentMode(name, title, matchHandler, runHandler, contextHandler?, hIcon?) {
         plugin := { name: name, title: title, matchHandler: matchHandler, runHandler: runHandler }
@@ -61,13 +87,13 @@ class PluginHelper {
      * @param title 插件项显示标题
      * @param keywords 插件项关键字
      * @param startHandler 鼠标双击、回车该插件项时执行的函数 (obj, searchText)=>any obj指向添加的插件项对象
-     * @param doubleLeftHandler 选填, 双击Left该插件项时执行的函数 (obj, searchText)=>any obj指向添加的插件项对象
+     * @param doubleRightHandler 选填, 双击Right该插件项时执行的函数 (obj, searchText)=>any obj指向添加的插件项对象
      * @param contextHandler 选填, 右键该插件项时的处理函数 (obj)=>any obj指向添加的插件项对象
      * @param hIcon 选填, 插件项显示的图标HICON, 默认使用插件的图标
      */
-    static addPluginToStartupMode(name, title, keywords, startHandler, doubleLeftHandler?, contextHandler?, hIcon?) {
+    static addPluginToStartupMode(name, title, keywords, startHandler, doubleRightHandler?, contextHandler?, hIcon?) {
         plugin := { name: name, title: title, keywords: keywords, startHandler: startHandler }
-        for n in ["doubleLeftHandler", "contextHandler", "hIcon"] {
+        for n in ["doubleRightHandler", "contextHandler", "hIcon"] {
             if (IsSet(%n%))
                 plugin.%n% := %n%
         }
@@ -90,7 +116,7 @@ class PluginHelper {
     /**
      * @description: 获取插件图标base64
      * @param pluginName 插件名称, 即文件名
-     * @return 有图标返回base64, 无图标则返回0
+     * @return 有图标返回无头部的base64, 无图标则返回0
      */
     static getPluginIconBase64(pluginName) {
         for info in PluginGui.pluginList {
@@ -102,7 +128,7 @@ class PluginHelper {
 
     /**
      * @description: 隐藏搜索框
-     * @param recordHideTime 默认false true则记录关闭时间，15s内可恢复窗口
+     * @param recordHideTime 默认false true则记录关闭时间，15s内按呼出搜索框快捷键可恢复窗口
      */
     static hideSearchGui(recordHideTime := false) {
         SearchGui.hideGui(recordHideTime)
@@ -131,7 +157,9 @@ class PluginHelper {
      * workWinInfo.processName  程序名称
      */
     static workWinInfo => SearchGui.workWinInfo
-    ; 是否处于窗口匹配状态
+    /**
+     * @description: 是否处于窗口匹配状态
+     */
     static winInfoMatchFlag => SearchGui.winInfoMatchFlag
 
     /**
@@ -145,7 +173,7 @@ class PluginHelper {
     /**
      * @description: 搜索框内容
      */
-    static SearchText {
+    static searchText {
         get => SearchGui.searchText
         set => SearchGui.edit.Value := SearchGui.searchText := value
     }
@@ -169,16 +197,24 @@ class PluginHelper {
     /**
      * @description: 特定情况下需要提前获取到PluginMode，即所谓的that
      */
-    static getPluginMode := (*) => PluginMode
+    static getPluginMode(*) {
+        return PluginMode
+    }
 
     /**
      * @description: 启动插件模式
      * @param pluginSearchData 用于插件模式搜索的数据
+     * 
+     * 将被存放至 that.pluginSearchData
+     * 
      * @param searchHandler 插件模式搜索处理函数 (that, searchText) => void
+     * 
+     * 规范使用，请将搜索结果存放至 that.pluginSearchResult 然后对其进行渲染(添加到listview)
+     * 
      * @param runHandler 插件模式回车、双击任意项时的处理函数 (that, rowNum) => void
      * @param options 可选参数对象 {...} 
      * 
-     * options.doubleLeftHandler (可选)插件模式双击Left时的处理函数 (that, rowNum) => void
+     * options.doubleRightHandler (可选)插件模式双击Right时的处理函数 (that, rowNum) => void
      * 
      * options.loadImgsHandler (可选)加载插件模式图片的处理函数, 若需要显示图标一定要带有此参数 (that) => void
      * 
@@ -249,48 +285,65 @@ class PluginHelper {
         /**
          * @description: 复制路径指向文件到剪切板
          */
-        static copyToClipboard := (this, filePath, cut := false) => CopyToClipboard(filePath, cut)
+        static copyToClipboard(filePath, cut := false) {
+            CopyToClipboard(filePath, cut)
+        }
 
         /**
          * @description: 运行文件
          */
-        static startFile := (this, path, workingDir := "", options := "", beforeRun?) => Start.startFile(path, workingDir, options, beforeRun?)
+        static startFile(path, workingDir := "", options := "", beforeRun?) {
+            return Start.startFile(path, workingDir, options, beforeRun?)
+        }
 
         /**
          * @description: 在文件夹中打开
          */
-        static openFileInFolder := (this, path) => Start.openFileInFolder(path)
+        static openFileInFolder(path) {
+            Start.openFileInFolder(path)
+        }
 
         /**
          * @description: UrlEncode编码
          */
-        static UrlEncode := (this, str) => UrlEncode(str)
+        static UrlEncode(str) {
+            return UrlEncode(str)
+        }
         /**
          * @description: UrlEncode解码
          */
-        static UrlDecode := (this, str) => UrlDecode(str)
-
+        static UrlDecode(str) {
+            return UrlDecode(str)
+        }
 
         /**
          * @description: 正则全局模式
          */
-        static globalMatch := (this, Haystack, NeedleRegEx, StartingPos := 1) => WinHttp.RegEx.GlobalMatch(Haystack, NeedleRegEx, StartingPos := 1)
+        static globalMatch(Haystack, NeedleRegEx, StartingPos := 1) {
+            return WinHttp.RegEx.GlobalMatch(Haystack, NeedleRegEx, StartingPos := 1)
+        }
 
         /**
          * @description: json转ahk数据
          * @param src json文本的引用
          */
-        static Jxon_Load := (this, &src, args*) => Jxon_Load(&src, args*)
+        static Jxon_Load(&src, args*) {
+            return Jxon_Load(&src, args*)
+        }
 
         /**
          * @description: ahk数据转json文本
          */
-        static Jxon_Dump := (this, obj, indent := "", lvl := 1) => Jxon_Dump(obj, indent := "", lvl := 1)
+        static Jxon_Dump(obj, indent := "", lvl := 1) {
+            return Jxon_Dump(obj, indent := "", lvl := 1)
+        }
 
         /**
          * @description: WinHttp请求库
          */
-        static WinHttp := (this, args*) => WinHttp(args*)
+        static WinHttp(args*) {
+            return WinHttp(args*)
+        }
 
         /**
          * @description: 载入文件路径对应的图标为HICON 可以直接关联到图标源头

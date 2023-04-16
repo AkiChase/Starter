@@ -15,7 +15,7 @@ date: 2023-04-11
 **插件智能项**是指通过插件添加的智能项。插件智能项只能通过插件的编写者更新或修改，有的插件可能会为用户提供**增删改**智能项的方式。
 
 ::: tip
-本章提到的内容都针对**原生智能项**，非开发者只需要了解**原生智能项**即可，若有兴趣请移步[插件开发](../../plugin/)
+本章提到的内容都针对**原生智能项**，非开发者只需要了解**原生智能项**即可，若有兴趣请移步[插件开发 - 插件智能项](../../dev/intelligent/basics.md)
 :::
 
 **原生智能项**的功能或许很强大，或许很鸡肋，因人而异。
@@ -32,19 +32,19 @@ date: 2023-04-11
 
 **匹配**指的是当前智能项会出现在搜索结果中，设定不同匹配模式可以灵活的匹配不同的输入内容
 
-::: note
+::: warning
 目前，**原生智能项**仅支持匹配**文本**输入类型的内容，暂时不支持**工作窗口信息、文件、位图**等输入类型的匹配。
 
 这是为了避免**原生智能项**的相关概念变得更加复杂，同时也降低了**智能模式编辑界面**的复杂程度。
 
-**工作窗口信息、文件、位图**等输入类型，只有**插件智能项**才可以设定相关的匹配条件，相关内容请移步[插件开发](../../plugin/)
+**工作窗口信息、文件、位图**等输入类型，只有**插件智能项**才可以设定相关的匹配条件，相关内容请移步[插件开发 - 插件智能项](../../dev/intelligent/basics.md)
 :::
 
 ### 1. 字符串模式(str)
 
 **智能模式搜索框**输入内容为**任意字符串**时匹配，输入内容**原封不动地传递**给启动处理程序。
 
-::: note
+::: tip
 启动处理程序具体做什么在后续会有解释，此时你只要知道它会接收**传递的内容**作为参数进行后续处理
 :::
 
@@ -54,7 +54,7 @@ date: 2023-04-11
 
 在智能模式搜索框输入文本时，对于每个原生智能项，**Starter** 依次使用该项中所有**匹配表达式**进行正则匹配，直到有一个表达式与输入文本匹配为止。如果所有表达式都无法匹配，则该智能项不会出现在搜索结果中。
 
-::: note
+::: tip
 对某个智能项的**匹配表达式**的匹配顺序是**从上到下**，也就是排在越前面的表达式优先级越高。
 :::
 
@@ -63,7 +63,7 @@ date: 2023-04-11
 正则匹配与替换参考:
 
 1. [正则表达式30分钟入门教程 (deerchao.cn)](https://deerchao.cn/tutorials/regex/regex.htm#mission)
-2. [RegExReplace - 语法 & 使用 | AutoHotkey v2 (autoahk.com)](https://www.autoahk.com/help/autohotkey/v2/docs/commands/RegExReplace.htm)
+2. [RegExReplace - 语法 & 使用 | AutoHotkey v2](https://orz707.gitee.io/v2/docs/commands/RegExReplace.htm)
 
 ### 3. 匹配优先级
 
@@ -89,7 +89,7 @@ date: 2023-04-11
 
 启动处理程序**直接执行传递的内容**，即直接执行 `Run(传递的内容)`，此时程序路径无效。
 
-`Run()` 函数细节可参考[Run / RunWait - 语法 & 使用 ](https://www.autoahk.com/help/autohotkey/v2/docs/commands/Run.htm)中的 `Target` 参数。
+`Run()` 函数细节可参考[Run / RunWait - 语法 & 使用 ](https://orz707.gitee.io/v2/docs/commands/Run.htm)中的 `Target` 参数。
 
 - 单参数模式(arg)
 
@@ -110,5 +110,5 @@ date: 2023-04-11
 **启动处理程序**将收到的内容填充到**搜索URL**中"{}"所在位置，启动填充后的URL。
 
 ::: tip
-启动处理程序的根本功能就是 `Run(Target)` 参考[Run / RunWait - 语法 & 使用 ](https://www.autoahk.com/help/autohotkey/v2/docs/commands/Run.htm)
+启动处理程序的根本功能就是 `Run(Target)` 参考[Run / RunWait - 语法 & 使用 ](https://orz707.gitee.io/v2/docs/commands/Run.htm)
 :::

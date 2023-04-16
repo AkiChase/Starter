@@ -33,7 +33,7 @@ date: 2023-04-13
 
 **自定义**按键类型可以**自由填写**热键内容，包括鼠标按键等，
 
-参考[热键 - 定义 & 使用 | AutoHotkey v2](https://www.autoahk.com/help/autohotkey/v2/docs/Hotkeys.htm#toc)
+参考[热键 - 定义 & 使用 | AutoHotkey v2](https://orz707.gitee.io/v2/docs/Hotkeys.htm#toc)
 
 :::warning
 热键内容的填写需要有一定AHK经验，否则建议使用其他类型
@@ -43,7 +43,7 @@ date: 2023-04-13
 
 **双击**按键类型必须填写**单个**按键名，
 
-参考[按键列表(键盘, 鼠标和操纵杆) | AutoHotkey v2](https://www.autoahk.com/help/autohotkey/v2/docs/KeyList.htm)
+参考[按键列表(键盘, 鼠标和操纵杆) | AutoHotkey v2](https://orz707.gitee.io/v2/docs/KeyList.htm)
 
 可勾选**是否屏蔽原按键功能**，勾选后快捷键原功能将被屏蔽。
 
@@ -55,7 +55,7 @@ date: 2023-04-13
 
 **双击**按键类型必须填写**单个**按键名，
 
-参考[按键列表(键盘, 鼠标和操纵杆) | AutoHotkey v2](https://www.autoahk.com/help/autohotkey/v2/docs/KeyList.htm)
+参考[按键列表(键盘, 鼠标和操纵杆) | AutoHotkey v2](https://orz707.gitee.io/v2/docs/KeyList.htm)
 
 可勾选**是否屏蔽原按键功能**，勾选后快捷键原功能将被屏蔽。
 
