@@ -27,5 +27,5 @@ static setSearchTextSel(start := 0, end := -1)
 :::tip
 当 `start` 和 `end` 的值相同时，表示将游标移动到指定位置。
 
-使用 `setSearchTextSel(StrLen(searchText), 1)` 将游标移动到最后
+使用 `setSearchTextSel(StrLen(searchText), -1)` 将游标移动到最后
 :::

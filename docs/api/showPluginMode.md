@@ -22,8 +22,8 @@ static showPluginMode(pluginSearchData, searchHandler, runHandler, options := {}
 ## 参数
 
 - \{Array\} `pluginSearchData`: **必填参数**，用于插件模式搜索的数据。
-- \{[Closure](https://orz707.gitee.io/v2/docs/Functions.htm#closures)\} `searchHandler`: **必填参数**，插件模式搜索处理函数，**额外说明见下方**。
-- \{[Closure](https://orz707.gitee.io/v2/docs/Functions.htm#closures)\} `runHandler`: **必填参数**，插件模式回车、双击任意项时的处理函数。
+- \{(that, searchText) => any\} `searchHandler`: **必填参数**，插件模式搜索处理函数，**额外说明见下方**。
+- \{(that, searchText) => any\} `runHandler`: **必填参数**，插件模式回车、双击任意项时的处理函数。
 - \{Object\} `options`: 可选参数，**具体使用见下方说明**。
 
 ### options 中可选参数的说明
@@ -50,11 +50,15 @@ static showPluginMode(pluginSearchData, searchHandler, runHandler, options := {}
 - `placeholder`（可选）: 设置搜索框占位符。
 - `thumb`（可选）: hICON，设置插件模式搜索框图标。
 
-### searchHandler 处理函数说明
+### searchHandler 处理函数说明{#searchHandler}
+
+```ahk
+(that, searchText) => any
+```
 
 为规范使用，请将搜索结果存放至 that.pluginSearchResult 然后对其进行渲染（添加到 listview）。
 
-### pasteContentHandler 处理函数说明
+### pasteContentHandler 处理函数说明{#pastecontenthandler}
 
 - 函数形式: 
     1. `(that, typeName) => bool` 
@@ -70,7 +74,7 @@ typeName: file 则 content为文件路径数组 \{Array\}
 typeName: bitmap 则 content为位图句柄 hBitmap \{Int\}
 :::
 
-### dropFilesHandler 处理函数说明
+### dropFilesHandler 处理函数说明{#dropFilesHandler}
 
 - 函数形式: 
     1. `(that, fileList, true) => bool` 

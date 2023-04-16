@@ -5,7 +5,7 @@ order: 1
 date: 2023-04-14
 ---
 
-## chineseFirstChar(str)
+## chineseFirstChar(str){#chineseFirstChar}
 
 将文本的中文部分转换为拼音首字母，多音字转换不准确
 
@@ -15,7 +15,7 @@ date: 2023-04-14
 - 返回值
     -  \{String\} 将中文部分转为拼音首字母后的字符串
 
-## strStartWith(ori, sub, caseSense := false)
+## strStartWith(ori, sub, caseSense := false){#strStartWith}
 
 ori是否以sub开头
 
@@ -27,7 +27,7 @@ ori是否以sub开头
 - 返回值
     -  \{Bool\} `true` 则 ori 以 sub 开头
 
-## pathStrCompact(fullPath, maxChars)
+## pathStrCompact(fullPath, maxChars){#pathStrCompact}
 
 压缩文件路径文本，使其不超过最大字符数
 
@@ -38,7 +38,7 @@ ori是否以sub开头
 - 返回值
     - \{String\} 压缩后的文件路径文本
 
-## copyToClipboard(filePath, cut := false)
+## copyToClipboard(filePath, cut := false){#copyToClipboard}
 
 复制指向文件的路径到剪切板，可选择进行剪切而不是复制
 
@@ -49,7 +49,7 @@ ori是否以sub开头
 - 返回值
     - 无
 
-## startFile(path, workingDir := "", options := "", beforeRun?)
+## startFile(path, workingDir := "", options := "", beforeRun?){#startFile}
 
 运行指定路径的文件
 
@@ -62,7 +62,7 @@ ori是否以sub开头
 - 返回值 \{String\}
     - PID 如果无法确定 PID, 返回空字符串
 
-## openFileInFolder(path)
+## openFileInFolder(path){#openFileInFolder}
 
 在资源管理器中显示指定路径的文件
 
@@ -72,7 +72,7 @@ ori是否以sub开头
 - 返回值
     - 无
 
-## UrlEncode(str)
+## UrlEncode(str){#UrlEncode}
 
 对给定字符串进行 URL 编码
 
@@ -82,7 +82,7 @@ ori是否以sub开头
 - 返回值
     - \{String\} URL 编码后的字符串
 
-## UrlDecode(str)
+## UrlDecode(str){#UrlDecode}
 
 对给定字符串进行 URL 解码
 
@@ -92,7 +92,7 @@ ori是否以sub开头
 - 返回值
     - \{String\} URL 解码后的字符串
 
-## globalMatch(Haystack, NeedleRegEx, StartingPos := 1)
+## globalMatch(Haystack, NeedleRegEx, StartingPos := 1){#globalMatch}
 
 从给定字符串的指定起始位置处查找符合正则表达式的所有子字符串，即正则全局模式
 
@@ -106,7 +106,7 @@ ori是否以sub开头
 - 返回值
     - \{Array\} 匹配对象数组，参考[匹配对象 - MatchObject](https://orz707.gitee.io/v2/docs/commands/RegExMatch.htm#MatchObject)
 
-## Jxon_Load(src, args*)
+## Jxon_Load(src, args*){#Jxon_Load}
 
 将给定 JSON 文本数据加载成为 AutoHotkey 变量
 
@@ -121,7 +121,7 @@ ori是否以sub开头
 - 返回值
     - AutoHotkey 变量
 
-## Jxon_Dump(obj, indent := "", lvl := 1)
+## Jxon_Dump(obj, indent := "", lvl := 1){#Jxon_Dump}
 
 将给定的 AutoHotkey 变量转换为 JSON 文本
 
@@ -137,7 +137,7 @@ ori是否以sub开头
 - 返回值
     - \{String\} 转换后的 JSON 文本
 
-## WinHttp(args*)
+## WinHttp(args*){#WinHttp}
 
 参考 WinHttp 库函数源码，`src\Utils\WinHttp.ah2`
 
@@ -147,7 +147,7 @@ ori是否以sub开头
 - 返回值
     - \{WinHttp\} WinHttp 对象
 
-## associatedHIcon(filePath)
+## associatedHIcon(filePath){#associatedHIcon}
 
 获取 Windows 中与指定文件关联的图标，并返回一个 hICON 句柄
 
@@ -157,7 +157,7 @@ ori是否以sub开头
 - 返回值
     - \{Int\} 获取到的关联图标的 HICON 句柄
 
-## tip(title, content, time?, unique := false)
+## tip(title, content, time?, unique := false){#tip}
 
 在右下角弹出一条 `WiseGui` 通知，可设置标题、内容、计时消失时间、是否唯一，返回该通知的 id
 
@@ -170,7 +170,7 @@ ori是否以sub开头
 - 返回值
     - \{String\} 该通知窗口的 id（如果 `unique` 为 true，则返回 A_TickCount 值作为 id）
 
-## quickSort(arr, fn)
+## quickSort(arr, fn){#quickSort}
 
 对给定的数组进行**快速排序**（不生成副本），并返回排序后的数组
 

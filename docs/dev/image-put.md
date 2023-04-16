@@ -11,7 +11,7 @@ date: 2023-04-14
 - [ImagePut —— 裁剪、缩放 & 其他选项](./others/image-put-doc-1.md)
 - [ImagePut —— 输入类型 & 输出函数](./others/image-put-doc-2.md)
 
-**Starter** 也引入了这个强大的图片操作库，并将其主要API访问方式添加到了 `PluginHelper.Utils.ImagePutHelper` 工具类中，参考[ImagePutHelper](../api/Utils/ImagePutHelper.md)
+**Starter** 也引入了这个强大的图片操作库，并将其主要API访问方式添加到了 `PluginHelper.Utils.ImagePutHelper` 工具类中，参考[ImagePutHelper](../api/utils/ImagePutHelper.md)
 
 可以通过这个工具类调用 `ImagePut`，完成你需要的图片相关操作。
 

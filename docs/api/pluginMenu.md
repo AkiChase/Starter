@@ -8,7 +8,7 @@ date: 2023-04-14
 ## 定义
 
 ```ahk
-static PluginHelper.pluginMenu
+static pluginMenu
 ```
 
 ## 类型

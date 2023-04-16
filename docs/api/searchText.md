@@ -1,5 +1,5 @@
 ---
-title: SearchText
+title: searchText
 author: ruchuby
 order: 1
 date: 2023-04-15
@@ -8,7 +8,7 @@ date: 2023-04-15
 ## 定义
 
 ```ahk
-static SearchText {
+static searchText {
     get => SearchGui.searchText
     set => SearchGui.edit.Value := SearchGui.searchText := value
 }
