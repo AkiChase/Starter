@@ -3,7 +3,7 @@
  * @Version: 0.0.1
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-13
+ * @LastEditTime: 2023-04-16
  * @Description: Hotkey Settings Tool Functions
  */
 
@@ -47,7 +47,7 @@ class HotkeyHelper {
         handler(*) {
             ; Wait for release
             if (KeyWait(key)) {
-                if (KeyWait(key, "DT" time)) {
+                if (KeyWait(key, "DT" time) && A_PriorKey = key) {
                     doubleCB()
                     KeyWait(key)
                 } else
@@ -78,7 +78,7 @@ class HotkeyHelper {
         handler(*) {
             if (KeyWait(key, "T" time1)) {
                 ; Released within time1, waiting for the second press
-                if (KeyWait(key, "DT" time2)) {
+                if (KeyWait(key, "DT" time2)  && A_PriorKey = key) {
                     ; Second Press within time2
                     doubleCB()
                     ; Endless waiting for release to avoid repeated calls
