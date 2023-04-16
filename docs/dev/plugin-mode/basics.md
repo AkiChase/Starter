@@ -3,6 +3,7 @@ title: 基础
 icon: square-caret-up
 author: ruchuby
 date: 2023-04-14
+order: 1
 ---
 
 **插件模式**类似于启动模式、智能模式，但更加自由、强大，**Starter** 仅仅提供一个搜索框，其他内容全部由插件定义。

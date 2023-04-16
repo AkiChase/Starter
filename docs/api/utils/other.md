@@ -149,13 +149,25 @@ ori是否以sub开头
 
 ## associatedHIcon(filePath){#associatedHIcon}
 
-获取 Windows 中与指定文件关联的图标，并返回一个 hICON 句柄
+获取 Windows 中与指定文件关联的图标，并返回一个 hIcon 句柄
 
 - 参数
     - \{String\} `filePath`：需要获取关联图标的文件路径
 
 - 返回值
     - \{Int\} 获取到的关联图标的 HICON 句柄
+
+# base64ToHICON(base64){#base64ToHICON}
+
+载入无头部的图片base64文本，返回 hIcon 句柄
+
+## 参数
+
+- \{String\} `base64`：无头部的图片base64文本
+
+## 返回值
+
+- \{Int\} 载入后图标的 HICON 句柄
 
 ## tip(title, content, time?, unique := false){#tip}
 
@@ -165,7 +177,7 @@ ori是否以sub开头
     - \{String\} `title`：通知标题
     - \{String\} `content`：通知内容
     - \{Number\} `time`：计时消失时间（单位为毫秒），选填，默认为 0，表示不消失
-    - \{Boolean\} `unique`：是否保证唯一（即同一时刻只有一条弹窗），选填，默认为 false
+    - \{Boolean\} `unique`：是否保证唯一（不会被覆盖），选填，默认为 false
 
 - 返回值
     - \{String\} 该通知窗口的 id（如果 `unique` 为 true，则返回 A_TickCount 值作为 id）
