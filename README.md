@@ -13,9 +13,18 @@
 </p>
 
 
+## 特性
+
+- 万能搜索框 —— 通过搜索和情景匹配，回应符合要求的多种内容。
+- 轻量 & 绿色 —— 使用AHK编写，绿色免安装，体积 < 2M 。
+- 简洁 & 颜值在线 —— 设计简洁美观，UI的「颜值即正义」。
+- 插件化 —— 自由装载插件，打造个人专属效率工具。
+
 ## 文档
 
-[Starter文档](https://ruchuby.github.io/Starter/)
+[Starter文档 - GitHub Pages](https://ruchuby.github.io/Starter/)
+
+[Starter文档 - Gitee Pages](https://ruchuby.github.io/Starter/)
 
 ## 下载
 
