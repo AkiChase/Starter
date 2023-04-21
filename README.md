@@ -24,7 +24,7 @@
 
 [Starter文档 - GitHub Pages](https://ruchuby.github.io/Starter/)
 
-[Starter文档 - Gitee Pages](https://ruchuby.github.io/Starter/)
+[Starter文档 - Gitee Pages](https://ruchuby.gitee.io/Starter/)
 
 ## 下载
 
