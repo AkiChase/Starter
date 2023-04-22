@@ -174,6 +174,7 @@ class SearchGui {
         this.thumbList := [LoadPicture(GlobalData.imgDir "\Starter.png", "w64"), LoadPicture(GlobalData.imgDir "\AI.png", "w64")]
         this.thumb := this.gui.AddPicture("x510 y10 w30 h30", "hBitmap:*" this.thumbList[1])
         this.thumb.OnEvent("Click", (*) => this.winInfoMatchFlag ? this.showWinInfo() : 0)
+        this.thumb.OnEvent("ContextMenu", (*) => A_TrayMenu.Show())
 
         this.contentThumb := this.gui.AddPicture("x7 y7 w36 h36 +Border +Hidden")
 
