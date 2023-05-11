@@ -3,11 +3,11 @@
  * @Version: 0.0.3
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-16
+ * @LastEditTime: 2023-05-11
  * @Description: 关于界面显示版本信息、项目主页、检查更新
  */
 class AboutGui {
-    static version := "0.5.1"
+    static version := "0.5.2"
     ; static gui:=unset
 
     static init() {

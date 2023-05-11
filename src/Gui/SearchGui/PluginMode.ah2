@@ -3,7 +3,7 @@
  * @Version: 0.0.1
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-15
+ * @LastEditTime: 2023-05-11
  * @Description: 插件模式
  */
 
@@ -63,10 +63,12 @@ class PluginMode {
         get => this._autoHideFlag
         set {
             _autoHideFunc() {
-                if (!WinActive(SearchGui.gui))
-                    PluginMode.hideGui(), SearchGui.hideTime := A_Now
+                if (!WinActive(SearchGui.gui)) {
+                    SetTimer((*) => (PluginMode.hideGui(), SearchGui.hideTime := A_Now), -1000)
+                    SetTimer(_autoHideFunc, 0)
+                }
             }
-            SetTimer(_autoHideFunc, Value ? 1000 : 0)
+            SetTimer(_autoHideFunc, Value ? 100 : 0)
         }
     }
     ;#endregion

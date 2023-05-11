@@ -6,7 +6,7 @@ class SearchGui {
     ; static contentThumb := unset
 
     static noRecover := true
-    static hideTime := A_Now
+    static hideTime := 0
 
     ;#region 设置搜索框占位符
     static _placeholder := ""
@@ -174,6 +174,7 @@ class SearchGui {
         this.thumbList := [LoadPicture(GlobalData.imgDir "\Starter.png", "w64"), LoadPicture(GlobalData.imgDir "\AI.png", "w64")]
         this.thumb := this.gui.AddPicture("x510 y10 w30 h30", "hBitmap:*" this.thumbList[1])
         this.thumb.OnEvent("Click", (*) => this.winInfoMatchFlag ? this.showWinInfo() : 0)
+        this.thumb.OnEvent("ContextMenu", (*) => A_TrayMenu.Show())
 
         this.contentThumb := this.gui.AddPicture("x7 y7 w36 h36 +Border +Hidden")
 
@@ -325,7 +326,7 @@ class SearchGui {
 
     ; 隐藏时间是否在时限
     static hideTimeDiff() {
-        return DateDiff(A_Now, SearchGui.hideTime, "s") < 15
+        return SearchGui.hideTime && DateDiff(A_Now, SearchGui.hideTime, "s") < 15
     }
 
     ; 恢复窗口

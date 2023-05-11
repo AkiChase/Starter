@@ -175,6 +175,8 @@ class GlobalData {
                         "key", "CapsLock",
                         "block", false
                     )]
+                case "keywordsHK":
+                    return []
             }
         } else {
             config := Map()
@@ -188,6 +190,7 @@ class GlobalData {
                 "key", "CapsLock",
                 "block", false
             )]
+            config["keywordsHK"] := []
             return config
         }
     }
@@ -201,22 +204,22 @@ class GlobalData {
                     this.config := this.newDefaultConfig()
                 }
 
-                for name in ["plugin", "hotkey"] {
+                for name in ["plugin", "hotkey", "keywordsHK"] {
                     if (!this.config.Has(name))
                         this.config[name] := this.newDefaultConfig(name)
                 }
-                pluginDefault := this.newDefaultConfig("plugin")
-                ; 热键数量变化则重置
-                if (this.config["hotkey"].Length < pluginDefault.Length)
-                    this.config["hotkey"] := pluginDefault
-            } catch {
-                this.config := this.newDefaultConfig()
-                this.storeConfig()
+                hotkeyDefault := this.newDefaultConfig("hotkey")
+                ; 热键数量变化则重置为默认热键
+                if (this.config["hotkey"].Length < hotkeyDefault.Length)
+                    this.config["hotkey"] := hotkeyDefault
+
+                return
             }
-        } else {
-            this.config := this.newDefaultConfig()
-            this.storeConfig()
         }
+
+        ; 配置文件不存在或读取失败则重置为默认配置
+        this.config := this.newDefaultConfig()
+        this.storeConfig()
     }
 
     ; 保存配置文件至本地
