@@ -3,7 +3,7 @@
  * @Version: 0.1.0
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-12
+ * @LastEditTime: 2023-05-11
  * @Description: 调用Everything进行文件搜索
  */
 
@@ -396,7 +396,7 @@ class Plugin_文件搜索 {
                 }
             } else {
                 if (pastedContentType == 'text' && searchText) {
-                    obj.matchData := { type: "text" } ; 标记匹配类型，方便进入插件模式前区分进入方式
+                    obj.matchData := { type: "text", searchTextFlag: true } ; 标记匹配类型，方便进入插件模式前区分进入方式
                     obj.title := "使用Everything搜索输入内容" ; 修改显示标题
                     return 1 ; 基本优先级
                 } else if (pastedContentType == 'file' && pastedContent.Length = 1 && InStr(FileExist(pastedContent[1]), "D")) {

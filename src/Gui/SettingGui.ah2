@@ -121,10 +121,10 @@ class SettingGui {
             c.showGui(kw)
             if (play) {
                 searchResult := mode == 0 ? GlobalData.startupSearchResult : GlobalData.intelligentSearchResult
+                pluginSearchResut := mode == 0 ? StartupMode.pluginSearchResult : IntelligentMode.pluginSearchResult
                 ; 启动第一个结果
-                if (searchResult.Length) {
+                if (searchResult.Length || pluginSearchResut.Length)
                     (mode == 0) ? StartupMode.startupRun(1) : IntelligentMode.intelligentRun(1)
-                }
             }
         }
 
