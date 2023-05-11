@@ -1,6 +1,6 @@
 /**
  * @Name: Starter
- * @Version: 0.3.0
+ * @Version: 0.5.2
  * @Author: ruchuby
  * @LastEditors: ruchuby
  * @LastEditTime: 2023-05-11
