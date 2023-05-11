@@ -6,7 +6,7 @@ class SearchGui {
     ; static contentThumb := unset
 
     static noRecover := true
-    static hideTime := A_Now
+    static hideTime := 0
 
     ;#region 设置搜索框占位符
     static _placeholder := ""
@@ -326,7 +326,7 @@ class SearchGui {
 
     ; 隐藏时间是否在时限
     static hideTimeDiff() {
-        return DateDiff(A_Now, SearchGui.hideTime, "s") < 15
+        return SearchGui.hideTime && DateDiff(A_Now, SearchGui.hideTime, "s") < 15
     }
 
     ; 恢复窗口

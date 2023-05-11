@@ -35,10 +35,12 @@ class StartupMode {
         get => this._autoHideFlag
         set {
             _autoHideFunc() {
-                if (!WinActive(SearchGui.gui))
-                    StartupMode.hideGui(), SearchGui.hideTime := A_Now
+                if (!WinActive(SearchGui.gui)) {
+                    SetTimer((*) => (StartupMode.hideGui(), SearchGui.hideTime := A_Now), -1000)
+                    SetTimer(_autoHideFunc, 0)
+                }
             }
-            SetTimer(_autoHideFunc, Value ? 1000 : 0)
+            SetTimer(_autoHideFunc, Value ? 100 : 0)
         }
     }
     ;#endregion
