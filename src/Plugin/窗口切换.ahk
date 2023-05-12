@@ -4,7 +4,7 @@
  * @Author: ruchuby
  * @LastEditors: ruchuby
  * @LastEditTime: 2023-05-12
- * @Description: 实现Switcheroo的功能
+ * @Description: 窗口切换，支持使用拼音首字母检索窗口标题进行切换，类似Switcheroo
  */
 
 /*
@@ -12,7 +12,7 @@
 {
     "author": "ruchuby",
     "version": "0.0.1",
-    "introduction": "窗口切换",
+    "introduction": "窗口切换，支持使用拼音首字母检索窗口标题进行切换，类似Switcheroo",
     "icon": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAA81JREFUWEftll9oW3UUx7/nd9NMKqZTVtT1bjrSrXeNw4cW0iGjLY048GUKLXN/UF+UbdJ2Ix2ID8sQlC3q2jqQKfqkuGXIRAYTmtmOPZhBYKDE3m2pqe3dyli3ka7t/nT3d+TepNrWpLnZXPegPwiXJN9zvh/OOb/7+xEe8qKH7I//CAAzeQ8PqKS4VHaXGAMbKoanK3/fFag5FC8Zf3yJyiRUlqYKIhWgCgDWUwVYBWB9/3sxH1bYtUffqJ53DFAZGSkHTTULoNpOzqyybYInZ6QeAWAAZIDYYImLYDYg2IBUDHhuGzzuahSkvA7gKX502XpHACuPDgXB/L6VnAhnbQMpL1omxMK44zKNlLnCQAuZToZ61ZHUBiZxDJBvFgTwRobXC8gTTLwl2fzsN04MnGhWHh3qZWmeKghgCcE8eaHlmZedJHaqKQ4A0C80L982N3lp+49PL1qkeK0hB5B98tKs7rwQfPD6vhd/zQXlGED99JdNd2/eWnrzSnoCyBjN+JQCuA4gBcLvYEoC5gAxJZnoPQABKZXVNz5u1OdCzAvgCZ58hwS/AUZNJpCHQZRixqAABi0zk0VSlsjkxAeBy/nKXtYRPQYQp8NNrzoG8ASjG4nwLTPvJcHHpSJSNz4MXHXa25m6xcGeBib6Mh0OWFWbtfJWoGx3NA6mnnS46d1cpr61nzxhQtFYkkZkLrc1RHH95/bjc/VZgN50OPCPYc8L4An2hBQF31Wc7p8070JjkhpIVDGxRgwNQHnG1O75ULZFDQR83R9r25qjAs4AtLoDIYDWALQKsI1cACYAWAOkE+OcFKwTFF0Zu3oukQjdmTarruv0S1BMYfIlzrT+Nv374o6f6hmyb94KVPq7PS7iE9awAGYURKPEQp9i6MkzrYbT3mt13b2AeUqP7QwVBaCt7XwJTF/psbbZB4ZT56zu3gHs0iv1eqy1sUjPWfKiASJ/MBPtoEzvFxag8kgqRCT2MOBbEIDyWu9eEkp95p3GDQAusSk3J19b0bcQAN+X13q7pvtFhEE3XD8kWpZds3fzg2xBWUf0CwBL0uHAK/nm64EBlHWcbAY4woQtY/sDee8R/zrAyLo1Vq8bwDzMEPvHPmo6ON/uotX+zu1M9LYea3v+frZhVV1Xkpg/u7zuuZ7bbveVydHSUXxeO1UoJ2n+rhoQ4gTe1R9rP1AoINf/mr/rLRAOzX0VO8lln1I+f3e1KRABs89JUA7NJUBu1mM7+4qN/+uYrHph32NkurMXkOLSKI+444m+HePFRWXUBS+l95K0mJj/Af4E/+8XBQoX0rkAAAAASUVORK5CYII="
 }
 <==Starter Plugin Info===
@@ -159,7 +159,7 @@ class Plugin_窗口切换 {
 
             ; that.listView.Delete() ; reloadLVIL中已经删除了
             for item in that.pluginSearchResult
-                that.listView.Add("icon" that.imgPathToImgListIndex[item.hwnd], item.title)
+                that.listView.Add("icon" that.imgPathToImgListIndex[item.hwnd], "  " item.title)
 
             that.resizeGui() ;根据搜索结果数量调整gui尺寸 并启用重绘
         }
