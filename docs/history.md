@@ -3,12 +3,16 @@ title: 更新日志
 icon: clock
 ---
 
+## [Starter v0.5.3](https://github.com/ruchuby/Starter/releases/tag/v0.5.3) (2023-05-12)
+1. 新增: 窗口切换插件 - [相关文档](https://ruchuby.github.io/Starter/plugin/window-switcher)
+2. 修复: PluginHelper模块注释内容错误
+
 ## [Starter v0.5.2](https://github.com/ruchuby/Starter/releases/tag/v0.5.2) (2023-05-11)
 
 1. 新增: 关键词快捷键 - [相关文档](https://ruchuby.github.io/Starter/guide/setting/#控制)
 2. 优化: 稳定搜索框自动隐藏的时间
 3. 修复: 文件选择对话框导航在某些窗口不生效的问题
-3. 修复: 智能模式下打开文件搜索插件的错误
+4. 修复: 智能模式下打开文件搜索插件的错误
 
 ## [Starter v0.5.1](https://github.com/ruchuby/Starter/releases/tag/v0.5.1) (2023-04-16)
 

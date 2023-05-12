@@ -3,7 +3,7 @@
  * @Version: 0.0.3
  * @Author: ruchuby
  * @LastEditors: ruchuby
- * @LastEditTime: 2023-04-16
+ * @LastEditTime: 2023-05-12
  * @Description: 插件API封装
  */
 
@@ -17,6 +17,13 @@ class PluginHelper {
         StartupMode.pluginLoadImgs()
         IntelligentMode.pluginLoadImgs()
     }
+
+    /**
+     * @description 返回搜索界面hwnd
+     * @link [searchGuiHwnd | Starter文档](https://ruchuby.github.io/Starter/api/searchGuiHwnd)
+     * @type {Int}
+     */
+    static searchGuiHwnd => SearchGui.gui.Hwnd
 
     /**
      * @description 插件菜单对象，菜单位于：托盘菜单 > 插件功能
@@ -259,7 +266,7 @@ class PluginHelper {
     /**
      * @description: 启动插件模式
      * @link [showPluginMode | Starter文档](https://ruchuby.github.io/Starter/api/showPluginMode)
-     * @param {Object} pluginSearchData 用于插件模式搜索的数据
+     * @param {Array} pluginSearchData 用于插件模式搜索的数据
      * @param {(that, searchText) => void} searchHandler 插件模式搜索处理函数
      * @param {(that, rowNum) => void} runHandler 插件模式回车、双击任意项时的处理函数
      * @param {Object} [options] 可选参数对象
