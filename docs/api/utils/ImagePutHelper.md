@@ -1,6 +1,6 @@
 ---
 title: ImagePutHelper
-author: ruchuby
+author: AkiChase
 order: 2
 date: 2023-04-14
 ---

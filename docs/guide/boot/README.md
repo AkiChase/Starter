@@ -1,7 +1,7 @@
 ---
 title: 自启界面
 icon: desktop
-author: ruchuby
+author: AkiChase
 date: 2023-04-11
 ---
 

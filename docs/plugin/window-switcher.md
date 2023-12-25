@@ -1,6 +1,6 @@
 ---
 title: 窗口切换
-author: ruchuby
+author: AkiChase
 date: 2023-05-12
 ---
 
@@ -29,7 +29,7 @@ date: 2023-05-12
 
 ## 进阶技巧
 
-添加对应的[关键词快捷键](https://ruchuby.github.io/Starter/guide/setting/#控制)，可以通过快捷键**快速启动插件**。
+添加对应的[关键词快捷键](https://AkiChase.github.io/Starter/guide/setting/#控制)，可以通过快捷键**快速启动插件**。
 
 ![窗口切换:关键词快捷键](./images/window-switcher-3.jpg)
 

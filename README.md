@@ -6,10 +6,10 @@
 <p align="center">智能、快捷地启动文件和插件应用，提供便利和高效的使用体验。</p>
 
 <p align="center">
-  <a href="https://github.com/ruchuby/starter"><img src="https://img.shields.io/github/license/ruchuby/starter" alt="License"></a>
-  <a href="https://github.com/ruchuby/starter/releases"><img src="https://img.shields.io/github/v/release/ruchuby/starter" alt="Version"></a>
-  <a href="https://github.com/ruchuby/starter/releases"><img src="https://img.shields.io/github/downloads/ruchuby/starter/total" alt="Downloads"></a>
-  <a href="https://github.com/ruchuby/starter"><img src="https://img.shields.io/github/stars/ruchuby/starter" alt="Stars"></a>
+  <a href="https://github.com/AkiChase/starter"><img src="https://img.shields.io/github/license/AkiChase/starter" alt="License"></a>
+  <a href="https://github.com/AkiChase/starter/releases"><img src="https://img.shields.io/github/v/release/AkiChase/starter" alt="Version"></a>
+  <a href="https://github.com/AkiChase/starter/releases"><img src="https://img.shields.io/github/downloads/AkiChase/starter/total" alt="Downloads"></a>
+  <a href="https://github.com/AkiChase/starter"><img src="https://img.shields.io/github/stars/AkiChase/starter" alt="Stars"></a>
 </p>
 
 
@@ -22,13 +22,13 @@
 
 ## 文档
 
-[Starter文档 - GitHub Pages](https://ruchuby.github.io/Starter/)
+[Starter文档 - GitHub Pages](https://AkiChase.github.io/Starter/)
 
-[Starter文档 - Gitee Pages](https://ruchuby.gitee.io/Starter/)
+[Starter文档 - Gitee Pages](https://AkiChase.gitee.io/Starter/)
 
 ## 下载
 
-- Github下载：[Github Releases](https://github.com/ruchuby/Starter/releases) 
+- Github下载：[Github Releases](https://github.com/AkiChase/Starter/releases) 
 
 - 蓝奏云下载：[蓝奏云](https://wwi.lanzoup.com/b01kb1g4j) 密码: 9vge
 

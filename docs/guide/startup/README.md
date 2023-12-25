@@ -1,7 +1,7 @@
 ---
 title: 启动模式
 icon: bolt
-author: ruchuby
+author: AkiChase
 date: 2023-04-11
 ---
 

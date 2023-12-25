@@ -1,7 +1,7 @@
 ---
 title: 插件界面
 icon: list-ul
-author: ruchuby
+author: AkiChase
 date: 2023-04-11
 ---
 

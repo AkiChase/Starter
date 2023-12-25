@@ -1,8 +1,8 @@
 /**
  * @Name: 关于界面
  * @Version: 0.0.3
- * @Author: ruchuby
- * @LastEditors: ruchuby
+ * @Author: AkiChase
+ * @LastEditors: AkiChase
  * @LastEditTime: 2023-05-12
  * @Description: 关于界面显示版本信息、项目主页、检查更新
  */
@@ -20,9 +20,9 @@ class AboutGui {
         this.gui.AddText("x160 yp+50", "当前版本: " this.version)
 
         this.gui.AddText("x140 yp+50", "开发者:")
-        this.gui.AddText("xp+90 yp w200", "ruchuby").SetFont("bold")
-        this.gui.AddLink("x120 yp+35", '项目主页:  <a href="https://github.com/ruchuby/Starter">Github Starter</a>')
-        this.gui.AddLink(, '项目主页:  <a href="https://gitee.com/ruchuby/Starter"> Gitee  Starter</a>')
+        this.gui.AddText("xp+90 yp w200", "AkiChase").SetFont("bold")
+        this.gui.AddLink("x120 yp+35", '项目主页:  <a href="https://github.com/AkiChase/Starter">Github Starter</a>')
+        this.gui.AddLink(, '项目主页:  <a href="https://gitee.com/AkiChase/Starter"> Gitee  Starter</a>')
 
         this.gui.AddButton("x175 yp+50", "检查更新").OnEvent("Click", (*) => this.checkUpdates())
 
@@ -49,7 +49,7 @@ class AboutGui {
     static checkUpdates(silent := false) {
         this.gui.Title := "正在检查更新..."
         try {
-            res := WinHttp().Download("https://gitee.com/api/v5/repos/ruchuby/Starter/tags?access_token=14eff4e12ee77cfd7ea5410727cb1526")
+            res := WinHttp().Download("https://gitee.com/api/v5/repos/AkiChase/Starter/tags?access_token=14eff4e12ee77cfd7ea5410727cb1526")
             res_json := Jxon_Load(&res)
             latest := SubStr(res_json[1]["name"], 2)
             if (this.versionCompare(latest, this.version) > 0) {

@@ -1,8 +1,8 @@
 /**
  * @Name: Class_Loader
  * @Version: 0.0.1
- * @Author: ruchuby
- * @LastEditors: ruchuby
+ * @Author: AkiChase
+ * @LastEditors: AkiChase
  * @LastEditTime: 2023-03-29
  * @Description: Loading files(or code) dynamically. But it needs to be loaded all in one call(loadFromFiles() or loadFromText()).
  */

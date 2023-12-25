@@ -1,7 +1,7 @@
 ---
 title: 关于界面
 icon: circle-info
-author: ruchuby
+author: AkiChase
 date: 2023-04-11
 ---
 

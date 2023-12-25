@@ -1,8 +1,8 @@
 /**
  * @Name: PluginHelper
  * @Version: 0.0.3
- * @Author: ruchuby
- * @LastEditors: ruchuby
+ * @Author: AkiChase
+ * @LastEditors: AkiChase
  * @LastEditTime: 2023-05-12
  * @Description: 插件API封装
  */
@@ -20,21 +20,21 @@ class PluginHelper {
 
     /**
      * @description 返回搜索界面hwnd
-     * @link [searchGuiHwnd | Starter文档](https://ruchuby.github.io/Starter/api/searchGuiHwnd)
+     * @link [searchGuiHwnd | Starter文档](https://AkiChase.github.io/Starter/api/searchGuiHwnd)
      * @type {Int}
      */
     static searchGuiHwnd => SearchGui.gui.Hwnd
 
     /**
      * @description 插件菜单对象，菜单位于：托盘菜单 > 插件功能
-     * @link [pluginMenu | Starter文档](https://ruchuby.github.io/Starter/api/pluginMenu)
+     * @link [pluginMenu | Starter文档](https://AkiChase.github.io/Starter/api/pluginMenu)
      * @type {Menu}
      */
     static pluginMenu := Menu()
 
     /**
      * @description 添加插件入口函数到执行队列，等待基本功能初始化后，函数将被执行
-     * @link [addEntryFunc | Starter文档](https://ruchuby.github.io/Starter/api/addEntryFunc)
+     * @link [addEntryFunc | Starter文档](https://AkiChase.github.io/Starter/api/addEntryFunc)
      * @param {(*)=>any} f 插件入口函数，也可以称为插件的初始化函数
      * @returns {void}
      */
@@ -43,8 +43,8 @@ class PluginHelper {
     }
 
     /**
-     * @description 添加插件智能项，应用方式见[插件智能项](https://ruchuby.github.io/Starter/dev/intelligent/)
-     * @link [addPluginToIntelligentMode | Starter文档](https://ruchuby.github.io/Starter/api/addPluginToIntelligentMode)
+     * @description 添加插件智能项，应用方式见[插件智能项](https://AkiChase.github.io/Starter/dev/intelligent/)
+     * @link [addPluginToIntelligentMode | Starter文档](https://AkiChase.github.io/Starter/api/addPluginToIntelligentMode)
      * @param {String} name 插件id，即插件文件名
      * @param {String} title 插件智能项显示标题
      * @param {(obj, searchText, pastedContentType, pastedContent, workWinInfo, winInfoMatchFlag)=>number} matchHandler 智能插件项的自定义匹配函数，返回值决定当前插件项是否显示
@@ -63,8 +63,8 @@ class PluginHelper {
     }
 
     /**
-     * @description 添加插件启动项，应用方式见[插件启动项](https://ruchuby.github.io/Starter/dev/startup)
-     * @link [addPluginToStartupMode | Starter文档](https://ruchuby.github.io/Starter/api/addPluginToStartupMode)
+     * @description 添加插件启动项，应用方式见[插件启动项](https://AkiChase.github.io/Starter/dev/startup)
+     * @link [addPluginToStartupMode | Starter文档](https://AkiChase.github.io/Starter/api/addPluginToStartupMode)
      * @param {String} name 插件id，即插件文件名
      * @param {String} title 插件启动项显示标题
      * @param {Array} keywords 插件启动项其他关键字，比如 `["其他","QTGJZ"]`
@@ -85,7 +85,7 @@ class PluginHelper {
 
     /**
      * @description 获取指定插件的图标 hIcon
-     * @link [getPluginHIcon | Starter文档](https://ruchuby.github.io/Starter/api/getPluginHIcon)
+     * @link [getPluginHIcon | Starter文档](https://AkiChase.github.io/Starter/api/getPluginHIcon)
      * @param {String} pluginName 插件名称，即插件文件名(插件id)
      * @returns {Int} 如果插件有图标，则返回hIcon，否则返回0
      */
@@ -99,7 +99,7 @@ class PluginHelper {
 
     /**
      * @description 获取指定插件的图标的 Base64
-     * @link [getPluginIconBase64 | Starter文档](https://ruchuby.github.io/Starter/api/getPluginIconBase64)
+     * @link [getPluginIconBase64 | Starter文档](https://AkiChase.github.io/Starter/api/getPluginIconBase64)
      * @param {String} pluginName 插件名称，即插件文件名、插件id
      * @returns {String|Int} 如果插件有图标，返回无头部Base64，否则返回0
      */
@@ -113,7 +113,7 @@ class PluginHelper {
 
     /**
      * @description 隐藏搜索框
-     * @link [hideSearchGui | Starter文档](https://ruchuby.github.io/Starter/api/hideSearchGui)
+     * @link [hideSearchGui | Starter文档](https://AkiChase.github.io/Starter/api/hideSearchGui)
      * @param {Bool} [recordHideTime=false] 默认为 `false`。如果设置为 `true`，则会记录隐藏时间，15s内按**呼出搜索框**快捷键可恢复搜索框内容。
      * @return {Void}
      */
@@ -123,21 +123,21 @@ class PluginHelper {
 
     /**
      * @description 返回当前搜索框粘贴的内容的类型，或者按下智能搜索框时选中的内容的类型。可返回 "file", "bitmap", "text"
-     * @link [pastedContentType | Starter文档](https://ruchuby.github.io/Starter/api/pastedContentType)
+     * @link [pastedContentType | Starter文档](https://AkiChase.github.io/Starter/api/pastedContentType)
      * @type {String}
      */
     static pastedContentType => SearchGui._pastedContentType
 
     /**
      * @description 返回当前搜索框粘贴的内容，或者按下智能搜索框时选中的内容
-     * @link [pastedContent | Starter文档](https://ruchuby.github.io/Starter/api/pastedContent)
+     * @link [pastedContent | Starter文档](https://AkiChase.github.io/Starter/api/pastedContent)
      * @type {(Array|ImagePutBuffer|String)}
      */
     static pastedContent => SearchGui._pastedContent
 
     /**
      * @description 返回当前活动窗口的相关信息
-     * @link [workWinInfo | Starter文档](https://ruchuby.github.io/Starter/api/workWinInfo)
+     * @link [workWinInfo | Starter文档](https://AkiChase.github.io/Starter/api/workWinInfo)
      * @type {Object}
      * @property {Int} hwnd 窗口句柄
      * @property {String} title 窗口标题
@@ -149,14 +149,14 @@ class PluginHelper {
 
     /**
      * @description 判断当前是否处于工作窗口模式
-     * @link [winInfoMatchFlag | Starter文档](https://ruchuby.github.io/Starter/api/winInfoMatchFlag)
+     * @link [winInfoMatchFlag | Starter文档](https://AkiChase.github.io/Starter/api/winInfoMatchFlag)
      * @type {Bool}
      */
     static winInfoMatchFlag => SearchGui.winInfoMatchFlag
 
     /**
      * @description 获取或设置搜索框的占位符
-     * @link [placeholder | Starter文档](https://ruchuby.github.io/Starter/api/placeholder)
+     * @link [placeholder | Starter文档](https://AkiChase.github.io/Starter/api/placeholder)
      * @type {String}
      * @example
      * Tooltip(PluginHelper.placeholder) ; 获取占位符内容
@@ -169,7 +169,7 @@ class PluginHelper {
 
     /**
      * @description 获取或设置搜索框的文本内容
-     * @link [SearchText | Starter文档](https://ruchuby.github.io/Starter/api/searchText)
+     * @link [SearchText | Starter文档](https://AkiChase.github.io/Starter/api/searchText)
      * @type {String}
      * @example
      * Tooltip(PluginHelper.searchText) ; 获取搜索框文本内容
@@ -182,7 +182,7 @@ class PluginHelper {
 
     /**
      * @description 设置搜索框的选中文本区域
-     * @link [setSearchTextSel | Starter文档](https://ruchuby.github.io/Starter/api/setSearchTextSel)
+     * @link [setSearchTextSel | Starter文档](https://AkiChase.github.io/Starter/api/setSearchTextSel)
      * @param {Int} [start=0] 选中文本区域的开始位置，默认值为 `0`
      * @param {Int} [end=-1] 选中文本区域的结束位置，默认值为 `-1`
      * @return {Void}
@@ -195,14 +195,14 @@ class PluginHelper {
 
     /**
      * @description 获取Starter的图片资源目录路径
-     * @link [imgDir | Starter文档](https://ruchuby.github.io/Starter/api/imgDir)
+     * @link [imgDir | Starter文档](https://AkiChase.github.io/Starter/api/imgDir)
      * @type {String}
      */
     static imgDir => GlobalData.imgDir
 
     /**
      * @description 获取PluginMode类。特定情况下需要提前获取到PluginMode，即所谓的 `that`
-     * @link [getPluginMode | Starter文档](https://ruchuby.github.io/Starter/api/getPluginMode)
+     * @link [getPluginMode | Starter文档](https://AkiChase.github.io/Starter/api/getPluginMode)
      * @return {PluginMode}
      */
     static getPluginMode(*) {
@@ -254,7 +254,7 @@ class PluginHelper {
 
     /**
      * @description 启动插件模式
-     * @link [showPluginMode | Starter文档](https://ruchuby.github.io/Starter/api/showPluginMode)
+     * @link [showPluginMode | Starter文档](https://AkiChase.github.io/Starter/api/showPluginMode)
      * @param {Array} pluginSearchData 插件模式搜索数据
      * @param {(that, typeName, content?) => bool} searchHandler 搜索结果处理函数，参考
      * @param {Function} runHandler 回车/双击任意项时的处理函数
@@ -265,7 +265,7 @@ class PluginHelper {
 
     /**
      * @description: 启动插件模式
-     * @link [showPluginMode | Starter文档](https://ruchuby.github.io/Starter/api/showPluginMode)
+     * @link [showPluginMode | Starter文档](https://AkiChase.github.io/Starter/api/showPluginMode)
      * @param {Array} pluginSearchData 用于插件模式搜索的数据
      * @param {(that, searchText) => void} searchHandler 插件模式搜索处理函数
      * @param {(that, rowNum) => void} runHandler 插件模式回车、双击任意项时的处理函数
@@ -277,9 +277,9 @@ class PluginHelper {
      * 
      * options.toBottomHandler {(that) => void}  列表最后一行可见(触底)处理函数
      * 
-     * options.pasteContentHandler {(that, typeName, content?) => bool}  Ctrl+V粘贴内容时的处理函数，参考[pasteContentHandler](https://ruchuby.github.io/Starter/api/showPluginMode.html#pastecontenthandler)
+     * options.pasteContentHandler {(that, typeName, content?) => bool}  Ctrl+V粘贴内容时的处理函数，参考[pasteContentHandler](https://AkiChase.github.io/Starter/api/showPluginMode.html#pastecontenthandler)
      * 
-     * options.dropFilesHandler {(that, fileList, pre) => bool}  拖入文件到搜索框的处理函数，参考[dropFilesHandler](https://ruchuby.github.io/Starter/api/showPluginMode.html#dropFilesHandler)
+     * options.dropFilesHandler {(that, fileList, pre) => bool}  拖入文件到搜索框的处理函数，参考[dropFilesHandler](https://AkiChase.github.io/Starter/api/showPluginMode.html#dropFilesHandler)
      * 
      * options.initHandler {(that) => void}  初始化处理函数
      * 
@@ -296,7 +296,7 @@ class PluginHelper {
     class Utils {
         /**
          * @description 将文本的中文部分转换为拼音首字母，多音字转换不准确
-         * @link [chineseFirstChar | Starter文档](https://ruchuby.github.io/Starter/api/utils/other.html#chineseFirstChar)
+         * @link [chineseFirstChar | Starter文档](https://AkiChase.github.io/Starter/api/utils/other.html#chineseFirstChar)
          * @param {String} str 要转换的文本
          * @returns {String} 将中文部分转为拼音首字母后的字符串
          */
@@ -306,7 +306,7 @@ class PluginHelper {
 
         /**
          * @description 判断文本是否以指定子串开头
-         * @link [strStartWith | Starter文档](https://ruchuby.github.io/Starter/api/utils/other.html#strStartWith)
+         * @link [strStartWith | Starter文档](https://AkiChase.github.io/Starter/api/utils/other.html#strStartWith)
          * @param {String} ori 进行判断的文本
          * @param {String} sub 开头的文本
          * @param {Bool} [caseSense=false] 是否大小写敏感，默认为false
@@ -321,7 +321,7 @@ class PluginHelper {
 
         /**
          * @description 压缩文件路径文本，使其不超过最大字符数
-         * @link [pathStrCompact | Starter文档](https://ruchuby.github.io/Starter/api/utils/other.html#pathStrCompact)
+         * @link [pathStrCompact | Starter文档](https://AkiChase.github.io/Starter/api/utils/other.html#pathStrCompact)
          * @param {String} fullPath 文件完整路径
          * @param {Number} maxChars 压缩后最大字符数
          * @returns {String} 压缩后的文件路径文本
@@ -338,7 +338,7 @@ class PluginHelper {
 
         /**
          * @description 复制指向文件的路径到剪切板，可选择进行剪切而不是复制
-         * @link [copyToClipboard | Starter文档](https://ruchuby.github.io/Starter/api/utils/other.html#copyToClipboard)
+         * @link [copyToClipboard | Starter文档](https://AkiChase.github.io/Starter/api/utils/other.html#copyToClipboard)
          * @param {String} filePath 指向文件的路径
          * @param {Bool} [cut=false] 是否剪切，默认为false
          * @returns {Void} 
@@ -349,7 +349,7 @@ class PluginHelper {
 
         /**
          * @description 运行指定路径的文件
-         * @link [startFile | Starter文档](https://ruchuby.github.io/Starter/api/utils/other.html#startFile)
+         * @link [startFile | Starter文档](https://AkiChase.github.io/Starter/api/utils/other.html#startFile)
          * @param {String} path 文件路径
          * @param {String} [workingDir=""] 工作目录，见[Run / RunWait - 语法 & 使用 | AutoHotkey v2](https://orz707.gitee.io/v2/docs/commands/Run.htm)
          * @param {String} [options=""] 见[Run / RunWait - 语法 & 使用 | AutoHotkey v2](https://orz707.gitee.io/v2/docs/commands/Run.htm)
@@ -362,7 +362,7 @@ class PluginHelper {
 
         /**
          * @description 在资源管理器中显示指定路径的文件
-         * @link [openFileInFolder | Starter文档](https://ruchuby.github.io/Starter/api/utils/other.html#openFileInFolder)
+         * @link [openFileInFolder | Starter文档](https://AkiChase.github.io/Starter/api/utils/other.html#openFileInFolder)
          * @param {String} path 文件路径
          * @returns {Void} 
          */
@@ -372,7 +372,7 @@ class PluginHelper {
 
         /**
          * @description 对给定字符串进行 URL 编码
-         * @link [UrlEncode | Starter文档](https://ruchuby.github.io/Starter/api/utils/other.html#UrlEncode)
+         * @link [UrlEncode | Starter文档](https://AkiChase.github.io/Starter/api/utils/other.html#UrlEncode)
          * @param {String} str 需要编码的字符串
          * @returns {String} URL 编码后的字符串
          */
@@ -382,7 +382,7 @@ class PluginHelper {
 
         /**
          * @description 对给定字符串进行 URL 解码
-         * @link [UrlDecode | Starter文档](https://ruchuby.github.io/Starter/api/utils/other.html#UrlDecode)
+         * @link [UrlDecode | Starter文档](https://AkiChase.github.io/Starter/api/utils/other.html#UrlDecode)
          * @param {String} str 需要解码的字符串
          * @returns {String} URL 解码后的字符串
          */
@@ -392,7 +392,7 @@ class PluginHelper {
 
         /**
          * @description 从给定字符串的指定起始位置处查找符合正则表达式的所有子字符串，即正则全局模式
-         * @link [globalMatch | Starter文档](https://ruchuby.github.io/Starter/api/utils/other.html#globalMatch)
+         * @link [globalMatch | Starter文档](https://AkiChase.github.io/Starter/api/utils/other.html#globalMatch)
          * @param {String} Haystack 给定字符串
          * @param {RegExp} NeedleRegEx 正则表达式对象
          * @param {Number} [StartingPos=1] 起始位置，默认为 1
@@ -404,7 +404,7 @@ class PluginHelper {
 
         /**
          * @description 将给定 JSON 文本数据加载成为 AutoHotkey 变量
-         * @link [Jxon_Load | Starter文档](https://ruchuby.github.io/Starter/api/utils/other.html#Jxon_Load)
+         * @link [Jxon_Load | Starter文档](https://AkiChase.github.io/Starter/api/utils/other.html#Jxon_Load)
          * @param {String} src JSON 文本的引用
          * @param {*} [args] 可选参数，参考源码JXON.ah2
          * @returns {*} AutoHotkey 变量
@@ -415,7 +415,7 @@ class PluginHelper {
 
         /**
          * @description 将给定的 AutoHotkey 变量转换为 JSON 文本
-         * @link [Jxon_Dump | Starter文档](https://ruchuby.github.io/Starter/api/utils/other.html#Jxon_Dump)
+         * @link [Jxon_Dump | Starter文档](https://AkiChase.github.io/Starter/api/utils/other.html#Jxon_Dump)
          * @param {*} obj 需要转换的 AutoHotkey 变量
          * @param {String} [indent=""] 缩进用的字符串，默认为空字符串
          * @param {Number} [lvl=1] 当前递归的深度，默认为 1
@@ -427,7 +427,7 @@ class PluginHelper {
 
         /**
          * @description 参考 WinHttp 库函数源码，`src\Utils\WinHttp.ah2`
-         * @link [WinHttp | Starter文档](https://ruchuby.github.io/Starter/api/utils/other.html#WinHttp)
+         * @link [WinHttp | Starter文档](https://AkiChase.github.io/Starter/api/utils/other.html#WinHttp)
          * @returns {WinHttp} WinHttp 对象
          */
         static WinHttp(args*) {
@@ -436,7 +436,7 @@ class PluginHelper {
 
         /**
          * @description 获取 Windows 中与指定文件关联的图标，并返回一个 hICON 句柄
-         * @link [associatedHIcon | Starter文档](https://ruchuby.github.io/Starter/api/utils/other.html#associatedHIcon)
+         * @link [associatedHIcon | Starter文档](https://AkiChase.github.io/Starter/api/utils/other.html#associatedHIcon)
          * @param {String} filePath 需要获取关联图标的文件路径
          * @returns {Int} 获取到的关联图标的 HICON 句柄
          */
@@ -446,7 +446,7 @@ class PluginHelper {
 
         /**
          * @description 载入无头部的图片base64文本，返回 hIcon 句柄
-         * @link [base64ToHICON | Starter文档](https://ruchuby.github.io/Starter/api/utils/other.html#base64ToHICON)
+         * @link [base64ToHICON | Starter文档](https://AkiChase.github.io/Starter/api/utils/other.html#base64ToHICON)
          * @param {String} base64 无头部的图片base64文本
          * @returns {Int} 载入后图标的 HICON 句柄
          */
@@ -461,7 +461,7 @@ class PluginHelper {
 
         /**
          * @description 在右下角弹出一条 `WiseGui` 通知，可设置标题、内容、计时消失时间、是否唯一，返回该通知的 id
-         * @link [tip | Starter文档](https://ruchuby.github.io/Starter/api/utils/other.html#tip)
+         * @link [tip | Starter文档](https://AkiChase.github.io/Starter/api/utils/other.html#tip)
          * @param {String} title 通知标题
          * @param {String} content 通知内容
          * @param {Number} [time=0] 计时消失时间（单位为毫秒），选填，默认为 0，表示不消失
@@ -474,7 +474,7 @@ class PluginHelper {
 
         /**
          * @description 对给定的数组进行**快速排序**（不生成副本），并返回排序后的数组
-         * @link [quickSort | Starter文档](https://ruchuby.github.io/Starter/api/utils/other.html#quickSort)
+         * @link [quickSort | Starter文档](https://AkiChase.github.io/Starter/api/utils/other.html#quickSort)
          * @param {Array} arr 待排序数组
          * @param {Function} fn 比较函数，接受两个参数 itemA 和 itemB，返回值为数字类型，表示 itemA 和 itemB 的大小关系。如果 itemA 大于 itemB，返回正数；如果 itemA 小于 itemB，返回负数；如果 itemA 等于 itemB，返回 0。
          * @returns {Array} 排序后的数组
@@ -489,7 +489,7 @@ class PluginHelper {
 
         /**
          * @description: 简单、高效、实用的图片操作库
-         * @link [ImagePutHelper | Starter文档](https://ruchuby.github.io/Starter/api/utils/ImagePutHelper.html)
+         * @link [ImagePutHelper | Starter文档](https://AkiChase.github.io/Starter/api/utils/ImagePutHelper.html)
          */
         class ImagePutHelper {
             ; Puts the image into a file format and returns a base64 encoded string.

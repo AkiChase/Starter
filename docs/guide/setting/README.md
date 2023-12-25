@@ -1,7 +1,7 @@
 ---
 title: 设置界面
 icon: gear
-author: ruchuby
+author: AkiChase
 date: 2023-04-13
 ---
 

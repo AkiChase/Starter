@@ -10,7 +10,7 @@ icon: lightbulb
 若想深入了解软件的**所有功能**，可以查阅使用指南的其他内容，其中包含了详细的介绍和操作说明。
 
 ::: tip
-若在使用 Starter 过程中遇到无法解决的问题，欢迎前往 [Issues](https://github.com/ruchuby/Starter/issues) 提交问题报告。
+若在使用 Starter 过程中遇到无法解决的问题，欢迎前往 [Issues](https://github.com/AkiChase/Starter/issues) 提交问题报告。
 
 在提交问题报告时，请尽可能提供详细的信息，例如出错时的错误提示、错误复现流程和软件版本等，以便更好地解决问题。感谢你的支持和理解！
 :::

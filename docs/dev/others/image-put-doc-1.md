@@ -1,7 +1,7 @@
 ---
 title: ImagePut —— 裁剪、缩放 & 其他选项
 icon: image
-author: ruchuby
+author: AkiChase
 date: 2023-04-16
 ---
 

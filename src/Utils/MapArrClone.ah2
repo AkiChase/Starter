@@ -1,7 +1,7 @@
 /**
  * MapArrClone(obj)
  * AHK v2.x
- * Created by ruchuby on 2023.2.17
+ * Created by AkiChase on 2023.2.17
  * 深拷贝 支持值类型和Map、Array引用类型
  */
 

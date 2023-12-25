@@ -1,6 +1,6 @@
 ---
 title: OCR识别文字
-author: ruchuby
+author: AkiChase
 date: 2023-04-13
 ---
 

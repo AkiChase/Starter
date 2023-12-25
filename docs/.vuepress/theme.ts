@@ -5,11 +5,11 @@ import { zhSidebar } from "./sidebar.js";
 
 
 export default hopeTheme({
-  hostname: "https://ruchuby.github.io/Starter/",
+  hostname: "https://AkiChase.github.io/Starter/",
 
   author: {
-    name: "ruchuby",
-    url: "https://github.com/ruchuby",
+    name: "AkiChase",
+    url: "https://github.com/AkiChase",
     email: "xiangyangxiao@outlook.com"
   },
 
@@ -25,7 +25,7 @@ export default hopeTheme({
   logoDark: "/logo-tp.svg",
 
 
-  repo: "ruchuby/Starter",
+  repo: "AkiChase/Starter",
   docsDir: "/docs",
   docsBranch: "master",
 
@@ -58,7 +58,7 @@ export default hopeTheme({
     prismjs: false,
     comment: {
       provider: "Giscus",
-      repo: "ruchuby/giscusRepo",
+      repo: "AkiChase/giscusRepo",
       repoId: "R_kgDOJUjnlw",
       category: "Announcements",
       categoryId: "DIC_kwDOJUjnl84CVpfq",
