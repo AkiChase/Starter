@@ -1,7 +1,7 @@
 ---
 title: 快速上手
 icon: lightbulb
-author: ruchuby
+author: AkiChase
 date: 2023-04-14
 ---
 
@@ -27,7 +27,7 @@ date: 2023-04-14
 /*
 ===Starter Plugin Info==>
 {
-    "author": "ruchuby",
+    "author": "AkiChase",
     "version": "0.0.1",
     "introduction": "Starter Plugin example",
     "icon": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAgNJREFUWEft1UuozVEUx/HPHRmaMFBMTDwmYiJSQimUMqAoAwNRQoSSR3kVxfWIIjISojwGiiLKgBkTYSADZGAkE2VAS3vXdvr/z/2fc27nls6a/fde+7e+e62113/IGNvQGMc3APivMnALE1NPLWraW6OVgZl4k4Jew/p+A+zBiRR0LW72G+A5FuArpuFHPwHm4mUKeAUbmwYPvyY9sAlTsL9G+Eixtwr3kt9RfMKldkAjAZzFNhxrA/Aas/Axpf9XAbAP57C9DqIOIOp4AUvSwbjlwQqRqHvUP+w8thY+h3EgfT/BFrxv1agCiDRG8EnJ+TM240EFQM5QbC3Dw8JnBS5iclqLBg2Iu6VOK0DUOW6b7XZqqu81KfyAqXiLmAWtNh6XsbrYiKxEf/y1EuA64g1n24nTNYFjeSGepf2T2N3GdweGi/0bWNcrwFVsSKIxejNMFUcjgDjYSQm+YQJeYU7N7TsqQdZo0oTxOh6nA1HP3O0lR1dNmAVan+Fx7C3U48+XG2teMQlLgEPF0+3oGZYi+ZmdQdQx20+MwwvMr0l/ngNdDaJSM0bx9AJgKR4lh+iZmJJVFgBfeh3FVcJ3EH0SNhsxiru2kf4FVcK/0+JTLO46cjrYKcDyYiTvwql+A9zHyhR0Bt71GyDSHhZDaE2vweN8pyUYjZj/aAwABhn4A2ymYyH5RzvQAAAAAElFTkSuQmCC"
@@ -61,7 +61,7 @@ date: 2023-04-14
 /*
 ===Starter Plugin Info==>
 {
-    "author": "ruchuby",
+    "author": "AkiChase",
     "version": "0.0.1",
     "introduction": "Starter Plugin example",
     "icon": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAgNJREFUWEft1UuozVEUx/HPHRmaMFBMTDwmYiJSQimUMqAoAwNRQoSSR3kVxfWIIjISojwGiiLKgBkTYSADZGAkE2VAS3vXdvr/z/2fc27nls6a/fde+7e+e62113/IGNvQGMc3APivMnALE1NPLWraW6OVgZl4k4Jew/p+A+zBiRR0LW72G+A5FuArpuFHPwHm4mUKeAUbmwYPvyY9sAlTsL9G+Eixtwr3kt9RfMKldkAjAZzFNhxrA/Aas/Axpf9XAbAP57C9DqIOIOp4AUvSwbjlwQqRqHvUP+w8thY+h3EgfT/BFrxv1agCiDRG8EnJ+TM240EFQM5QbC3Dw8JnBS5iclqLBg2Iu6VOK0DUOW6b7XZqqu81KfyAqXiLmAWtNh6XsbrYiKxEf/y1EuA64g1n24nTNYFjeSGepf2T2N3GdweGi/0bWNcrwFVsSKIxejNMFUcjgDjYSQm+YQJeYU7N7TsqQdZo0oTxOh6nA1HP3O0lR1dNmAVan+Fx7C3U48+XG2teMQlLgEPF0+3oGZYi+ZmdQdQx20+MwwvMr0l/ngNdDaJSM0bx9AJgKR4lh+iZmJJVFgBfeh3FVcJ3EH0SNhsxiru2kf4FVcK/0+JTLO46cjrYKcDyYiTvwql+A9zHyhR0Bt71GyDSHhZDaE2vweN8pyUYjZj/aAwABhn4A2ymYyH5RzvQAAAAAElFTkSuQmCC"
@@ -302,7 +302,7 @@ class Plugin_MyPlugin {
 /*
 ===Starter Plugin Info==>
 {
-    "author": "ruchuby",
+    "author": "AkiChase",
     "version": "0.0.1",
     "introduction": "Starter Plugin example",
     "icon": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAgNJREFUWEft1UuozVEUx/HPHRmaMFBMTDwmYiJSQimUMqAoAwNRQoSSR3kVxfWIIjISojwGiiLKgBkTYSADZGAkE2VAS3vXdvr/z/2fc27nls6a/fde+7e+e62113/IGNvQGMc3APivMnALE1NPLWraW6OVgZl4k4Jew/p+A+zBiRR0LW72G+A5FuArpuFHPwHm4mUKeAUbmwYPvyY9sAlTsL9G+Eixtwr3kt9RfMKldkAjAZzFNhxrA/Aas/Axpf9XAbAP57C9DqIOIOp4AUvSwbjlwQqRqHvUP+w8thY+h3EgfT/BFrxv1agCiDRG8EnJ+TM240EFQM5QbC3Dw8JnBS5iclqLBg2Iu6VOK0DUOW6b7XZqqu81KfyAqXiLmAWtNh6XsbrYiKxEf/y1EuA64g1n24nTNYFjeSGepf2T2N3GdweGi/0bWNcrwFVsSKIxejNMFUcjgDjYSQm+YQJeYU7N7TsqQdZo0oTxOh6nA1HP3O0lR1dNmAVan+Fx7C3U48+XG2teMQlLgEPF0+3oGZYi+ZmdQdQx20+MwwvMr0l/ngNdDaJSM0bx9AJgKR4lh+iZmJJVFgBfeh3FVcJ3EH0SNhsxiru2kf4FVcK/0+JTLO46cjrYKcDyYiTvwql+A9zHyhR0Bt71GyDSHhZDaE2vweN8pyUYjZj/aAwABhn4A2ymYyH5RzvQAAAAAElFTkSuQmCC"

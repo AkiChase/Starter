@@ -1,7 +1,7 @@
 ---
 title: ImagePut
 icon: image
-author: ruchuby
+author: AkiChase
 date: 2023-04-14
 ---
 

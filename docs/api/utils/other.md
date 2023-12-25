@@ -1,6 +1,6 @@
 ---
 title: 其他
-author: ruchuby
+author: AkiChase
 order: 1
 date: 2023-04-14
 ---

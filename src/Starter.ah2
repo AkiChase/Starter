@@ -1,8 +1,8 @@
 /**
  * @Name: Starter
  * @Version: 0.5.2
- * @Author: ruchuby
- * @LastEditors: ruchuby
+ * @Author: AkiChase
+ * @LastEditors: AkiChase
  * @LastEditTime: 2023-05-12
  * @Description: 介绍Starter 是一款AHK编写的快速启动工具，旨在方便快捷地启动文件、文件夹，提高电脑的使用效率。
  */

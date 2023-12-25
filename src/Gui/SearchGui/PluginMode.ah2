@@ -1,8 +1,8 @@
 /**
  * @Name: PluginMode
  * @Version: 0.0.1
- * @Author: ruchuby
- * @LastEditors: ruchuby
+ * @Author: AkiChase
+ * @LastEditors: AkiChase
  * @LastEditTime: 2023-05-11
  * @Description: 插件模式
  */

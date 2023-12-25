@@ -1,8 +1,8 @@
 /**
  * @Name: win10任务栏透明.ahk
  * @Version: 0.0.1
- * @Author: ruchuby
- * @LastEditors: ruchuby
+ * @Author: AkiChase
+ * @LastEditors: AkiChase
  * @LastEditTime: 2023-03-29
  * @Description: win10任务栏透明功能
  */
@@ -10,7 +10,7 @@
 /*
 ===Starter Plugin Info==>
 {
-    "author": "ruchuby",
+    "author": "AkiChase",
     "version": "0.0.1",
     "introduction": "任务栏透明化，仅支持win10，打开开始菜单透明化会消失",
     "icon": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAKtJREFUWEdjZBhgwDjA9jMMOgfMxBEiZxkYGGbhkPPBIf6cgYEBpA8vQA8BkAOMsegAWY7LAWl4HD3qgNEQIDkEcCUoPQYGhh14Ujs2KREGBoZLhPQQWw6AspovDsPScYhLMjAwSGGR+8zAwHALJj7qgNEQGHQhMFoXjIbAaAiMVka4GpCjteFoCIBCQB1HAunF0yLixSFHcouIUAeHbHliq2OyLSCkccAdAADLclshWioLowAAAABJRU5ErkJggg=="

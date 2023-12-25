@@ -2,7 +2,7 @@
 title: 配置
 icon: gear
 order: 2
-author: ruchuby
+author: AkiChase
 date: 2023-04-11
 ---
 

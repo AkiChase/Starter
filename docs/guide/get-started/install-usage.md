@@ -2,7 +2,7 @@
 title: 下载与使用
 icon: download
 order: 2
-author: ruchuby
+author: AkiChase
 date: 2023-04-09
 ---
 
@@ -13,15 +13,15 @@ date: 2023-04-09
 :::
 
 <p class="shields">
-  <a href="https://github.com/ruchuby/starter"><img src="https://img.shields.io/github/license/ruchuby/starter" alt="License"></a>
-  <a href="https://github.com/ruchuby/starter/releases"><img src="https://img.shields.io/github/v/release/ruchuby/starter" alt="Version"></a>
-  <a href="https://github.com/ruchuby/starter/releases"><img src="https://img.shields.io/github/downloads/ruchuby/starter/total" alt="Downloads"></a>
-  <a href="https://github.com/ruchuby/starter"><img src="https://img.shields.io/github/stars/ruchuby/starter" alt="Stars"></a>
+  <a href="https://github.com/AkiChase/starter"><img src="https://img.shields.io/github/license/AkiChase/starter" alt="License"></a>
+  <a href="https://github.com/AkiChase/starter/releases"><img src="https://img.shields.io/github/v/release/AkiChase/starter" alt="Version"></a>
+  <a href="https://github.com/AkiChase/starter/releases"><img src="https://img.shields.io/github/downloads/AkiChase/starter/total" alt="Downloads"></a>
+  <a href="https://github.com/AkiChase/starter"><img src="https://img.shields.io/github/stars/AkiChase/starter" alt="Stars"></a>
 </p>
 
 ## 下载
 
-- Github下载：[Github Releases](https://github.com/ruchuby/Starter/releases) 
+- Github下载：[Github Releases](https://github.com/AkiChase/Starter/releases) 
 
 - 蓝奏云下载：[蓝奏云](https://wwi.lanzoup.com/b01kb1g4j) 密码: 9vge
 

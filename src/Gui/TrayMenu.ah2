@@ -1,8 +1,8 @@
 /**
  * @Name: TrayMenu
  * @Version: 0.0.2
- * @Author: ruchuby
- * @LastEditors: ruchuby
+ * @Author: AkiChase
+ * @LastEditors: AkiChase
  * @LastEditTime: 2023-04-14
  * @Description: 菜单栏
  */

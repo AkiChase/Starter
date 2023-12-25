@@ -1,6 +1,6 @@
 /*
 WinHttp 3.9 for ahk v2
-updated by ruchuby on 2023/2/15
+updated by AkiChase on 2023/2/15
 
 example:
   url := "https://httpbin.org/post?a=1&b=2"

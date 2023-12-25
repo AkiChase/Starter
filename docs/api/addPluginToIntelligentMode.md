@@ -1,6 +1,6 @@
 ---
 title: addPluginToIntelligentMode
-author: ruchuby
+author: AkiChase
 order: 1
 date: 2023-04-15
 ---

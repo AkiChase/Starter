@@ -1,8 +1,8 @@
 /**
  * @Name: OCR识别文字
  * @Version: 0.0.1
- * @Author: ruchuby
- * @LastEditors: ruchuby
+ * @Author: AkiChase
+ * @LastEditors: AkiChase
  * @LastEditTime: 2023-04-13
  * @Description: OCR识别文字
  */
@@ -10,7 +10,7 @@
 /*
 ===Starter Plugin Info==>
 {
-    "author": "ruchuby",
+    "author": "AkiChase",
     "version": "0.0.1",
     "introduction": "OCR识别文字",
     "icon": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAoZJREFUWEftl0toE1EUhv8ziS1oSWYmIraCgiCCC10pCPUJahF02QZxIyKCQsGN0naCqZmIgrpRELpwa6s7XWhFUbEL0ZWKO0HF4gObO5NAwUc6R+YmU5JY5lES6CJ3k9y55/Hxz8nJubTjwAAjYDHRnqmH48+C7GrPe/f3Z4nofJAPLRmAF5MTFETbrPPevvRuYn7qxptXoA3QViCqAto5sZaXza2Xhcl/P9r5ns9hi7QpRaga4gaA07KSmcesfOrkogBcGtcxaqNRDVHXwDp//en6cWX1bBgIL6eED+PQaKMahTMAXat7TmzauVQmarxFAohpAGsakjm2qcdaDqCNiENMuFdNNE3gWQZtrOxp0Da161EgIiugGuI5gJ2VJDwKRglEV+UO+F409e6WAehDhU1OjN57CeJOZ09Xx3LLLlvfAKiVXwSOWHn9dliISAqoRuEWQMdkIqK7Vk7rd79rGXGZGWerSd/apr6l+QBZ7lDL1m8vMDk4aF3UH7j7lcM/u8tK7Kt35iixvtKF5GQYiNAKaMbMCEMxq0HfAXOD9QniRwE+Xi3Gx7ap7WsqgGqITwDWhQnq2jgU21bKJV8H2YdSIJERaYURurBkjYAnLDOVbgqAahSeALS3GixoNpStXapQLm8oXVr1wQ8iUIFEZmarwsqrsEE1Q4wzMFDtCzeLpn7KF8CdXl2DqUd35Gfj0gwxxsAJ+Zzovp3TDvsF1IbFZlbwZh44HkuVsklR6yP/jBxnl4zoTcULzQOJ7BddKa8oeM4K83aRT70Meq+1r4yBfNHUjUaA9lDaVmDpKeBeQP2qO+rMWDv3LRT3PwX8krf6diwviQEAo5EVqFzP3Wbju/4ByLREuNknZDkAAAAASUVORK5CYII="

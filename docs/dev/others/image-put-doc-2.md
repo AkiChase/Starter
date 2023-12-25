@@ -1,7 +1,7 @@
 ---
 title: ImagePut —— 输入类型 & 输出函数
 icon: image
-author: ruchuby
+author: AkiChase
 date: 2023-04-16
 ---
 

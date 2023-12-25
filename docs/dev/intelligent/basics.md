@@ -1,7 +1,7 @@
 ---
 title: 基础
 icon: square-caret-up
-author: ruchuby
+author: AkiChase
 date: 2023-04-14
 order: 1
 ---
