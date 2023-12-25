@@ -2,4 +2,4 @@
 User-agent:*
 Disallow:
 
-Sitemap: https://ruchuby.github.io/Starter/Starter/sitemap.xml
+Sitemap: https://AkiChase.github.io/Starter/Starter/sitemap.xml
