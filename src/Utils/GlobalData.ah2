@@ -52,6 +52,7 @@ class GlobalData {
             this.storeStartupData()
             this.storeConfig()
             this.storeIntelligentData()
+            Tip.show("", "配置保存成功！", 500)
         }
         this.onExitHandler := onExitHandler
     }
