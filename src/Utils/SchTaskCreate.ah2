@@ -23,14 +23,16 @@ taskDef := scheduleService.NewTask(0)
 
 ; 创建触发器
 trigger := taskDef.Triggers.Create(9) ; 表示触发器类型为登录
+trigger.Delay := "PT6S"
 
 ; 创建操作
 action := taskDef.Actions.Create(0) ; 0 表示动作类型为运行程序
 action.Path := A_Args[1]
 action.Arguments := Format('"{}" "{}"', A_Args[2], A_Args[3])
 
-; A_Clipboard:=taskDef.XmlText ; 输出任务定义的 XML 文本
-; ExitApp()
+settings := taskDef.Settings
+settings.DisallowStartIfOnBatteries := false
+settings.StopIfGoingOnBatteries := false
 
 ; 注册任务
 registeredTask := rootFolder.RegisterTaskDefinition(
