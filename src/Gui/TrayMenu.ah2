@@ -3,7 +3,7 @@
  * @Version: 0.0.2
  * @Author: AkiChase
  * @LastEditors: AkiChase
- * @LastEditTime: 2023-04-14
+ * @LastEditTime: 2023-12-31
  * @Description: 菜单栏
  */
 
@@ -67,8 +67,7 @@ class TrayMenu {
         g.AddButton("xp+220 yp-5", "选择").OnEvent("Click",
             (*) => mode ?
                 pathEdit.Value := FileSelect(3, A_Desktop, "请选择用户数据文件", "zip (*.zip)") :
-                pathEdit.Value := DirSelect("*" A_Desktop, , "请选择保存目录")
-        )
+                pathEdit.Value := DirSelect("*" A_Desktop, , "请选择保存目录"))
 
         g.AddText("x10 yp+50", mode ? "导入内容选项:" : "导出内容选项:")
 
@@ -85,8 +84,7 @@ class TrayMenu {
         }
 
         g.AddButton("x130 yp+40 h27 w100", mode ? "导 入" : "导 出").OnEvent("Click",
-            (*) => mode ? this.importUserData(pathEdit.Value, options()) : this.backupUserData(pathEdit.Value, options(), g)
-        )
+            (*) => mode ? this.importUserData(pathEdit.Value, options()) : this.backupUserData(pathEdit.Value, options(), g))
 
         g.OnEvent("Close", (*) => g.Destroy())
         g.Show()
@@ -164,22 +162,45 @@ class TrayMenu {
         }
     }
 
-    ; 获取加入注册表状态
+    ; 获取加入任务计划状态
     static getStartupState() {
-        try
-            return !!RegRead("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run", "Starter")
-        catch
+        static taskScheduler := 0
+        if (taskScheduler == 0) {
+            taskScheduler := ComObject("Schedule.Service")
+            taskScheduler.Connect()
+        }
+
+        try {
+            rootFolder := taskScheduler.GetFolder("\")
+            ; 获取指定名称的计划任务
+            task := rootFolder.GetTask("Starter")
+
+            ; 如果任务存在，检查是否被禁用
+            if (task) {
+                return task.Enabled
+            } else {
+                return false
+            }
+        } catch
             return false
     }
 
     ; 切换开机启动
     static toggleStartupState() {
         if (this.getStartupState()) {
-            RegDelete("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run", "Starter")
+            ; RegDelete("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run", "Starter")
+            cmd := Format('*RunAs "{1}" "{2}"'
+                , A_AhkPath, GlobalData.rootDir "\src\Utils\SchTaskDel.ah2"
+            )
+            Run(cmd)
             this.menu.Uncheck("开机启动")
         } else {
-            cmd := Format('"{}" "{}" "the_Startup"', GlobalData.rootDir "\src\AutoHotkey64.exe", GlobalData.rootDir "\src\Starter.ah2")
-            RegWrite(cmd, "REG_SZ", "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run", "Starter")
+            ; cmd := Format('"{}" "{}" "the_Startup"', GlobalData.rootDir "\src\AutoHotkey64.exe", GlobalData.rootDir "\src\Starter.ah2")
+            ; RegWrite(cmd, "REG_SZ", "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run", "Starter")
+            cmd := Format('*RunAs "{1}" "{2}" "{1}" "{3}" "the_Startup"'
+                , A_AhkPath, GlobalData.rootDir "\src\Utils\SchTaskCreate.ah2", A_ScriptFullPath
+            )
+            Run(cmd)
             this.menu.check("开机启动")
         }
     }

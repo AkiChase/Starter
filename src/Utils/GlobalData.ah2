@@ -125,7 +125,7 @@ class GlobalData {
             ]
             }
         )"
-    ; 加载默认值
+        ; 加载默认值
         default := Jxon_Load(&defaultData)
         if (FileExist(this.intelligentDataPath)) {
             this.intelligentData := DataHelper.loadJSONFile(this.intelligentDataPath)
